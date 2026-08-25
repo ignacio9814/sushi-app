@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /productos/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /categorias/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /config/negocio {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /config/sistema {
+      allow read: if true;
+      allow create: if true;
+      allow update: if request.resource.data.ultimoBoleta == resource.data.ultimoBoleta + 1;
+    }
+
+    match /pedidos/{id} {
+      allow create: if true;
+      allow read: if true;
+      allow update, delete: if request.auth != null;
+    }
+  }
+}

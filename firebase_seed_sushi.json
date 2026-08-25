@@ -1,0 +1,275 @@
+{
+    "configuracion": {
+        "reglas_salsas": "Hasta 20 piezas incluye 1 salsa soja y 1 teriyaki.",
+        "adicional_rebozado": 3000
+    },
+    "categorias": [
+        {
+            "id": "cat_infaltables",
+            "nombre": "Rolls Infaltables",
+            "descripcion": "Cualquiera se puede rebozar y freír. Ese proceso tiene un adicional de $ 3.000.",
+            "orden": 1
+        },
+        {
+            "id": "cat_autor",
+            "nombre": "Rolls De Autor",
+            "descripcion": "Cada región del Perú guarda una identidad única en sus productos marcada por su tierra, su clima y la riqueza de su producción. Inspirados en esa diversidad buscamos la frescura y la esencia de cada territorio para dar nombre a cada uno de nuestros rolls. Una propuesta que conecta sabores, origen e identidad en cada pieza.",
+            "orden": 2
+        },
+        {
+            "id": "cat_nigiri",
+            "nombre": "Nigiri",
+            "descripcion": "1 und. $ 2.500",
+            "orden": 3
+        },
+        {
+            "id": "cat_ceviche",
+            "nombre": "Ceviche",
+            "orden": 4
+        },
+        {
+            "id": "cat_extras",
+            "nombre": "Extras",
+            "descripcion": "Acompañamientos y salsas extra. No cuentan como piezas del pedido.",
+            "orden": 5
+        }
+    ],
+    "productos": [
+        {
+            "id": "p1",
+            "categoria_id": "cat_infaltables",
+            "nombre": "New York Phila",
+            "descripcion": "Salmón queso palta",
+            "variantes": [
+                { "nombre": "5 pz", "precio": 10000 },
+                { "nombre": "10 pz", "precio": 15000 }
+            ],
+            "permite_rebozado": true,
+            "disponible": true
+        },
+        {
+            "id": "p2",
+            "categoria_id": "cat_infaltables",
+            "nombre": "Philadelphia",
+            "descripcion": "Salmón queso",
+            "variantes": [
+                { "nombre": "5 pz", "precio": 10000 },
+                { "nombre": "10 pz", "precio": 15000 }
+            ],
+            "permite_rebozado": true,
+            "disponible": true
+        },
+        {
+            "id": "p3",
+            "categoria_id": "cat_infaltables",
+            "nombre": "New York",
+            "descripcion": "Salmón palta",
+            "variantes": [
+                { "nombre": "5 pz", "precio": 10000 },
+                { "nombre": "10 pz", "precio": 15000 }
+            ],
+            "permite_rebozado": true,
+            "disponible": true
+        },
+        {
+            "id": "p4",
+            "categoria_id": "cat_infaltables",
+            "nombre": "California",
+            "descripcion": "Pasta de cangrejo palta y pepino",
+            "variantes": [
+                { "nombre": "5 pz", "precio": 10000 },
+                { "nombre": "10 pz", "precio": 15000 }
+            ],
+            "permite_rebozado": true,
+            "disponible": true
+        },
+        {
+            "id": "p5",
+            "categoria_id": "cat_autor",
+            "nombre": "Piura",
+            "descripcion": "Langostino rebozado queso mango, cobertura de mango",
+            "variantes": [
+                { "nombre": "5 pz", "precio": 10500 },
+                { "nombre": "10 pz", "precio": 17500 }
+            ],
+            "permite_rebozado": false,
+            "disponible": true
+        },
+        {
+            "id": "p6",
+            "categoria_id": "cat_autor",
+            "nombre": "Máncora",
+            "descripcion": "Langostino rebosado, tartare de salmón queso, cobertura de palta",
+            "variantes": [
+                { "nombre": "5 pz", "precio": 10500 },
+                { "nombre": "10 pz", "precio": 18000 }
+            ],
+            "permite_rebozado": false,
+            "disponible": true
+        },
+        {
+            "id": "p7",
+            "categoria_id": "cat_autor",
+            "nombre": "Costa Verde",
+            "descripcion": "Tartare de salmón, palta, rúcula, cobertura de salmón sellado, bañado con salsa de ostras y amaranto.",
+            "variantes": [
+                { "nombre": "5 pz", "precio": 10500 },
+                { "nombre": "10 pz", "precio": 18500 }
+            ],
+            "permite_rebozado": false,
+            "disponible": true
+        },
+        {
+            "id": "p8",
+            "categoria_id": "cat_autor",
+            "nombre": "Lima",
+            "descripcion": "Langostino, salmón y queso, bañado con salsa acevichada y maní crujiente",
+            "variantes": [
+                { "nombre": "5 pz", "precio": 10500 },
+                { "nombre": "10 pz", "precio": 18500 }
+            ],
+            "permite_rebozado": false,
+            "disponible": true
+        },
+        {
+            "id": "p9",
+            "categoria_id": "cat_autor",
+            "nombre": "Callao",
+            "descripcion": "Langostino rebozado palta y salmón coronado con un ceviche clásico cremoso.",
+            "variantes": [
+                { "nombre": "5 pz", "precio": 10500 },
+                { "nombre": "10 pz", "precio": 18500 }
+            ],
+            "permite_rebozado": false,
+            "disponible": true
+        },
+        {
+            "id": "p10",
+            "categoria_id": "cat_nigiri",
+            "nombre": "De salmón",
+            "descripcion": "",
+            "precio": 2500,
+            "disponible": true
+        },
+        {
+            "id": "p11",
+            "categoria_id": "cat_nigiri",
+            "nombre": "De langostino",
+            "descripcion": "",
+            "precio": 2500,
+            "disponible": true
+        },
+        {
+            "id": "p12",
+            "categoria_id": "cat_nigiri",
+            "nombre": "De atún rojo",
+            "descripcion": "",
+            "precio": 2500,
+            "disponible": true
+        },
+        {
+            "id": "p13",
+            "categoria_id": "cat_ceviche",
+            "nombre": "Clásico",
+            "descripcion": "De pesca blanca",
+            "precio": 20000,
+            "disponible": true
+        },
+        {
+            "id": "p14",
+            "categoria_id": "cat_ceviche",
+            "nombre": "Chalaco",
+            "descripcion": "De langostinos, salmón y calamar",
+            "precio": 22000,
+            "disponible": true
+        },
+        {
+            "id": "p15",
+            "categoria_id": "cat_ceviche",
+            "nombre": "Del Barrio",
+            "descripcion": "Ceviche mixto con unos crujientes chicharrones de marisco.",
+            "precio": 25000,
+            "disponible": true
+        },
+        {
+            "id": "p16",
+            "categoria_id": "cat_ceviche",
+            "nombre": "Oriental",
+            "descripcion": "De salmón con salsa de ostras y almendras.",
+            "precio": 25000,
+            "disponible": true
+        },
+        {
+            "id": "p17",
+            "categoria_id": "cat_extras",
+            "nombre": "Palitos chinos",
+            "descripcion": "",
+            "precio": 1000,
+            "disponible": true
+        },
+        {
+            "id": "p18",
+            "categoria_id": "cat_extras",
+            "nombre": "Wasabi",
+            "descripcion": "",
+            "precio": 1000,
+            "disponible": true
+        },
+        {
+            "id": "p19",
+            "categoria_id": "cat_extras",
+            "nombre": "Jengibre",
+            "descripcion": "",
+            "precio": 1000,
+            "disponible": true
+        },
+        {
+            "id": "p20",
+            "categoria_id": "cat_extras",
+            "nombre": "Salsa soja",
+            "descripcion": "",
+            "precio": 2000,
+            "disponible": true
+        },
+        {
+            "id": "p21",
+            "categoria_id": "cat_extras",
+            "nombre": "Salsa teriyaki",
+            "descripcion": "",
+            "precio": 4000,
+            "disponible": true
+        },
+        {
+            "id": "p22",
+            "categoria_id": "cat_extras",
+            "nombre": "Salsa de ostras",
+            "descripcion": "",
+            "precio": 4000,
+            "disponible": true
+        },
+        {
+            "id": "p23",
+            "categoria_id": "cat_extras",
+            "nombre": "Salsa acevichada",
+            "descripcion": "",
+            "precio": 4000,
+            "disponible": true
+        },
+        {
+            "id": "p24",
+            "categoria_id": "cat_extras",
+            "nombre": "Salsa de maracuyá",
+            "descripcion": "",
+            "precio": 4000,
+            "disponible": true
+        },
+        {
+            "id": "p25",
+            "categoria_id": "cat_extras",
+            "nombre": "Salsa de ají amarillo",
+            "descripcion": "",
+            "precio": 4000,
+            "disponible": true
+        }
+    ]
+}
