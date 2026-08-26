@@ -1,15 +1,17 @@
-import { formatMoney } from "@/lib/money";
+import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
 import { BRAND } from "@/lib/brand";
-import type { Pedido } from "@/types";
+import { MEDIO_PAGO_LABEL, type Pedido } from "@/types";
 
 export function getWhatsAppPhone() {
   return (process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "").replace(/\D/g, "");
 }
 
 export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
+  const emitida = Boolean(pedido.boletaEmitida);
+  const codigo = emitida ? formatBoleta(pedido.numero) : formatPedido(pedido.numero);
   const lines = [
     `*${BRAND.name}*`,
-    `Pedido ${pedido.numeroFormateado}`,
+    emitida ? `Boleta ${codigo}` : `Nuevo pedido ${codigo}`,
     "",
     `Cliente: ${pedido.clienteNombre}`,
     `Tel: ${pedido.clienteTelefono}`,
@@ -37,14 +39,16 @@ export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
     lines.push("", `Notas: ${pedido.notas}`);
   }
 
-  lines.push(
-    "",
-    `*Total: ${formatMoney(pedido.totalCentavos)}*`,
-    `Pago: ${pedido.pago === "cobrado" ? "COBRADO" : "PENDIENTE"}`
-  );
+  lines.push("", `*Total: ${formatMoney(pedido.totalCentavos)}*`);
 
-  if (boletaUrl) {
-    lines.push("", `Comprobante: ${boletaUrl}`);
+  if (emitida && pedido.medioPago) {
+    lines.push(`Pago: ${MEDIO_PAGO_LABEL[pedido.medioPago]} · COBRADO`);
+  } else {
+    lines.push("Pago: a coordinar");
+  }
+
+  if (emitida && boletaUrl) {
+    lines.push("", `Boleta: ${boletaUrl}`);
   }
 
   return lines.join("\n");

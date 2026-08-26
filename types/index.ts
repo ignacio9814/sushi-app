@@ -49,6 +49,14 @@ export type PedidoEstado =
 
 export type PedidoPago = "pendiente" | "cobrado";
 
+export type MedioPago = "efectivo" | "transferencia" | "mercadopago";
+
+export const MEDIO_PAGO_LABEL: Record<MedioPago, string> = {
+  efectivo: "Efectivo",
+  transferencia: "Transferencia",
+  mercadopago: "Mercado Pago",
+};
+
 export interface PedidoItem {
   productoId: string;
   nombre: string;
@@ -74,7 +82,15 @@ export interface Pedido {
   incluyeSalsasGratis: boolean;
   estado: PedidoEstado;
   pago: PedidoPago;
+  medioPago?: MedioPago;
+  boletaEmitida?: boolean;
+  cerradoAt?: number;
 }
 
 export const REBOZADO_CENTAVOS = 3000;
 export const SALSAS_MAX_PIEZAS = 20;
+export const EXTRAS_CATEGORY_ID = "cat_extras";
+
+export function isExtraProduct(producto: { categoria_id: string }) {
+  return producto.categoria_id === EXTRAS_CATEGORY_ID;
+}

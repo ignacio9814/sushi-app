@@ -42,7 +42,7 @@ export default function BatterDialog({ producto, variante }: BatterDialogProps) 
           <Button
             size="sm"
             variant="outline"
-            className="h-9 border-[#c41e3a]/60 px-4 text-red-200 hover:bg-[#c41e3a] hover:text-white"
+            className="h-9 border-white/15 bg-white/5 px-4 text-amber-100/80 hover:border-amber-200/30 hover:bg-amber-200/10"
           />
         }
       >
@@ -65,14 +65,14 @@ export default function BatterDialog({ producto, variante }: BatterDialogProps) 
           <Button
             onClick={handleAddClassic}
             variant="outline"
-            className="h-11 w-full border-[#c41e3a]/40 text-red-100 hover:bg-[#c41e3a] hover:text-white"
+            className="h-11 w-full border-amber-500/40 text-amber-100 hover:bg-amber-500/15"
           >
             <ChefHat className="mr-2 size-4" />
             Agregar clásico
           </Button>
           <Button
             onClick={handleAddBattered}
-            className="h-11 w-full bg-amber-500 text-zinc-950 hover:bg-amber-400"
+            className="h-11 w-full border border-amber-200/30 bg-amber-200/10 text-amber-100/90 hover:bg-amber-200/20"
           >
             <Flame className="mr-2 size-4" />
             Agregar rebozado (+{formatMoney(REBOZADO_CENTAVOS)})

@@ -4,40 +4,18 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import BatterDialog from "@/components/BatterDialog";
+import { BRAND } from "@/lib/brand";
 import { formatMoney } from "@/lib/money";
 import { useCart } from "@/store/useCart";
 import type { Producto, Variante } from "@/types";
 
-const CATEGORY_ACCENT: Record<string, string> = {
-  cat_infaltables: "from-red-950 via-black to-zinc-950",
-  cat_autor: "from-amber-950 via-black to-zinc-950",
-  cat_nigiri: "from-rose-950 via-black to-zinc-950",
-  cat_ceviche: "from-red-950 via-zinc-900 to-black",
-  cat_extras: "from-stone-900 via-black to-zinc-950",
-};
-
 function ProductVisual({ producto }: { producto: Producto }) {
-  if (producto.imagen_url) {
-    return (
-      <img
-        src={producto.imagen_url}
-        alt={producto.nombre}
-        className="aspect-square w-full object-cover"
-      />
-    );
-  }
-
   return (
-    <div
-      className={`relative aspect-square overflow-hidden bg-gradient-to-br ${CATEGORY_ACCENT[producto.categoria_id] ?? "from-zinc-900 to-zinc-950"}`}
-    >
-      <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_50%_20%,rgba(196,30,58,0.45),transparent_50%),radial-gradient(circle_at_80%_80%,rgba(212,175,55,0.18),transparent_40%)]" />
-      <div className="absolute inset-x-6 top-1/3 h-px bg-[#c41e3a]/40" />
-      <div className="absolute inset-y-6 left-1/2 w-px bg-amber-500/20" />
-      <span className="absolute inset-0 flex items-center justify-center font-heading text-5xl text-amber-100/70">
-        寿司
-      </span>
-    </div>
+    <img
+      src={producto.imagen_url || BRAND.placeholderProductSrc}
+      alt={producto.nombre}
+      className="aspect-square w-full object-cover"
+    />
   );
 }
 
@@ -52,11 +30,11 @@ export default function ProductCard({ producto }: { producto: Producto }) {
   }, [producto.precio, variante]);
 
   return (
-    <article className="overflow-hidden rounded-lg border border-zinc-800 bg-black/80 shadow-sm transition hover:-translate-y-0.5 hover:border-[#c41e3a]/50 hover:shadow-lg hover:shadow-red-950/40">
+    <article className="overflow-hidden rounded-lg border border-zinc-800 bg-black/80 shadow-sm transition hover:-translate-y-0.5 hover:border-amber-500/40 hover:shadow-lg hover:shadow-amber-950/30">
       <div className="relative">
         <ProductVisual producto={producto} />
         {producto.permite_rebozado && (
-          <Badge className="absolute top-3 right-3 bg-amber-500/20 text-amber-300">
+          <Badge className="absolute top-3 right-3 border-white/10 bg-black/40 text-amber-100/80 backdrop-blur-sm">
             Rebozado
           </Badge>
         )}
@@ -82,8 +60,8 @@ export default function ProductCard({ producto }: { producto: Producto }) {
                   onClick={() => setVariante(option)}
                   className={`flex-1 rounded-lg border px-2 py-2 text-xs transition ${
                     selected
-                      ? "border-[#c41e3a] bg-[#c41e3a]/15 text-red-100"
-                      : "border-zinc-700 text-zinc-400 hover:border-[#c41e3a]/40"
+                      ? "border-amber-200/35 bg-amber-200/10 text-amber-100/90"
+                      : "border-zinc-700 text-zinc-400 hover:border-white/20"
                   }`}
                 >
                   <span className="block font-medium">{option.nombre}</span>
@@ -104,7 +82,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
             <Button
               size="sm"
               variant="outline"
-              className="h-9 border-[#c41e3a]/60 px-4 text-red-200 hover:bg-[#c41e3a] hover:text-white"
+              className="h-9 border-white/15 bg-white/5 px-4 text-amber-100/80 hover:border-amber-200/30 hover:bg-amber-200/10"
               onClick={() => addItem(producto, variante)}
             >
               Agregar

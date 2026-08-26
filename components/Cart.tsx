@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Minus, Plus, ShoppingBag, X } from "lucide-react";
+import { ArrowLeft, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { toast } from "sonner";
+import ExtraRow from "@/components/ExtraRow";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,14 +14,19 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { createOrder } from "@/lib/create-order";
 import { formatMoney } from "@/lib/money";
 import { openWhatsApp } from "@/lib/whatsapp";
 import { useCart } from "@/store/useCart";
 import BrandLogo from "@/components/BrandLogo";
+import { isExtraProduct, type Producto } from "@/types";
+
+type CheckoutStep = "comida" | "extras" | "datos";
+
+const STEPS: CheckoutStep[] = ["comida", "extras", "datos"];
 
 export default function Cart() {
-  const router = useRouter();
   const {
     items,
     removeItem,
@@ -31,27 +36,60 @@ export default function Cart() {
     getTotalItems,
     includesFreeSauces,
     clearCart,
+    clearExtras,
   } = useCart();
   const [open, setOpen] = useState(false);
+  const [step, setStep] = useState<CheckoutStep>("comida");
   const [sending, setSending] = useState(false);
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [direccion, setDireccion] = useState("");
   const [notas, setNotas] = useState("");
+  const [extras, setExtras] = useState<Producto[]>(() =>
+    getSeedCatalog().productos.filter(
+      (producto) => producto.disponible && isExtraProduct(producto)
+    )
+  );
 
   useEffect(() => {
     void useCart.persist.rehydrate();
   }, []);
 
+  useEffect(() => {
+    return subscribeCatalog(({ productos }) => {
+      setExtras(
+        productos.filter((producto) => producto.disponible && isExtraProduct(producto))
+      );
+    });
+  }, []);
+
+  const foodItems = items.filter((item) => !isExtraProduct(item.producto));
+  const extraItems = items.filter((item) => isExtraProduct(item.producto));
   const total = getTotal();
   const totalPieces = getTotalPieces();
   const totalItems = getTotalItems();
   const qualifiesForFreeSauces = includesFreeSauces();
+  const stepIndex = STEPS.indexOf(step);
+
+  const titles: Record<CheckoutStep, string> = {
+    comida: "Tu pedido",
+    extras: "Extras",
+    datos: "Tus datos",
+  };
+
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    if (next) setStep("comida");
+  };
 
   const handleCheckout = async () => {
-    if (items.length === 0) return;
+    if (foodItems.length === 0) {
+      toast.error("Elegí al menos un plato antes de enviar.");
+      setStep("comida");
+      return;
+    }
     if (!nombre.trim() || !telefono.trim()) {
-      toast.error("Completá nombre y teléfono para emitir la boleta.");
+      toast.error("Dejanos nombre y WhatsApp para confirmar el pedido.");
       return;
     }
 
@@ -63,12 +101,14 @@ export default function Cart() {
         direccion,
         notas,
       });
-      const boletaUrl = `${window.location.origin}/pedido/${pedido.id}`;
       clearCart();
       setOpen(false);
-      toast.success(`Boleta ${pedido.numeroFormateado} generada`);
-      router.push(`/pedido/${pedido.id}`);
-      openWhatsApp(pedido, boletaUrl);
+      setNombre("");
+      setTelefono("");
+      setDireccion("");
+      setNotas("");
+      toast.success(`Pedido ${pedido.numeroFormateado} enviado a cocina`);
+      openWhatsApp(pedido);
     } catch (error) {
       console.error(error);
       toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
@@ -77,20 +117,26 @@ export default function Cart() {
     }
   };
 
+  const goBack = () => {
+    if (step === "extras") setStep("comida");
+    if (step === "datos") setStep("extras");
+  };
+
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger
         render={
           <Button
             size="lg"
-            className="fixed right-4 bottom-4 z-50 h-16 w-16 rounded-full border border-[#c41e3a]/40 bg-[#c41e3a] p-0 shadow-2xl hover:bg-red-700"
+            variant="outline"
+            className="fixed right-4 bottom-4 z-50 h-16 w-16 rounded-full border-[#25D366]/55 bg-[#25D366]/20 p-0 text-white shadow-lg shadow-[#25D366]/10 backdrop-blur-md hover:bg-[#25D366]/35"
           />
         }
       >
         <span className="relative">
-          <ShoppingBag className="size-7 text-white" />
+          <ShoppingBag className="size-7" />
           {totalItems > 0 && (
-            <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-rose-500 text-xs font-bold text-white">
+            <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full border border-[#25D366]/50 bg-black/80 text-xs font-bold text-[#25D366]">
               {totalItems}
             </span>
           )}
@@ -103,21 +149,33 @@ export default function Cart() {
         <div className="flex h-full flex-col">
           <SheetHeader className="border-b border-zinc-800">
             <SheetTitle className="flex items-center gap-2 text-xl">
+              {step !== "comida" && foodItems.length > 0 && (
+                <Button variant="ghost" size="icon-sm" onClick={goBack}>
+                  <ArrowLeft className="size-4" />
+                </Button>
+              )}
               <BrandLogo size="sm" />
-              Tu pedido
-              <span className="text-amber-400">({totalItems})</span>
+              {titles[step]}
+              {step === "comida" && (
+                <span className="text-amber-400">({foodItems.length})</span>
+              )}
             </SheetTitle>
+            {foodItems.length > 0 && (
+              <p className="text-xs tracking-wide text-zinc-500">
+                Paso {stepIndex + 1} de 3
+              </p>
+            )}
           </SheetHeader>
 
           <div className="flex-1 overflow-y-auto p-4">
-            {items.length === 0 ? (
+            {foodItems.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center text-zinc-500">
                 <ShoppingBag className="mb-3 size-10 opacity-40" />
-                <p>El carrito está vacío</p>
+                <p>Elegí primero tu comida</p>
               </div>
-            ) : (
+            ) : step === "comida" ? (
               <div className="space-y-3">
-                {items.map((item) => {
+                {foodItems.map((item) => {
                   const unit = item.variante?.precio || item.producto.precio || 0;
                   const rebozado = item.conRebozado ? 3000 : 0;
                   const itemTotal = (unit + rebozado) * item.cantidad;
@@ -192,16 +250,40 @@ export default function Cart() {
                     </div>
                   );
                 })}
-
                 {qualifiesForFreeSauces && (
-                  <div className="rounded-lg border border-[#c41e3a]/30 bg-[#c41e3a]/10 p-3 text-sm text-red-200">
-                    Incluye 1 salsa soja y 1 teriyaki ({totalPieces} piezas)
+                  <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm text-zinc-300">
+                    Pedidos de hasta {totalPieces} piezas incluyen 1 soja y 1 teriyaki
                   </div>
                 )}
-
+              </div>
+            ) : step === "extras" ? (
+              <div className="space-y-3">
+                <p className="text-sm text-zinc-400">
+                  Palitos, wasabi, salsas extra… o seguí sin nada más.
+                </p>
+                <div className="rounded-lg border border-zinc-800 bg-zinc-950/80 px-4">
+                  {extras.map((producto) => (
+                    <ExtraRow key={producto.id} producto={producto} />
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {extraItems.length > 0 && (
+                  <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3 text-sm text-zinc-300">
+                    {extraItems.map((item) => (
+                      <p key={item.producto.id}>
+                        {item.cantidad}× {item.producto.nombre}
+                      </p>
+                    ))}
+                  </div>
+                )}
                 <div className="space-y-3 rounded-lg border border-zinc-800 p-3">
                   <p className="font-heading text-sm text-zinc-300">
-                    Datos para la boleta
+                    ¿Cómo te contactamos?
+                  </p>
+                  <p className="text-xs text-zinc-500">
+                    Cocina confirma el pedido. La boleta la arma el local al cobrar.
                   </p>
                   <Input
                     placeholder="Nombre"
@@ -231,26 +313,57 @@ export default function Cart() {
             )}
           </div>
 
-          {items.length > 0 && (
+          {foodItems.length > 0 && (
             <div className="space-y-3 border-t border-zinc-800 p-4">
               <div className="flex items-center justify-between font-heading text-xl">
                 <span>Total</span>
                 <span className="text-amber-400">{formatMoney(total)}</span>
               </div>
-              <Button
-                onClick={handleCheckout}
-                disabled={sending}
-                className="h-12 w-full bg-[#c41e3a] text-base font-heading tracking-wide uppercase hover:bg-red-700"
-              >
-                {sending ? "Generando boleta..." : "Enviar pedido por WhatsApp"}
-              </Button>
-              <Button
-                onClick={clearCart}
-                variant="ghost"
-                className="w-full text-zinc-400"
-              >
-                Vaciar carrito
-              </Button>
+              {step === "comida" && (
+                <Button
+                  onClick={() => setStep("extras")}
+                  className="h-12 w-full bg-amber-200/15 text-base font-heading tracking-wide text-amber-100 uppercase hover:bg-amber-200/25"
+                >
+                  Continuar a extras
+                </Button>
+              )}
+              {step === "extras" && (
+                <>
+                  <Button
+                    onClick={() => setStep("datos")}
+                    className="h-12 w-full bg-amber-200/15 text-base font-heading tracking-wide text-amber-100 uppercase hover:bg-amber-200/25"
+                  >
+                    {extraItems.length > 0 ? "Continuar" : "Continuar sin extras"}
+                  </Button>
+                  {extraItems.length > 0 && (
+                    <Button
+                      onClick={() => {
+                        clearExtras();
+                        setStep("datos");
+                      }}
+                      variant="ghost"
+                      className="w-full text-zinc-400"
+                    >
+                      Quitar extras y continuar
+                    </Button>
+                  )}
+                </>
+              )}
+              {step === "datos" && (
+                <Button
+                  onClick={handleCheckout}
+                  disabled={sending}
+                  variant="outline"
+                  className="h-12 w-full border-[#25D366]/55 bg-[#25D366]/20 text-base font-heading tracking-wide text-white uppercase backdrop-blur-sm hover:bg-[#25D366]/35"
+                >
+                  {sending ? "Enviando..." : "Enviar pedido por WhatsApp"}
+                </Button>
+              )}
+              {step === "comida" && (
+                <Button onClick={clearCart} variant="ghost" className="w-full text-zinc-400">
+                  Vaciar carrito
+                </Button>
+              )}
             </div>
           )}
         </div>

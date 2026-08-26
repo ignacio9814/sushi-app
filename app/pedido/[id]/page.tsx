@@ -8,11 +8,11 @@ import { Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getLocalPedido } from "@/lib/create-order";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
-import { formatMoney } from "@/lib/money";
+import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
 import { openWhatsApp } from "@/lib/whatsapp";
 import BrandLogo, { PeruStripe } from "@/components/BrandLogo";
 import { BRAND } from "@/lib/brand";
-import type { Pedido } from "@/types";
+import { MEDIO_PAGO_LABEL, type Pedido } from "@/types";
 
 export default function PedidoPage() {
   const params = useParams<{ id: string }>();
@@ -55,23 +55,27 @@ export default function PedidoPage() {
   if (!pedido) {
     return (
       <div className="p-8 text-center">
-        <p className="mb-4 text-zinc-400">No encontramos esta boleta.</p>
+        <p className="mb-4 text-zinc-400">No encontramos este pedido.</p>
         <Button render={<Link href="/" />}>Volver al menú</Button>
       </div>
     );
   }
 
   const fecha = new Date(pedido.createdAt).toLocaleString("es-AR");
+  const emitida = Boolean(pedido.boletaEmitida);
+  const codigo = emitida ? formatBoleta(pedido.numero) : formatPedido(pedido.numero);
 
   return (
     <div className="min-h-screen bg-black px-4 py-8 print:bg-white print:text-black">
       <div className="mx-auto max-w-lg rounded-lg border border-zinc-800 bg-zinc-950 p-6 print:border-black print:bg-white">
         <BrandLogo size="md" className="mx-auto print:invert-0" />
         <PeruStripe className="mx-auto mt-3 max-w-48" />
-        <p className="mt-4 text-center text-xs tracking-[0.25em] text-[#c41e3a] uppercase print:text-black">
+        <p className="mt-4 text-center text-xs tracking-[0.25em] text-amber-400 uppercase print:text-black">
           {BRAND.name}
         </p>
-        <h1 className="mt-1 font-heading text-3xl">Boleta {pedido.numeroFormateado}</h1>
+        <h1 className="mt-1 font-heading text-3xl">
+          {emitida ? `Boleta ${codigo}` : `Pedido ${codigo}`}
+        </h1>
         <p className="mt-1 text-sm text-zinc-400 print:text-zinc-600">{fecha}</p>
         <p className="mt-4 text-sm">
           {pedido.clienteNombre} · {pedido.clienteTelefono}
@@ -103,7 +107,9 @@ export default function PedidoPage() {
 
         <div className="mt-6 flex items-end justify-between border-t border-zinc-800 pt-4 print:border-black">
           <p className="text-sm text-zinc-400 print:text-zinc-600">
-            Pago: {pedido.pago === "cobrado" ? "COBRADO" : "PENDIENTE"}
+            {emitida && pedido.medioPago
+              ? `Pago: ${MEDIO_PAGO_LABEL[pedido.medioPago]}`
+              : "Pago: pendiente de cierre"}
           </p>
           <p className="font-heading text-2xl text-amber-400 print:text-black">
             {formatMoney(pedido.totalCentavos)}
@@ -111,20 +117,27 @@ export default function PedidoPage() {
         </div>
 
         <p className="mt-4 text-xs text-zinc-500 print:text-zinc-600">
-          Comprobante interno de pedido. No es factura fiscal.
+          {emitida
+            ? "Boleta interna emitida al cerrar el pedido. No es factura fiscal."
+            : "Comanda de cocina. La boleta se emite cuando el local cobra y cierra el pedido."}
         </p>
 
         <div className="mt-6 flex flex-col gap-2 print:hidden">
-          <Button
-            className="h-11 bg-[#c41e3a] hover:bg-red-700"
-            onClick={() => openWhatsApp(pedido, window.location.href)}
-          >
-            Reenviar por WhatsApp
-          </Button>
-          <Button variant="outline" onClick={() => window.print()}>
-            <Printer className="mr-2 size-4" />
-            Imprimir boleta
-          </Button>
+          {emitida && (
+            <>
+              <Button
+                variant="outline"
+                className="h-11 border-[#25D366]/55 bg-[#25D366]/20 text-white hover:bg-[#25D366]/35"
+                onClick={() => openWhatsApp(pedido, window.location.href)}
+              >
+                Enviar boleta por WhatsApp
+              </Button>
+              <Button variant="outline" onClick={() => window.print()}>
+                <Printer className="mr-2 size-4" />
+                Imprimir boleta
+              </Button>
+            </>
+          )}
           <Button variant="ghost" render={<Link href="/" />}>
             Volver al menú
           </Button>

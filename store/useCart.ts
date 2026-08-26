@@ -4,6 +4,7 @@ import { itemUnitPrice, piecesOfLine } from "@/lib/money";
 import {
   REBOZADO_CENTAVOS,
   SALSAS_MAX_PIEZAS,
+  isExtraProduct,
   type CartItem,
   type Producto,
   type Variante,
@@ -37,6 +38,7 @@ interface CartStore {
     conRebozado?: boolean
   ) => void;
   clearCart: () => void;
+  clearExtras: () => void;
   getTotal: () => number;
   getTotalItems: () => number;
   getTotalPieces: () => number;
@@ -102,6 +104,12 @@ export const useCart = create<CartStore>()(
 
       clearCart: () => {
         set({ items: [] });
+      },
+
+      clearExtras: () => {
+        set((state) => ({
+          items: state.items.filter((item) => !isExtraProduct(item.producto)),
+        }));
       },
 
       getTotal: () => {

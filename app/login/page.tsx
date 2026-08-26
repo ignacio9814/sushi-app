@@ -45,7 +45,7 @@ export default function LoginPage() {
         <div className="text-center">
           <BrandLogo size="lg" className="mx-auto" />
           <PeruStripe className="mx-auto mt-4 max-w-40" />
-          <p className="mt-4 text-xs tracking-[0.3em] text-[#c41e3a] uppercase">Staff</p>
+          <p className="mt-4 text-xs tracking-[0.3em] text-amber-400/90 uppercase">Staff</p>
           <h1 className="mt-1 font-heading text-3xl text-amber-200">Cocina</h1>
           <p className="mt-2 text-sm text-zinc-400">
             Acceso solo para el local. El cliente no ve este panel.
@@ -68,7 +68,7 @@ export default function LoginPage() {
         <Button
           type="submit"
           disabled={loading}
-          className="h-11 w-full bg-[#c41e3a] hover:bg-red-700"
+          className="h-11 w-full border border-amber-200/30 bg-amber-200/10 text-amber-100/90 hover:bg-amber-200/20"
         >
           {loading ? "Entrando..." : "Entrar"}
         </Button>

@@ -5,6 +5,10 @@ export function formatMoney(pesos: number) {
   return `$ ${formatted}`;
 }
 
+export function formatPedido(numero: number) {
+  return `P-${String(numero).padStart(6, "0")}`;
+}
+
 export function formatBoleta(numero: number) {
   return `B-${String(numero).padStart(6, "0")}`;
 }

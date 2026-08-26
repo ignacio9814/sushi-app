@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Cart from "@/components/Cart";
-import ExtraRow from "@/components/ExtraRow";
 import ProductCard from "@/components/ProductCard";
 import BrandLogo, { PeruStripe } from "@/components/BrandLogo";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
@@ -26,14 +25,15 @@ export default function Home() {
   }, []);
 
   const visibleProductos = productos.filter((producto) => producto.disponible);
+  const foodCategorias = categorias.filter((categoria) => categoria.id !== "cat_extras");
   const filteredCategorias =
     activeCategory === "all"
-      ? categorias
-      : categorias.filter((categoria) => categoria.id === activeCategory);
+      ? foodCategorias
+      : foodCategorias.filter((categoria) => categoria.id === activeCategory);
 
   return (
     <div className="relative min-h-screen bg-black pb-28">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(196,30,58,0.18),transparent_42%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,175,55,0.07),transparent_46%)]" />
       <header className="sticky top-0 z-40 bg-black/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <BrandLogo priority size="md" />
@@ -48,20 +48,20 @@ export default function Home() {
             onClick={() => setActiveCategory("all")}
             className={`rounded-full border px-3 py-1.5 text-sm whitespace-nowrap ${
               activeCategory === "all"
-                ? "border-[#c41e3a] bg-[#c41e3a]/20 text-red-200"
+                ? "border-amber-200/35 bg-amber-200/10 text-amber-100/90"
                 : "border-zinc-800 text-zinc-400"
             }`}
           >
             Todo
           </button>
-          {categorias.map((categoria) => (
+          {foodCategorias.map((categoria) => (
             <button
               key={categoria.id}
               type="button"
               onClick={() => setActiveCategory(categoria.id)}
               className={`rounded-full border px-3 py-1.5 text-sm whitespace-nowrap ${
                 activeCategory === categoria.id
-                  ? "border-[#c41e3a] bg-[#c41e3a]/20 text-red-200"
+                  ? "border-amber-200/35 bg-amber-200/10 text-amber-100/90"
                   : "border-zinc-800 text-zinc-400"
               }`}
             >
@@ -88,27 +88,19 @@ export default function Home() {
                   </p>
                 )}
               </div>
-              {categoria.id === "cat_extras" ? (
-                <div className="rounded-lg border border-zinc-800 bg-zinc-950/80 px-4">
-                  {productosCategoria.map((producto) => (
-                    <ExtraRow key={producto.id} producto={producto} />
-                  ))}
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {productosCategoria.map((producto) => (
-                    <ProductCard key={producto.id} producto={producto} />
-                  ))}
-                </div>
-              )}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {productosCategoria.map((producto) => (
+                  <ProductCard key={producto.id} producto={producto} />
+                ))}
+              </div>
             </section>
           );
         })}
       </main>
 
       <footer className="mx-auto flex max-w-6xl items-center justify-between px-4 pb-8 text-xs text-zinc-600">
-        <span>Comprobante automático al confirmar</span>
-        <Link href="/login" className="inline-flex items-center gap-1 hover:text-[#c41e3a]">
+        <span>El local confirma por WhatsApp y emite la boleta al cobrar</span>
+        <Link href="/login" className="inline-flex items-center gap-1 hover:text-amber-400">
           <Lock className="size-3" />
           Cocina
         </Link>

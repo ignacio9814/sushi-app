@@ -17,7 +17,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Adan Reymundo · Pedidos",
-  description: "Cocina nikkei. Elegí, confirmá por WhatsApp y recibí tu boleta.",
+  description: "Cocina nikkei. Pedí por WhatsApp; el local emite la boleta al cerrar el pedido.",
   icons: { icon: "/logo.png" },
 };
 

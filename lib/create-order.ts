@@ -3,15 +3,19 @@ import {
   doc,
   runTransaction,
   serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
-import { formatBoleta, itemUnitPrice, piecesOfLine } from "@/lib/money";
+import { formatPedido, itemUnitPrice, piecesOfLine } from "@/lib/money";
 import {
   REBOZADO_CENTAVOS,
   SALSAS_MAX_PIEZAS,
   type CartItem,
+  type MedioPago,
   type Pedido,
+  type PedidoEstado,
   type PedidoItem,
+  type PedidoPago,
 } from "@/types";
 
 export interface CheckoutPayload {
@@ -52,7 +56,7 @@ function buildPedidoDraft(
   return {
     id,
     numero,
-    numeroFormateado: formatBoleta(numero),
+    numeroFormateado: formatPedido(numero),
     createdAt: Date.now(),
     clienteNombre: payload.clienteNombre.trim(),
     clienteTelefono: payload.clienteTelefono.trim(),
@@ -64,11 +68,13 @@ function buildPedidoDraft(
     incluyeSalsasGratis: piezas > 0 && piezas <= SALSAS_MAX_PIEZAS,
     estado: "pendiente",
     pago: "pendiente",
+    boletaEmitida: false,
   };
 }
 
 const LOCAL_PEDIDOS_KEY = "sushi_pedidos_local";
 const LOCAL_COUNTER_KEY = "sushi_boleta_counter";
+export const PEDIDOS_UPDATED_EVENT = "sushi-pedidos-updated";
 
 function nextLocalNumero() {
   const current = Number(window.localStorage.getItem(LOCAL_COUNTER_KEY) || "0");
@@ -98,6 +104,39 @@ function saveLocalPedido(pedido: Pedido) {
   const all = readLocalPedidos();
   all[pedido.id] = pedido;
   window.localStorage.setItem(LOCAL_PEDIDOS_KEY, JSON.stringify(all));
+  window.dispatchEvent(new Event(PEDIDOS_UPDATED_EVENT));
+}
+
+export async function updatePedidoRecord(
+  pedido: Pedido,
+  data: {
+    estado?: PedidoEstado;
+    pago?: PedidoPago;
+    medioPago?: MedioPago;
+    boletaEmitida?: boolean;
+    cerradoAt?: number;
+  }
+) {
+  const next: Pedido = { ...pedido, ...data };
+
+  if (!isFirebaseConfigured || !db || pedido.id.startsWith("local-")) {
+    saveLocalPedido(next);
+    return next;
+  }
+
+  const { id: _id, createdAt: _createdAt, ...rest } = next;
+  await updateDoc(doc(db, "pedidos", pedido.id), rest);
+  return next;
+}
+
+export async function closePedido(pedido: Pedido, medioPago: MedioPago) {
+  return updatePedidoRecord(pedido, {
+    medioPago,
+    pago: "cobrado",
+    boletaEmitida: true,
+    estado: "entregado",
+    cerradoAt: Date.now(),
+  });
 }
 
 export async function createOrder(
