@@ -1,15 +1,33 @@
 export default function MenuBackdrop() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#F6F3EA]" aria-hidden>
+    <div
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden print:hidden"
+      aria-hidden
+      style={{
+        background:
+          "radial-gradient(ellipse 92% 70% at 50% 36%, #F9F7F2 0%, #F4F0E4 68%, #EFE8D6 100%)",
+      }}
+    >
       <svg
-        viewBox="0 0 800 400"
-        className="absolute top-[44%] left-1/2 w-[min(92vw,720px)] -translate-x-1/2 -translate-y-1/2 opacity-[0.055]"
+        viewBox="0 0 1000 500"
+        fill="none"
+        className="absolute top-[47%] left-1/2 w-[min(118vw,860px)] -translate-x-1/2 -translate-y-1/2 opacity-[0.14]"
       >
-        <path
-          fill="#C5A059"
-          d="M118 206c22-54 14-108-32-148 64 18 104 70 112 128 48-72 150-112 252-92 82 16 144 64 168 124 44-24 108-18 164 28-42-8-76 14-90 48 58 10 112 38 146 86-52-24-110-20-156 12 26 36 32 80 12 124-36-40-90-56-152-48 12 54-14 102-66 132 12-52-16-100-72-122-34 46-98 66-168 52 38-28 54-72 40-120-66 12-122-12-158-64 44 6 82-12 110-48-50 0-94-20-114-60z"
-        />
-        <circle cx="596" cy="168" r="7" fill="#9B2B2B" />
+        <g
+          stroke="#C5A059"
+          strokeWidth="2.1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M206 252C152 198 88 138 78 88c58 48 92 104 128 164C152 306 82 372 90 418c58-52 88-108 116-166Z" />
+          <path d="M206 252c48-82 196-128 372-112 138 12 248 62 318 112-70 50-180 100-318 112C402 380 254 334 206 252Z" />
+          <path d="M392 148c52-68 188-78 268 2" />
+          <path d="M468 348c28 62 128 78 198 8" />
+          <path d="M792 202c-28 28-30 68 0 98" />
+          <path d="M468 208c18 28 18 58 0 86M538 192c24 34 24 72 0 108M608 186c26 38 26 80 0 118" />
+          <path d="M868 268c22 10 38 28 32 52" />
+        </g>
+        <circle cx="838" cy="228" r="5.5" fill="#9B2B2B" className="opacity-70" />
       </svg>
     </div>
   );

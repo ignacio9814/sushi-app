@@ -28,9 +28,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="es"
       className={`${cinzel.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="relative min-h-full flex flex-col">
+      <body className="relative min-h-full flex flex-col bg-transparent">
         <MenuBackdrop />
-        {children}
+        <div className="relative z-[1] flex min-h-full flex-1 flex-col">
+          {children}
+        </div>
         <Toaster />
       </body>
     </html>
