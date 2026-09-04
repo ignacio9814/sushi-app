@@ -154,10 +154,10 @@ export default function Cart() {
       )}
       <SheetContent
         side="bottom"
-        className="h-[92dvh] w-full gap-0 border-zinc-800 bg-zinc-950 sm:max-w-none"
+        className="flex h-[92dvh] max-h-[92dvh] min-h-0 w-full flex-col gap-0 overflow-hidden border-zinc-800 bg-zinc-950 pt-[env(safe-area-inset-top)] data-[side=bottom]:h-[92dvh] data-[side=bottom]:max-h-[92dvh] sm:max-w-none"
       >
-        <div className="flex h-full flex-col">
-          <SheetHeader className="border-b border-zinc-800">
+        <div className="flex min-h-0 flex-1 flex-col">
+          <SheetHeader className="shrink-0 border-b border-zinc-800">
             <SheetTitle className="flex items-center gap-2 text-xl">
               {step !== "comida" && foodItems.length > 0 && (
                 <Button variant="ghost" size="icon-sm" onClick={goBack}>
@@ -198,7 +198,7 @@ export default function Cart() {
             )}
           </SheetHeader>
 
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 [-webkit-overflow-scrolling:touch]">
             {foodItems.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center text-zinc-500">
                 <ShoppingBag className="mb-3 size-10 opacity-40" />
@@ -371,7 +371,7 @@ export default function Cart() {
           </div>
 
           {foodItems.length > 0 && (
-            <div className="space-y-3 border-t border-zinc-800 p-4">
+            <div className="shrink-0 space-y-3 border-t border-zinc-800 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <div className="flex items-center justify-between font-heading text-xl">
                 <span>Total</span>
                 <span className="text-amber-400">{formatMoney(total)}</span>
