@@ -58,11 +58,18 @@ export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
   return lines.join("\n");
 }
 
-export function openWhatsApp(pedido: Pedido, boletaUrl?: string) {
+export function getWhatsAppUrl(pedido: Pedido, boletaUrl?: string) {
   const phone = getWhatsAppPhone();
   const text = encodeURIComponent(buildWhatsAppMessage(pedido, boletaUrl));
-  const url = phone
+  return phone
     ? `https://wa.me/${phone}?text=${text}`
     : `https://wa.me/?text=${text}`;
-  window.open(url, "_blank");
+}
+
+export function openWhatsApp(pedido: Pedido, boletaUrl?: string) {
+  const url = getWhatsAppUrl(pedido, boletaUrl);
+  const opened = window.open(url, "_blank");
+  if (!opened) {
+    window.location.assign(url);
+  }
 }

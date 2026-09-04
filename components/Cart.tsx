@@ -16,7 +16,7 @@ import {
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { createOrder } from "@/lib/create-order";
 import { formatMoney } from "@/lib/money";
-import { openWhatsApp } from "@/lib/whatsapp";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 import { formatRetiroFranja } from "@/lib/retiro";
 import { useCart } from "@/store/useCart";
 import { isExtraProduct, type Producto } from "@/types";
@@ -116,7 +116,7 @@ export default function Cart() {
       setRetiroHasta("");
       setNotas("");
       toast.success(`Pedido ${pedido.numeroFormateado} enviado a cocina`);
-      openWhatsApp(pedido);
+      window.location.assign(getWhatsAppUrl(pedido));
     } catch (error) {
       console.error(error);
       toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
