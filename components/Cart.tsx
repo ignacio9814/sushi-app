@@ -78,6 +78,12 @@ export default function Cart() {
     datos: "Tus datos",
   };
 
+  const hints: Record<CheckoutStep, string> = {
+    comida: "Revisá cantidades y seguí al siguiente paso.",
+    extras: "Opcional. Sumá palitos o salsas, o continuá sin nada más.",
+    datos: "Nombre, WhatsApp y en qué horario pasás a retirar.",
+  };
+
   const handleOpenChange = (next: boolean) => {
     setOpen(next);
     if (next) setStep("comida");
@@ -154,10 +160,11 @@ export default function Cart() {
       )}
       <SheetContent
         side="bottom"
-        className="menu-page flex h-[92dvh] max-h-[92dvh] min-h-0 w-full flex-col gap-0 overflow-hidden rounded-t-3xl border-[#d9c9a3] pt-[env(safe-area-inset-top)] text-[#1A1A1A] data-[side=bottom]:h-[92dvh] data-[side=bottom]:max-h-[92dvh] sm:max-w-none"
+        overlayClassName="bg-black/45 backdrop-blur-none"
+        className="flex h-[92dvh] max-h-[92dvh] min-h-0 w-full flex-col gap-0 overflow-hidden rounded-t-3xl border-[#d9c9a3] bg-[#F9F7F2] pt-[env(safe-area-inset-top)] text-[#1A1A1A] data-[side=bottom]:h-[92dvh] data-[side=bottom]:max-h-[92dvh] sm:max-w-none"
       >
-        <div className="flex min-h-0 flex-1 flex-col">
-          <SheetHeader className="shrink-0 border-b border-[#d9c9a3]">
+        <div className="flex min-h-0 flex-1 flex-col bg-[#F9F7F2]">
+          <SheetHeader className="shrink-0 border-b border-[#d9c9a3] bg-[#F9F7F2]">
             <SheetTitle className="flex items-center gap-2 text-xl">
               {step !== "comida" && foodItems.length > 0 && (
                 <Button variant="ghost" size="icon-sm" onClick={goBack}>
@@ -196,9 +203,12 @@ export default function Cart() {
                 ))}
               </ol>
             )}
+            {foodItems.length > 0 && (
+              <p className="mt-3 text-sm text-[#6b6256]">{hints[step]}</p>
+            )}
           </SheetHeader>
 
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 [-webkit-overflow-scrolling:touch]">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[#F9F7F2] p-4 [-webkit-overflow-scrolling:touch]">
             {foodItems.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center text-[#8a8174]">
                 <ShoppingBag className="mb-3 size-10 opacity-40" />
@@ -214,7 +224,7 @@ export default function Cart() {
                   return (
                     <div
                       key={`${item.producto.id}-${item.variante?.nombre}-${item.conRebozado}`}
-                      className="rounded-2xl border border-[#d9c9a3] bg-white/50 p-3"
+                      className="rounded-2xl border border-[#d9c9a3] bg-white p-3"
                     >
                       <div className="mb-2 flex items-start justify-between gap-2">
                         <div>
@@ -282,7 +292,7 @@ export default function Cart() {
                   );
                 })}
                 {qualifiesForFreeSauces && (
-                  <div className="rounded-2xl border border-[#d9c9a3] bg-white/40 p-3 text-sm text-[#6b6256]">
+                  <div className="rounded-2xl border border-[#d9c9a3] bg-white p-3 text-sm text-[#6b6256]">
                     Pedidos de hasta {totalPieces} piezas incluyen 1 soja y 1 teriyaki
                   </div>
                 )}
@@ -292,7 +302,7 @@ export default function Cart() {
                 <p className="text-sm text-[#6b6256]">
                   Palitos, wasabi, salsas extra… o seguí sin nada más.
                 </p>
-                <div className="rounded-2xl border border-[#d9c9a3] bg-white/40 px-4">
+                <div className="rounded-2xl border border-[#d9c9a3] bg-white px-4">
                   {extras.map((producto) => (
                     <ExtraRow key={producto.id} producto={producto} />
                   ))}
@@ -301,7 +311,7 @@ export default function Cart() {
             ) : (
               <div className="space-y-3">
                 {extraItems.length > 0 && (
-                  <div className="rounded-2xl border border-[#d9c9a3] bg-white/40 p-3 text-sm text-[#1A1A1A]">
+                  <div className="rounded-2xl border border-[#d9c9a3] bg-white p-3 text-sm text-[#1A1A1A]">
                     {extraItems.map((item) => (
                       <p key={item.producto.id}>
                         {item.cantidad}× {item.producto.nombre}
@@ -309,7 +319,7 @@ export default function Cart() {
                     ))}
                   </div>
                 )}
-                <div className="space-y-3 rounded-2xl border border-[#d9c9a3] bg-white/40 p-3">
+                <div className="space-y-3 rounded-2xl border border-[#d9c9a3] bg-white p-3">
                   <p className="font-heading text-sm text-[#1A1A1A]">
                     ¿Cómo te contactamos?
                   </p>
