@@ -42,9 +42,9 @@ export default function BrandLogo({
       src={BRAND.logoSrc}
       alt={BRAND.name}
       width={1024}
-      height={1024}
+      height={576}
       priority={priority}
-      className={cn("object-contain mix-blend-multiply", sizes[size], className)}
+      className={cn("object-contain", sizes[size], className)}
     />
   );
 }
