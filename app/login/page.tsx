@@ -1,39 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { auth, isFirebaseConfigured } from "@/lib/firebase";
 import BrandLogo, { PeruStripe } from "@/components/BrandLogo";
+import { isDemoAdmin, saveAdminSession } from "@/lib/admin-session";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    if (!isFirebaseConfigured || !auth) {
-      toast.message("Firebase no está configurado: entrando en modo demo.");
-      router.push("/admin");
+    if (!isDemoAdmin(usuario, password)) {
+      toast.error("Usuario o contraseña incorrectos");
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      toast.success("Sesión iniciada");
-      router.push("/admin");
-    } catch {
-      toast.error("Credenciales inválidas");
-    } finally {
-      setLoading(false);
-    }
+    saveAdminSession();
+    toast.success("Sesión iniciada");
+    router.push("/admin");
+    setLoading(false);
   };
 
   return (
@@ -48,22 +42,24 @@ export default function LoginPage() {
           <p className="mt-4 text-xs tracking-[0.3em] text-amber-400/90 uppercase">Staff</p>
           <h1 className="mt-1 font-heading text-3xl text-amber-200">Cocina</h1>
           <p className="mt-2 text-sm text-zinc-400">
-            Acceso solo para el local. El cliente no ve este panel.
+            Acceso de prueba para el local. El cliente no ve este panel.
           </p>
         </div>
         <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required={isFirebaseConfigured}
+          type="text"
+          placeholder="Usuario"
+          value={usuario}
+          onChange={(e) => setUsuario(e.target.value)}
+          autoComplete="username"
+          required
         />
         <Input
           type="password"
           placeholder="Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required={isFirebaseConfigured}
+          autoComplete="current-password"
+          required
         />
         <Button
           type="submit"

@@ -2,36 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth, isFirebaseConfigured } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import BrandLogo from "@/components/BrandLogo";
+import { clearAdminSession, hasAdminSession } from "@/lib/admin-session";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [ready, setReady] = useState(!isFirebaseConfigured);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!isFirebaseConfigured || !auth) {
-      setReady(true);
+    if (!hasAdminSession()) {
+      router.replace("/login");
       return;
     }
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.replace("/login");
-        return;
-      }
-      setReady(true);
-    });
-
-    return () => unsubscribe();
+    setReady(true);
   }, [router]);
 
-  const handleLogout = async () => {
-    if (auth) {
-      await signOut(auth);
-    }
+  const handleLogout = () => {
+    clearAdminSession();
     router.push("/login");
   };
 
