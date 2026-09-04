@@ -35,11 +35,8 @@ export default function Home() {
     <div className="menu-page relative min-h-screen pb-32 text-[#1A1A1A]">
       <header>
         <div className="mx-auto flex max-w-2xl flex-col items-center px-5 pt-8 pb-5 text-center">
-          <BrandLogo priority size="md" />
-          <p className="mt-3 font-heading text-lg tracking-[0.28em] text-[#C5A059] uppercase">
-            {BRAND.name}
-          </p>
-          <p className="mt-1 text-[11px] font-medium tracking-[0.32em] text-[#9B2B2B] uppercase">
+          <BrandLogo priority size="lg" />
+          <p className="mt-2 text-[11px] font-medium tracking-[0.32em] text-[#9B2B2B] uppercase">
             {BRAND.tagline}
           </p>
           <MenuDivider className="mt-4 w-40" />

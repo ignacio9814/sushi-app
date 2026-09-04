@@ -32,19 +32,19 @@ export default function BrandLogo({
   size?: "sm" | "md" | "lg";
 }) {
   const sizes = {
-    sm: "h-12 w-auto",
-    md: "h-20 w-auto",
-    lg: "h-40 w-auto",
+    sm: "h-16 w-auto",
+    md: "h-40 w-auto",
+    lg: "h-56 w-auto",
   };
 
   return (
     <Image
       src={BRAND.logoSrc}
       alt={BRAND.name}
-      width={640}
-      height={640}
+      width={1024}
+      height={1024}
       priority={priority}
-      className={cn("object-contain", sizes[size], className)}
+      className={cn("object-contain mix-blend-multiply", sizes[size], className)}
     />
   );
 }
