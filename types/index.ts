@@ -75,6 +75,7 @@ export interface Pedido {
   clienteNombre: string;
   clienteTelefono: string;
   direccion?: string;
+  horarioRetiro?: string;
   notas?: string;
   items: PedidoItem[];
   totalCentavos: number;

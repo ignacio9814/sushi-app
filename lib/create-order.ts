@@ -22,6 +22,7 @@ export interface CheckoutPayload {
   clienteNombre: string;
   clienteTelefono: string;
   direccion?: string;
+  horarioRetiro?: string;
   notas?: string;
 }
 
@@ -61,6 +62,7 @@ function buildPedidoDraft(
     clienteNombre: payload.clienteNombre.trim(),
     clienteTelefono: payload.clienteTelefono.trim(),
     direccion: payload.direccion?.trim() || undefined,
+    horarioRetiro: payload.horarioRetiro?.trim() || undefined,
     notas: payload.notas?.trim() || undefined,
     items: pedidoItems,
     totalCentavos,

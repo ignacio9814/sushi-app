@@ -21,6 +21,10 @@ export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
     lines.push(`Dir: ${pedido.direccion}`);
   }
 
+  if (pedido.horarioRetiro) {
+    lines.push(`Retiro: ${pedido.horarioRetiro}`);
+  }
+
   lines.push("", "*Detalle*");
 
   pedido.items.forEach((item, index) => {

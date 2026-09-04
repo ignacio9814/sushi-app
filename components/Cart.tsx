@@ -17,6 +17,7 @@ import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { createOrder } from "@/lib/create-order";
 import { formatMoney } from "@/lib/money";
 import { openWhatsApp } from "@/lib/whatsapp";
+import { isPresetRetiro, RETIRO_OPTIONS } from "@/lib/retiro";
 import { useCart } from "@/store/useCart";
 import { isExtraProduct, type Producto } from "@/types";
 
@@ -42,6 +43,7 @@ export default function Cart() {
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [direccion, setDireccion] = useState("");
+  const [horarioRetiro, setHorarioRetiro] = useState("Lo antes posible");
   const [notas, setNotas] = useState("");
   const [extras, setExtras] = useState<Producto[]>(() =>
     getSeedCatalog().productos.filter(
@@ -97,6 +99,7 @@ export default function Cart() {
         clienteNombre: nombre,
         clienteTelefono: telefono,
         direccion,
+        horarioRetiro,
         notas,
       });
       clearCart();
@@ -104,6 +107,7 @@ export default function Cart() {
       setNombre("");
       setTelefono("");
       setDireccion("");
+      setHorarioRetiro("Lo antes posible");
       setNotas("");
       toast.success(`Pedido ${pedido.numeroFormateado} enviado a cocina`);
       openWhatsApp(pedido);
@@ -323,6 +327,39 @@ export default function Cart() {
                     value={direccion}
                     onChange={(e) => setDireccion(e.target.value)}
                   />
+                  <div className="space-y-2">
+                    <p className="text-sm text-zinc-300">Horario aproximado de retiro</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {RETIRO_OPTIONS.map((option) => {
+                        const selected = horarioRetiro === option;
+                        return (
+                          <button
+                            key={option}
+                            type="button"
+                            onClick={() => setHorarioRetiro(option)}
+                            className={`rounded-xl border px-3 py-2.5 text-sm transition ${
+                              selected
+                                ? "border-[#25D366]/70 bg-[#25D366]/15 text-white"
+                                : "border-zinc-800 text-zinc-400 hover:border-zinc-600"
+                            }`}
+                          >
+                            {option}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <Input
+                      type="time"
+                      value={isPresetRetiro(horarioRetiro) ? "" : horarioRetiro}
+                      onChange={(e) => {
+                        if (e.target.value) setHorarioRetiro(e.target.value);
+                      }}
+                      className={isPresetRetiro(horarioRetiro) ? "" : "border-[#25D366]/70"}
+                    />
+                    <p className="text-xs text-zinc-500">
+                      O elegí una hora exacta. Cocina confirma si llega a tiempo.
+                    </p>
+                  </div>
                   <Textarea
                     placeholder="Notas para cocina (opcional)"
                     value={notas}

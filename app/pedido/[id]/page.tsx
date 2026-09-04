@@ -81,6 +81,11 @@ export default function PedidoPage() {
           {pedido.clienteNombre} · {pedido.clienteTelefono}
         </p>
         {pedido.direccion && <p className="text-sm text-zinc-400">{pedido.direccion}</p>}
+        {pedido.horarioRetiro && (
+          <p className="text-sm text-amber-200 print:text-black">
+            Retiro: {pedido.horarioRetiro}
+          </p>
+        )}
 
         <div className="mt-6 space-y-2 border-t border-zinc-800 pt-4 print:border-black">
           {pedido.items.map((item, index) => (

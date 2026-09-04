@@ -148,6 +148,9 @@ export default function AdminOrders() {
                 <p className="text-sm text-zinc-400">
                   {pedido.clienteNombre} · {pedido.clienteTelefono}
                 </p>
+                {pedido.horarioRetiro && (
+                  <p className="text-sm text-amber-200/80">Retiro: {pedido.horarioRetiro}</p>
+                )}
                 <p className="text-xs text-zinc-500">
                   {new Date(pedido.createdAt).toLocaleString("es-AR")}
                 </p>
