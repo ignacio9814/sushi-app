@@ -3,7 +3,7 @@ import { BRAND } from "@/lib/brand";
 import { MEDIO_PAGO_LABEL, type Pedido } from "@/types";
 
 export function getWhatsAppPhone() {
-  return (process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "").replace(/\D/g, "");
+  return (process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "5493816025882").replace(/\D/g, "");
 }
 
 export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {

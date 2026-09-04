@@ -7,7 +7,7 @@ import BrandLogo, { PeruStripe } from "@/components/BrandLogo";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { BRAND } from "@/lib/brand";
 import type { Categoria, Producto } from "@/types";
-import { Lock } from "lucide-react";
+import { Instagram, Lock } from "lucide-react";
 import Link from "next/link";
 
 const initialCatalog = getSeedCatalog();
@@ -41,6 +41,16 @@ export default function Home() {
             {BRAND.tagline}
           </p>
           <p className="mt-1 text-sm text-zinc-400">Elegí, armá el pedido y confirmá por WhatsApp</p>
+          <a
+            href={BRAND.instagramUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 inline-flex items-center gap-1.5 text-sm text-amber-200/80 hover:text-amber-100"
+          >
+            <Instagram className="size-4" />
+            @{BRAND.instagram}
+            <span className="text-zinc-500">· dudas</span>
+          </a>
         </div>
         <div className="sticky top-0 z-40 border-b border-zinc-900 bg-black/95 backdrop-blur">
           <PeruStripe />
@@ -101,8 +111,19 @@ export default function Home() {
         })}
       </main>
 
-      <footer className="mx-auto flex max-w-6xl items-center justify-between px-4 pb-8 text-xs text-zinc-600">
-        <span>El local confirma por WhatsApp y emite la boleta al cobrar</span>
+      <footer className="mx-auto flex max-w-6xl flex-col gap-3 px-4 pb-8 text-xs text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-1">
+          <p>Pedidos por WhatsApp {BRAND.whatsappLocal}</p>
+          <a
+            href={BRAND.instagramUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 hover:text-amber-300"
+          >
+            <Instagram className="size-3" />
+            @{BRAND.instagram} para dudas
+          </a>
+        </div>
         <Link href="/login" className="inline-flex items-center gap-1 hover:text-amber-400">
           <Lock className="size-3" />
           Cocina
