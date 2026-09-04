@@ -49,24 +49,24 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --background: #f9f7f2;
+  --foreground: #1a1a1a;
+  --card: #fbf8f1;
+  --card-foreground: #1a1a1a;
+  --popover: #fbf8f1;
+  --popover-foreground: #1a1a1a;
+  --primary: #9b2b2b;
+  --primary-foreground: #f9f7f2;
+  --secondary: #efe6d4;
+  --secondary-foreground: #1a1a1a;
+  --muted: #efe6d4;
+  --muted-foreground: #6b6256;
+  --accent: #efe6d4;
+  --accent-foreground: #1a1a1a;
+  --destructive: #9b2b2b;
+  --border: #d9c9a3;
+  --input: #d9c9a3;
+  --ring: #c5a059;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -142,4 +142,12 @@
 
 .cart-bar-enter {
   animation: cart-bar-in 0.35s ease-out;
+}
+
+.menu-page {
+  background-color: #f9f7f2;
+  background-image:
+    radial-gradient(circle at 0 0, rgba(197, 160, 89, 0.12), transparent 38%),
+    radial-gradient(circle at 100% 100%, rgba(197, 160, 89, 0.12), transparent 38%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='36' viewBox='0 0 72 36'%3E%3Cpath d='M0 36c12 0 12-16 24-16s12 16 24 16 12-16 24-16' fill='none' stroke='%23C5A059' stroke-opacity='0.22' stroke-width='0.8'/%3E%3Cpath d='M-12 36c12 0 12-16 24-16s12 16 24 16' fill='none' stroke='%23C5A059' stroke-opacity='0.12' stroke-width='0.8'/%3E%3C/svg%3E");
 }

@@ -44,21 +44,21 @@ export default function BatterDialog({ producto, variante }: BatterDialogProps) 
         render={
           <Button
             size="sm"
-            className="h-10 rounded-full bg-[#25D366] px-4 font-semibold text-white hover:bg-[#20bd5a]"
+            className="h-9 rounded-none bg-[#9B2B2B] px-4 text-xs tracking-[0.16em] text-[#F9F7F2] uppercase hover:bg-[#7f2020]"
           />
         }
       >
         <Plus className="size-4" />
         Agregar
       </DialogTrigger>
-      <DialogContent className="border-zinc-800 bg-zinc-950 sm:max-w-md">
+      <DialogContent className="menu-page border-[#d9c9a3] text-[#1A1A1A] sm:max-w-md">
         <DialogHeader className="space-y-3">
-          <DialogTitle className="text-center text-xl">
+          <DialogTitle className="text-center font-heading text-xl">
             ¿Rebozar y freír?
           </DialogTitle>
-          <DialogDescription className="text-center text-base">
+          <DialogDescription className="text-center text-base text-[#6b6256]">
             Por{" "}
-            <span className="font-semibold text-amber-400">
+            <span className="font-semibold text-[#9B2B2B]">
               {formatMoney(REBOZADO_CENTAVOS)}
             </span>{" "}
             extra, el roll sale rebozado y frito.
@@ -68,14 +68,14 @@ export default function BatterDialog({ producto, variante }: BatterDialogProps) 
           <Button
             onClick={handleAddClassic}
             variant="outline"
-            className="h-11 w-full border-amber-500/40 text-amber-100 hover:bg-amber-500/15"
+            className="h-11 w-full border-[#d9c9a3] text-[#1A1A1A] hover:bg-[#efe6d4]"
           >
             <ChefHat className="mr-2 size-4" />
             Agregar clásico
           </Button>
           <Button
             onClick={handleAddBattered}
-            className="h-11 w-full border border-amber-200/30 bg-amber-200/10 text-amber-100/90 hover:bg-amber-200/20"
+            className="h-11 w-full bg-[#9B2B2B] text-[#F9F7F2] hover:bg-[#7f2020]"
           >
             <Flame className="mr-2 size-4" />
             Agregar rebozado (+{formatMoney(REBOZADO_CENTAVOS)})

@@ -9,13 +9,6 @@ import { formatMoney } from "@/lib/money";
 import { useCart } from "@/store/useCart";
 import type { Producto, Variante } from "@/types";
 
-const KIND_LABEL: Record<string, string> = {
-  cat_infaltables: "Roll clásico",
-  cat_autor: "Roll de autor",
-  cat_nigiri: "Nigiri",
-  cat_ceviche: "Ceviche",
-};
-
 export default function ProductCard({ producto }: { producto: Producto }) {
   const { addItem } = useCart();
   const defaultVariante = producto.variantes?.[0];
@@ -26,28 +19,41 @@ export default function ProductCard({ producto }: { producto: Producto }) {
     return producto.precio ?? 0;
   }, [producto.precio, variante]);
 
+  const detalles = producto.descripcion
+    ?.split(/\s*[·•|]\s*/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-zinc-800/90 bg-zinc-950/80 p-5 shadow-[0_0_0_1px_rgba(212,175,55,0.04)] transition hover:-translate-y-0.5 hover:border-amber-200/25 hover:bg-zinc-900/70">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-[11px] font-medium tracking-[0.22em] text-amber-200/70 uppercase">
-            {KIND_LABEL[producto.categoria_id] || "Plato"}
-          </p>
-          <h3 className="font-heading mt-1 text-xl text-zinc-50">{producto.nombre}</h3>
-        </div>
-        {producto.permite_rebozado && (
-          <span className="shrink-0 rounded-full border border-amber-200/25 bg-amber-200/10 px-2.5 py-1 text-[11px] text-amber-100">
-            Rebozado
-          </span>
-        )}
+    <article>
+      <div className="flex items-baseline justify-between gap-4">
+        <h3 className="text-base font-semibold tracking-wide text-[#1A1A1A] uppercase">
+          {producto.nombre}
+        </h3>
+        <p className="shrink-0 text-base font-medium text-[#9B2B2B]">
+          {formatMoney(precioVisible)}
+        </p>
       </div>
 
-      {producto.descripcion && (
-        <p className="mt-2 text-sm leading-relaxed text-zinc-400">{producto.descripcion}</p>
+      {detalles && detalles.length > 0 && (
+        <ul className="mt-2 ml-1 space-y-1 border-l border-[#C5A059] pl-4">
+          {detalles.map((detalle) => (
+            <li key={detalle} className="flex gap-2 text-sm leading-relaxed text-[#1A1A1A]">
+              <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#9B2B2B]" />
+              <span>{detalle}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {producto.permite_rebozado && (
+        <p className="mt-2 text-[11px] tracking-[0.18em] text-[#C5A059] uppercase">
+          Se puede rebozar
+        </p>
       )}
 
       {producto.variantes && producto.variantes.length > 0 ? (
-        <div className="mt-4 flex gap-2">
+        <div className="mt-3 flex gap-2">
           {producto.variantes.map((option) => {
             const selected = variante?.nombre === option.nombre;
             return (
@@ -55,34 +61,33 @@ export default function ProductCard({ producto }: { producto: Producto }) {
                 key={option.nombre}
                 type="button"
                 onClick={() => setVariante(option)}
-                className={`flex-1 rounded-xl border px-3 py-2 text-left text-xs transition ${
+                className={`flex-1 border px-3 py-2 text-left text-xs tracking-wide uppercase transition ${
                   selected
-                    ? "border-amber-200/50 bg-amber-200/10 text-amber-50"
-                    : "border-zinc-800 text-zinc-400 hover:border-zinc-600"
+                    ? "border-[#9B2B2B] bg-[#9B2B2B]/8 text-[#9B2B2B]"
+                    : "border-[#d9c9a3] text-[#6b6256]"
                 }`}
               >
                 <span className="block font-medium">{option.nombre}</span>
-                <span className="text-amber-400">{formatMoney(option.precio)}</span>
+                <span className="text-[#9B2B2B]">{formatMoney(option.precio)}</span>
               </button>
             );
           })}
         </div>
       ) : null}
 
-      <div className="mt-auto flex items-center justify-between gap-3 pt-5">
-        <p className="font-heading text-2xl text-amber-300">{formatMoney(precioVisible)}</p>
+      <div className="mt-3 flex justify-end">
         {producto.permite_rebozado ? (
           <BatterDialog producto={producto} variante={variante} />
         ) : (
           <Button
             size="sm"
-            className="h-10 rounded-full bg-[#25D366] px-4 font-semibold text-white hover:bg-[#20bd5a]"
+            className="h-9 rounded-none bg-[#9B2B2B] px-4 text-xs tracking-[0.16em] text-[#F9F7F2] uppercase hover:bg-[#7f2020]"
             onClick={() => {
               addItem(producto, variante);
               toast.success("Agregado al pedido");
             }}
           >
-            <Plus className="size-4" />
+            <Plus className="size-3.5" />
             Agregar
           </Button>
         )}

@@ -154,10 +154,10 @@ export default function Cart() {
       )}
       <SheetContent
         side="bottom"
-        className="flex h-[92dvh] max-h-[92dvh] min-h-0 w-full flex-col gap-0 overflow-hidden border-zinc-800 bg-zinc-950 pt-[env(safe-area-inset-top)] data-[side=bottom]:h-[92dvh] data-[side=bottom]:max-h-[92dvh] sm:max-w-none"
+        className="menu-page flex h-[92dvh] max-h-[92dvh] min-h-0 w-full flex-col gap-0 overflow-hidden border-[#d9c9a3] pt-[env(safe-area-inset-top)] text-[#1A1A1A] data-[side=bottom]:h-[92dvh] data-[side=bottom]:max-h-[92dvh] sm:max-w-none"
       >
         <div className="flex min-h-0 flex-1 flex-col">
-          <SheetHeader className="shrink-0 border-b border-zinc-800">
+          <SheetHeader className="shrink-0 border-b border-[#d9c9a3]">
             <SheetTitle className="flex items-center gap-2 text-xl">
               {step !== "comida" && foodItems.length > 0 && (
                 <Button variant="ghost" size="icon-sm" onClick={goBack}>
@@ -166,7 +166,7 @@ export default function Cart() {
               )}
               {titles[step]}
               {step === "comida" && foodItems.length > 0 && (
-                <span className="text-amber-400">({foodItems.length})</span>
+                <span className="text-[#9B2B2B]">({foodItems.length})</span>
               )}
             </SheetTitle>
             {foodItems.length > 0 && (
@@ -176,21 +176,21 @@ export default function Cart() {
                     <span
                       className={`flex h-6 min-w-6 items-center justify-center rounded-full ${
                         index <= stepIndex
-                          ? "bg-[#25D366] text-black"
-                          : "bg-zinc-800 text-zinc-500"
+                          ? "bg-[#9B2B2B] text-[#F9F7F2]"
+                          : "bg-[#eee6d6] text-[#8a8174]"
                       }`}
                     >
                       {index + 1}
                     </span>
                     <span
                       className={
-                        index <= stepIndex ? "font-medium text-zinc-200" : "text-zinc-500"
+                        index <= stepIndex ? "font-medium text-[#1A1A1A]" : "text-[#8a8174]"
                       }
                     >
                       {id === "comida" ? "Pedido" : id === "extras" ? "Extras" : "Datos"}
                     </span>
                     {index < STEPS.length - 1 && (
-                      <span className="h-px flex-1 bg-zinc-800" />
+                      <span className="h-px flex-1 bg-[#d9c9a3]" />
                     )}
                   </li>
                 ))}
@@ -200,7 +200,7 @@ export default function Cart() {
 
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 [-webkit-overflow-scrolling:touch]">
             {foodItems.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center text-zinc-500">
+              <div className="flex h-full flex-col items-center justify-center text-[#8a8174]">
                 <ShoppingBag className="mb-3 size-10 opacity-40" />
                 <p>Elegí primero tu comida</p>
               </div>
@@ -214,16 +214,16 @@ export default function Cart() {
                   return (
                     <div
                       key={`${item.producto.id}-${item.variante?.nombre}-${item.conRebozado}`}
-                      className="rounded-lg border border-zinc-800 bg-zinc-900/70 p-3"
+                      className="border border-[#d9c9a3] bg-white/50 p-3"
                     >
                       <div className="mb-2 flex items-start justify-between gap-2">
                         <div>
                           <p className="font-heading text-base">{item.producto.nombre}</p>
                           {item.variante && (
-                            <p className="text-sm text-zinc-400">{item.variante.nombre}</p>
+                            <p className="text-sm text-[#6b6256]">{item.variante.nombre}</p>
                           )}
                           {item.conRebozado && (
-                            <p className="mt-1 text-xs text-amber-400">+ Rebozado</p>
+                            <p className="mt-1 text-xs text-[#9B2B2B]">+ Rebozado</p>
                           )}
                         </div>
                         <Button
@@ -274,7 +274,7 @@ export default function Cart() {
                             <Plus className="size-3" />
                           </Button>
                         </div>
-                        <p className="font-semibold text-amber-400">
+                        <p className="font-semibold text-[#9B2B2B]">
                           {formatMoney(itemTotal)}
                         </p>
                       </div>
@@ -282,17 +282,17 @@ export default function Cart() {
                   );
                 })}
                 {qualifiesForFreeSauces && (
-                  <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm text-zinc-300">
+                  <div className="border border-[#d9c9a3] bg-white/40 p-3 text-sm text-[#6b6256]">
                     Pedidos de hasta {totalPieces} piezas incluyen 1 soja y 1 teriyaki
                   </div>
                 )}
               </div>
             ) : step === "extras" ? (
               <div className="space-y-3">
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-[#6b6256]">
                   Palitos, wasabi, salsas extra… o seguí sin nada más.
                 </p>
-                <div className="rounded-lg border border-zinc-800 bg-zinc-950/80 px-4">
+                <div className="border border-[#d9c9a3] bg-white/40 px-4">
                   {extras.map((producto) => (
                     <ExtraRow key={producto.id} producto={producto} />
                   ))}
@@ -301,7 +301,7 @@ export default function Cart() {
             ) : (
               <div className="space-y-3">
                 {extraItems.length > 0 && (
-                  <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3 text-sm text-zinc-300">
+                  <div className="border border-[#d9c9a3] bg-white/40 p-3 text-sm text-[#1A1A1A]">
                     {extraItems.map((item) => (
                       <p key={item.producto.id}>
                         {item.cantidad}× {item.producto.nombre}
@@ -309,11 +309,11 @@ export default function Cart() {
                     ))}
                   </div>
                 )}
-                <div className="space-y-3 rounded-lg border border-zinc-800 p-3">
-                  <p className="font-heading text-sm text-zinc-300">
+                <div className="space-y-3 border border-[#d9c9a3] bg-white/40 p-3">
+                  <p className="font-heading text-sm text-[#1A1A1A]">
                     ¿Cómo te contactamos?
                   </p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-[#8a8174]">
                     Cocina confirma el pedido. La boleta la arma el local al cobrar.
                   </p>
                   <Input
@@ -334,13 +334,13 @@ export default function Cart() {
                     onChange={(e) => setDireccion(e.target.value)}
                   />
                   <div className="space-y-2">
-                    <p className="text-sm text-zinc-300">Franja horaria de retiro</p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-sm text-[#1A1A1A]">Franja horaria de retiro</p>
+                    <p className="text-xs text-[#8a8174]">
                       Pedí con anticipación. Indicá entre qué horas pasás a buscar.
                     </p>
                     <div className="grid grid-cols-2 gap-2">
                       <label className="space-y-1">
-                        <span className="text-xs text-zinc-500">Desde</span>
+                        <span className="text-xs text-[#8a8174]">Desde</span>
                         <Input
                           type="time"
                           value={retiroDesde}
@@ -349,7 +349,7 @@ export default function Cart() {
                         />
                       </label>
                       <label className="space-y-1">
-                        <span className="text-xs text-zinc-500">Hasta</span>
+                        <span className="text-xs text-[#8a8174]">Hasta</span>
                         <Input
                           type="time"
                           value={retiroHasta}
@@ -371,10 +371,10 @@ export default function Cart() {
           </div>
 
           {foodItems.length > 0 && (
-            <div className="shrink-0 space-y-3 border-t border-zinc-800 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            <div className="shrink-0 space-y-3 border-t border-[#d9c9a3] bg-[#F9F7F2] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <div className="flex items-center justify-between font-heading text-xl">
                 <span>Total</span>
-                <span className="text-amber-400">{formatMoney(total)}</span>
+                <span className="text-[#9B2B2B]">{formatMoney(total)}</span>
               </div>
               {step === "comida" && (
                 <Button
@@ -399,7 +399,7 @@ export default function Cart() {
                         setStep("datos");
                       }}
                       variant="ghost"
-                      className="w-full text-zinc-400"
+                      className="w-full text-[#8a8174]"
                     >
                       Quitar extras y continuar
                     </Button>
@@ -417,7 +417,7 @@ export default function Cart() {
                 </Button>
               )}
               {step === "comida" && (
-                <Button onClick={clearCart} variant="ghost" className="w-full text-zinc-400">
+                <Button onClick={clearCart} variant="ghost" className="w-full text-[#8a8174]">
                   Vaciar carrito
                 </Button>
               )}

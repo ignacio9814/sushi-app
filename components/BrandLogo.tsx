@@ -5,9 +5,19 @@ import { cn } from "@/lib/utils";
 export function PeruStripe({ className }: { className?: string }) {
   return (
     <div className={cn("flex h-0.5 w-full overflow-hidden", className)} aria-hidden>
-      <span className="h-full w-1/3 bg-[#c41e3a]" />
+      <span className="h-full w-1/3 bg-[#9B2B2B]" />
       <span className="h-full w-1/3 bg-white" />
-      <span className="h-full w-1/3 bg-[#c41e3a]" />
+      <span className="h-full w-1/3 bg-[#9B2B2B]" />
+    </div>
+  );
+}
+
+export function MenuDivider({ className }: { className?: string }) {
+  return (
+    <div className={cn("flex items-center gap-3", className)} aria-hidden>
+      <span className="h-px flex-1 bg-[#C5A059]" />
+      <span className="size-1.5 rounded-full bg-[#9B2B2B]" />
+      <span className="h-px flex-1 bg-[#C5A059]" />
     </div>
   );
 }

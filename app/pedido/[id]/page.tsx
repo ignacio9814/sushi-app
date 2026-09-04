@@ -66,11 +66,11 @@ export default function PedidoPage() {
   const codigo = emitida ? formatBoleta(pedido.numero) : formatPedido(pedido.numero);
 
   return (
-    <div className="min-h-screen bg-black px-4 py-8 print:bg-white print:text-black">
-      <div className="mx-auto max-w-lg rounded-lg border border-zinc-800 bg-zinc-950 p-6 print:border-black print:bg-white">
+    <div className="menu-page min-h-screen px-4 py-8 print:bg-white print:text-black">
+      <div className="mx-auto max-w-lg border border-[#d9c9a3] bg-[#F9F7F2] p-6 print:border-black print:bg-white">
         <BrandLogo size="md" className="mx-auto print:invert-0" />
         <PeruStripe className="mx-auto mt-3 max-w-48" />
-        <p className="mt-4 text-center text-xs tracking-[0.25em] text-amber-400 uppercase print:text-black">
+        <p className="mt-4 text-center text-xs tracking-[0.25em] text-[#C5A059] uppercase print:text-black">
           {BRAND.name}
         </p>
         <h1 className="mt-1 font-heading text-3xl">

@@ -12,7 +12,7 @@ export default function AdminPage() {
     <div>
       <div className="mb-6">
         <h2 className="font-heading text-2xl">Cocina</h2>
-        <p className="text-sm text-zinc-400">Pedidos en vivo. La boleta se emite al cobrar y cerrar.</p>
+        <p className="text-sm text-[#6b6256]">Pedidos en vivo. La boleta se emite al cobrar y cerrar.</p>
       </div>
       <div className="mb-6 grid grid-cols-2 gap-2">
         <Button

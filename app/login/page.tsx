@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import BrandLogo, { PeruStripe } from "@/components/BrandLogo";
+import BrandLogo, { MenuDivider } from "@/components/BrandLogo";
 import { isDemoAdmin, saveAdminSession } from "@/lib/admin-session";
 
 export default function LoginPage() {
@@ -31,17 +31,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black p-4">
+    <div className="menu-page flex min-h-screen items-center justify-center p-4">
       <form
         onSubmit={handleLogin}
-        className="w-full max-w-md space-y-4 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 p-6"
+        className="w-full max-w-md space-y-4 border border-[#d9c9a3] bg-[#F9F7F2]/90 p-8"
       >
         <div className="text-center">
           <BrandLogo size="lg" className="mx-auto" />
-          <PeruStripe className="mx-auto mt-4 max-w-40" />
-          <p className="mt-4 text-xs tracking-[0.3em] text-amber-400/90 uppercase">Staff</p>
-          <h1 className="mt-1 font-heading text-3xl text-amber-200">Cocina</h1>
-          <p className="mt-2 text-sm text-zinc-400">
+          <MenuDivider className="mx-auto mt-4 max-w-40" />
+          <p className="mt-4 text-[11px] tracking-[0.3em] text-[#9B2B2B] uppercase">Staff</p>
+          <h1 className="mt-1 font-heading text-3xl tracking-wide text-[#1A1A1A]">Cocina</h1>
+          <p className="mt-2 text-sm text-[#6b6256]">
             Acceso de prueba para el local. El cliente no ve este panel.
           </p>
         </div>
@@ -64,7 +64,7 @@ export default function LoginPage() {
         <Button
           type="submit"
           disabled={loading}
-          className="h-11 w-full border border-amber-200/30 bg-amber-200/10 text-amber-100/90 hover:bg-amber-200/20"
+          className="h-11 w-full rounded-none bg-[#9B2B2B] text-[#F9F7F2] tracking-[0.16em] uppercase hover:bg-[#7f2020]"
         >
           {loading ? "Entrando..." : "Entrar"}
         </Button>

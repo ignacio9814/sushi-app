@@ -140,23 +140,23 @@ export default function AdminOrders() {
         return (
           <article
             key={pedido.id}
-            className="rounded-lg border border-zinc-800 bg-zinc-900/80 p-4"
+            className="border border-[#d9c9a3] bg-white/50 p-4"
           >
             <div className="mb-3 flex items-start justify-between gap-3">
               <div>
                 <h3 className="font-heading text-xl">{codigo}</h3>
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-[#6b6256]">
                   {pedido.clienteNombre} · {pedido.clienteTelefono}
                 </p>
                 {pedido.horarioRetiro && (
-                  <p className="text-sm text-amber-200/80">Retiro: {pedido.horarioRetiro}</p>
+                  <p className="text-sm text-[#9B2B2B]">Retiro: {pedido.horarioRetiro}</p>
                 )}
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-[#8a8174]">
                   {new Date(pedido.createdAt).toLocaleString("es-AR")}
                 </p>
               </div>
               <div className="text-right">
-                <p className="font-heading text-lg text-amber-400">
+                <p className="font-heading text-lg text-[#9B2B2B]">
                   {formatMoney(pedido.totalCentavos)}
                 </p>
                 <p className="text-xs text-zinc-500">

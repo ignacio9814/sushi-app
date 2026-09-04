@@ -25,21 +25,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!ready) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-zinc-400">
+      <div className="menu-page flex min-h-screen items-center justify-center text-[#6b6256]">
         Verificando acceso...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black">
-      <header className="border-b border-zinc-800 bg-black/80 backdrop-blur">
+    <div className="menu-page min-h-screen text-[#1A1A1A]">
+      <header className="border-b border-[#d9c9a3] bg-[#F9F7F2]/90 backdrop-blur">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
             <BrandLogo size="sm" />
-            <h1 className="font-heading text-xl text-amber-200">Panel cocina</h1>
+            <h1 className="font-heading text-xl tracking-wide text-[#1A1A1A]">Panel cocina</h1>
           </div>
-          <Button variant="outline" onClick={handleLogout}>
+          <Button
+            variant="outline"
+            className="rounded-none border-[#d9c9a3]"
+            onClick={handleLogout}
+          >
             Salir
           </Button>
         </div>

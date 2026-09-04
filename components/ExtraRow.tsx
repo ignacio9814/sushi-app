@@ -11,12 +11,12 @@ export default function ExtraRow({ producto }: { producto: Producto }) {
   const inCart = items.find((item) => item.producto.id === producto.id);
 
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-zinc-800 py-3 last:border-0">
+    <div className="flex items-center justify-between gap-3 border-b border-[#d9c9a3] py-3 last:border-0">
       <div>
-        <p className="font-heading text-base text-zinc-100">{producto.nombre}</p>
-        <p className="font-heading text-sm text-amber-400">
-          {formatMoney(producto.precio ?? 0)}
+        <p className="text-sm font-semibold tracking-wide text-[#1A1A1A] uppercase">
+          {producto.nombre}
         </p>
+        <p className="text-sm text-[#9B2B2B]">{formatMoney(producto.precio ?? 0)}</p>
       </div>
       {inCart ? (
         <div className="flex items-center gap-2">
@@ -39,8 +39,7 @@ export default function ExtraRow({ producto }: { producto: Producto }) {
       ) : (
         <Button
           size="sm"
-          variant="outline"
-          className="h-9 border-white/15 bg-white/5 px-4 text-amber-100/80 hover:border-amber-200/30 hover:bg-amber-200/10"
+          className="h-9 rounded-none bg-[#9B2B2B] px-4 text-xs tracking-[0.14em] text-[#F9F7F2] uppercase hover:bg-[#7f2020]"
           onClick={() => addItem(producto)}
         >
           Agregar
