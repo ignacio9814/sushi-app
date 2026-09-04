@@ -7,7 +7,7 @@ import BrandLogo, { PeruStripe } from "@/components/BrandLogo";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { BRAND } from "@/lib/brand";
 import type { Categoria, Producto } from "@/types";
-import { Instagram, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import Link from "next/link";
 
 const initialCatalog = getSeedCatalog();
@@ -47,7 +47,6 @@ export default function Home() {
             rel="noreferrer"
             className="mt-3 inline-flex items-center gap-1.5 text-sm text-amber-200/80 hover:text-amber-100"
           >
-            <Instagram className="size-4" />
             @{BRAND.instagram}
             <span className="text-zinc-500">· dudas</span>
           </a>
@@ -120,7 +119,6 @@ export default function Home() {
             rel="noreferrer"
             className="inline-flex items-center gap-1 hover:text-amber-300"
           >
-            <Instagram className="size-3" />
             @{BRAND.instagram} para dudas
           </a>
         </div>
