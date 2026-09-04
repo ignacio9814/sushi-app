@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cinzel, Inter } from "next/font/google";
 import "./globals.css";
+import MenuBackdrop from "@/components/MenuBackdrop";
 import { Toaster } from "@/components/ui/toast";
 
 const cinzel = Cinzel({
@@ -27,7 +28,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="es"
       className={`${cinzel.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}<Toaster /></body>
+      <body className="relative min-h-full flex flex-col">
+        <MenuBackdrop />
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }
