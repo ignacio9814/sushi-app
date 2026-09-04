@@ -32,42 +32,45 @@ export default function Home() {
       : foodCategorias.filter((categoria) => categoria.id === activeCategory);
 
   return (
-    <div className="relative min-h-screen bg-black pb-28">
+    <div className="relative min-h-screen bg-black pb-32">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,175,55,0.07),transparent_46%)]" />
-      <header className="sticky top-0 z-40 bg-black/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+      <header>
+        <div className="mx-auto flex max-w-6xl flex-col items-center px-4 pt-6 pb-4 text-center">
           <BrandLogo priority size="md" />
-          <p className="hidden text-sm tracking-wide text-amber-200/80 sm:block">
-            {BRAND.tagline} · Pedí por WhatsApp
+          <p className="mt-2 text-[11px] font-medium tracking-[0.28em] text-amber-200/75 uppercase">
+            {BRAND.tagline}
           </p>
+          <p className="mt-1 text-sm text-zinc-400">Elegí, armá el pedido y confirmá por WhatsApp</p>
         </div>
-        <PeruStripe />
-        <div className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-3">
-          <button
-            type="button"
-            onClick={() => setActiveCategory("all")}
-            className={`rounded-full border px-3 py-1.5 text-sm whitespace-nowrap ${
-              activeCategory === "all"
-                ? "border-amber-200/35 bg-amber-200/10 text-amber-100/90"
-                : "border-zinc-800 text-zinc-400"
-            }`}
-          >
-            Todo
-          </button>
-          {foodCategorias.map((categoria) => (
+        <div className="sticky top-0 z-40 border-b border-zinc-900 bg-black/95 backdrop-blur">
+          <PeruStripe />
+          <div className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button
-              key={categoria.id}
               type="button"
-              onClick={() => setActiveCategory(categoria.id)}
-              className={`rounded-full border px-3 py-1.5 text-sm whitespace-nowrap ${
-                activeCategory === categoria.id
-                  ? "border-amber-200/35 bg-amber-200/10 text-amber-100/90"
-                  : "border-zinc-800 text-zinc-400"
+              onClick={() => setActiveCategory("all")}
+              className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition ${
+                activeCategory === "all"
+                  ? "bg-amber-200 text-black"
+                  : "bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
               }`}
             >
-              {categoria.nombre}
+              Todo
             </button>
-          ))}
+            {foodCategorias.map((categoria) => (
+              <button
+                key={categoria.id}
+                type="button"
+                onClick={() => setActiveCategory(categoria.id)}
+                className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition ${
+                  activeCategory === categoria.id
+                    ? "bg-amber-200 text-black"
+                    : "bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+                }`}
+              >
+                {categoria.nombre}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 

@@ -128,3 +128,18 @@
     @apply font-sans;
   }
 }
+
+@keyframes cart-bar-in {
+  from {
+    transform: translateY(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.cart-bar-enter {
+  animation: cart-bar-in 0.35s ease-out;
+}

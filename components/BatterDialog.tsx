@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ChefHat, Flame } from "lucide-react";
+import { ChefHat, Flame, Plus } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,11 +29,13 @@ export default function BatterDialog({ producto, variante }: BatterDialogProps) 
   const handleAddClassic = () => {
     addItem(producto, variante, false);
     setOpen(false);
+    toast.success("Agregado al pedido");
   };
 
   const handleAddBattered = () => {
     addItem(producto, variante, true);
     setOpen(false);
+    toast.success("Agregado al pedido");
   };
 
   return (
@@ -41,11 +44,11 @@ export default function BatterDialog({ producto, variante }: BatterDialogProps) 
         render={
           <Button
             size="sm"
-            variant="outline"
-            className="h-9 border-white/15 bg-white/5 px-4 text-amber-100/80 hover:border-amber-200/30 hover:bg-amber-200/10"
+            className="h-10 rounded-full bg-[#25D366] px-4 font-semibold text-white hover:bg-[#20bd5a]"
           />
         }
       >
+        <Plus className="size-4" />
         Agregar
       </DialogTrigger>
       <DialogContent className="border-zinc-800 bg-zinc-950 sm:max-w-md">

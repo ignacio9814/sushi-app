@@ -12,14 +12,12 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { createOrder } from "@/lib/create-order";
 import { formatMoney } from "@/lib/money";
 import { openWhatsApp } from "@/lib/whatsapp";
 import { useCart } from "@/store/useCart";
-import BrandLogo from "@/components/BrandLogo";
 import { isExtraProduct, type Producto } from "@/types";
 
 type CheckoutStep = "comida" | "extras" | "datos";
@@ -124,24 +122,26 @@ export default function Cart() {
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetTrigger
-        render={
-          <Button
-            size="lg"
-            variant="outline"
-            className="fixed right-4 bottom-4 z-50 h-16 w-16 rounded-full border-[#25D366]/55 bg-[#25D366]/20 p-0 text-white shadow-lg shadow-[#25D366]/10 backdrop-blur-md hover:bg-[#25D366]/35"
-          />
-        }
-      >
-        <span className="relative">
-          <ShoppingBag className="size-7" />
-          {totalItems > 0 && (
-            <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full border border-[#25D366]/50 bg-black/80 text-xs font-bold text-[#25D366]">
-              {totalItems}
+      {totalItems > 0 && !open && (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="cart-bar-enter fixed inset-x-3 z-50 flex h-16 items-center justify-between rounded-2xl bg-[#25D366] px-5 text-left text-white shadow-[0_12px_40px_rgba(37,211,102,0.45)] bottom-[max(0.75rem,env(safe-area-inset-bottom))] hover:bg-[#20bd5a]"
+        >
+          <span className="flex min-w-0 items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-black/20">
+              <ShoppingBag className="size-5" />
             </span>
-          )}
-        </span>
-      </SheetTrigger>
+            <span className="min-w-0">
+              <span className="block text-base font-semibold">Ver pedido</span>
+              <span className="block text-sm text-white/85">
+                {totalItems} {totalItems === 1 ? "producto" : "productos"}
+              </span>
+            </span>
+          </span>
+          <span className="shrink-0 text-lg font-bold">{formatMoney(total)}</span>
+        </button>
+      )}
       <SheetContent
         side="bottom"
         className="h-[92dvh] w-full gap-0 border-zinc-800 bg-zinc-950 sm:max-w-none"
@@ -154,16 +154,37 @@ export default function Cart() {
                   <ArrowLeft className="size-4" />
                 </Button>
               )}
-              <BrandLogo size="sm" />
               {titles[step]}
-              {step === "comida" && (
+              {step === "comida" && foodItems.length > 0 && (
                 <span className="text-amber-400">({foodItems.length})</span>
               )}
             </SheetTitle>
             {foodItems.length > 0 && (
-              <p className="text-xs tracking-wide text-zinc-500">
-                Paso {stepIndex + 1} de 3
-              </p>
+              <ol className="mt-3 flex items-center gap-2 text-xs">
+                {STEPS.map((id, index) => (
+                  <li key={id} className="flex flex-1 items-center gap-2">
+                    <span
+                      className={`flex h-6 min-w-6 items-center justify-center rounded-full ${
+                        index <= stepIndex
+                          ? "bg-[#25D366] text-black"
+                          : "bg-zinc-800 text-zinc-500"
+                      }`}
+                    >
+                      {index + 1}
+                    </span>
+                    <span
+                      className={
+                        index <= stepIndex ? "font-medium text-zinc-200" : "text-zinc-500"
+                      }
+                    >
+                      {id === "comida" ? "Pedido" : id === "extras" ? "Extras" : "Datos"}
+                    </span>
+                    {index < STEPS.length - 1 && (
+                      <span className="h-px flex-1 bg-zinc-800" />
+                    )}
+                  </li>
+                ))}
+              </ol>
             )}
           </SheetHeader>
 
@@ -322,18 +343,18 @@ export default function Cart() {
               {step === "comida" && (
                 <Button
                   onClick={() => setStep("extras")}
-                  className="h-12 w-full bg-amber-200/15 text-base font-heading tracking-wide text-amber-100 uppercase hover:bg-amber-200/25"
+                  className="h-14 w-full bg-[#25D366] text-base font-semibold text-white hover:bg-[#20bd5a]"
                 >
-                  Continuar a extras
+                  Siguiente
                 </Button>
               )}
               {step === "extras" && (
                 <>
                   <Button
                     onClick={() => setStep("datos")}
-                    className="h-12 w-full bg-amber-200/15 text-base font-heading tracking-wide text-amber-100 uppercase hover:bg-amber-200/25"
+                    className="h-14 w-full bg-[#25D366] text-base font-semibold text-white hover:bg-[#20bd5a]"
                   >
-                    {extraItems.length > 0 ? "Continuar" : "Continuar sin extras"}
+                    {extraItems.length > 0 ? "Siguiente" : "Siguiente, sin extras"}
                   </Button>
                   {extraItems.length > 0 && (
                     <Button
@@ -354,7 +375,7 @@ export default function Cart() {
                   onClick={handleCheckout}
                   disabled={sending}
                   variant="outline"
-                  className="h-12 w-full border-[#25D366]/55 bg-[#25D366]/20 text-base font-heading tracking-wide text-white uppercase backdrop-blur-sm hover:bg-[#25D366]/35"
+                  className="h-14 w-full border-transparent bg-[#25D366] text-base font-semibold text-white hover:bg-[#20bd5a]"
                 >
                   {sending ? "Enviando..." : "Enviar pedido por WhatsApp"}
                 </Button>

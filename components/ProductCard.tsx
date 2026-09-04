@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Plus } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import BatterDialog from "@/components/BatterDialog";
@@ -81,10 +83,13 @@ export default function ProductCard({ producto }: { producto: Producto }) {
           ) : (
             <Button
               size="sm"
-              variant="outline"
-              className="h-9 border-white/15 bg-white/5 px-4 text-amber-100/80 hover:border-amber-200/30 hover:bg-amber-200/10"
-              onClick={() => addItem(producto, variante)}
+              className="h-10 rounded-full bg-[#25D366] px-4 font-semibold text-white hover:bg-[#20bd5a]"
+              onClick={() => {
+                addItem(producto, variante);
+                toast.success("Agregado al pedido");
+              }}
             >
+              <Plus className="size-4" />
               Agregar
             </Button>
           )}
