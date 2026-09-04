@@ -149,16 +149,17 @@ export async function createOrder(
     throw new Error("El carrito está vacío");
   }
 
+  const numeroLocal = nextLocalNumero();
+  const localPedido = buildPedidoDraft(items, payload, numeroLocal, `local-${numeroLocal}`);
+  saveLocalPedido(localPedido);
+
   if (!isFirebaseConfigured || !db) {
-    const numero = nextLocalNumero();
-    const id = `local-${numero}`;
-    const pedido = buildPedidoDraft(items, payload, numero, id);
-    saveLocalPedido(pedido);
-    return pedido;
+    return localPedido;
   }
 
   const firestore = db;
-  return runTransaction(firestore, async (transaction) => {
+  try {
+    return await runTransaction(firestore, async (transaction) => {
     const counterRef = doc(firestore, "config", "sistema");
     const counterSnap = await transaction.get(counterRef);
     const numero = (counterSnap.data()?.ultimoBoleta ?? 0) + 1;
@@ -171,10 +172,14 @@ export async function createOrder(
       { merge: true }
     );
     transaction.set(pedidoRef, {
-      ...pedido,
+      ...JSON.parse(JSON.stringify(pedido)),
       createdAt: serverTimestamp(),
     });
 
-    return pedido;
-  });
+      return pedido;
+    });
+  } catch (error) {
+    console.error("Firebase no guardó el pedido; queda en este dispositivo.", error);
+    return localPedido;
+  }
 }
