@@ -106,7 +106,7 @@ export default function Home() {
                 )}
                 <MenuDivider className="mx-auto mt-4 max-w-56" />
               </div>
-              <div className="space-y-8">
+              <div className="space-y-4">
                 {productosCategoria.map((producto) => (
                   <ProductCard key={producto.id} producto={producto} />
                 ))}

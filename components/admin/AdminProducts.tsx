@@ -186,7 +186,7 @@ export default function AdminProducts() {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-zinc-400">
+      <p className="text-sm text-[#6b6256]">
         Cambiá fotos, precios y marcá sin stock. El menú del cliente se actualiza al toque.
       </p>
       {isFirebaseConfigured && (
@@ -195,42 +195,44 @@ export default function AdminProducts() {
         </Button>
       )}
       {!isFirebaseConfigured && (
-        <p className="rounded-lg border border-amber-200/20 bg-amber-200/5 px-3 py-2 text-sm text-amber-100/80">
+        <p className="border border-[#d9c9a3] bg-white/50 px-3 py-2 text-sm text-[#6b6256]">
           Modo demo: los cambios quedan en este celular/computadora hasta conectar Firebase.
         </p>
       )}
 
       {grouped.map(({ categoria, productos: items }) => (
         <section key={categoria.id} className="space-y-3">
-          <h3 className="font-heading text-lg text-zinc-200">{categoria.nombre}</h3>
+          <h3 className="font-heading text-lg tracking-wide text-[#1A1A1A]">{categoria.nombre}</h3>
           <div className="space-y-3">
             {items.map((producto) => {
               const photo = producto.imagen_url || BRAND.placeholderProductSrc;
               return (
                 <div
                   key={producto.id}
-                  className={`rounded-lg border bg-zinc-900/80 p-3 ${
-                    producto.disponible ? "border-zinc-800" : "border-zinc-800 opacity-70"
+                  className={`relative overflow-hidden border bg-white/55 p-3 ${
+                    producto.disponible ? "border-[#d9c9a3]" : "border-[#d9c9a3] opacity-70"
                   }`}
                 >
-                  <div className="flex gap-3">
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/80 via-transparent to-[#C5A059]/12" />
+                  <div className="relative flex gap-3">
                     <img
                       src={photo}
                       alt=""
-                      className="size-16 shrink-0 rounded-md object-cover"
+                      className="size-16 shrink-0 object-cover"
                     />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <h4 className="font-heading text-base">{producto.nombre}</h4>
-                          <p className="text-sm text-amber-400">{priceLabel(producto)}</p>
+                          <h4 className="font-heading text-base text-[#1A1A1A]">{producto.nombre}</h4>
+                          <p className="text-sm text-[#9B2B2B]">{priceLabel(producto)}</p>
                           {!producto.disponible && (
-                            <p className="text-xs text-zinc-400">Sin stock</p>
+                            <p className="text-xs text-[#8a8174]">Sin stock</p>
                           )}
                         </div>
                         <Button
                           variant="outline"
                           size="sm"
+                          className="rounded-none border-[#d9c9a3]"
                           onClick={() => openEdit(producto)}
                         >
                           <Pencil className="size-4" />
@@ -238,7 +240,7 @@ export default function AdminProducts() {
                         </Button>
                       </div>
                       <label className="mt-3 flex items-center justify-between gap-3 text-sm">
-                        <span className="text-zinc-300">
+                        <span className="text-[#1A1A1A]">
                           {producto.disponible ? "En stock" : "Sin stock"}
                         </span>
                         <Switch
@@ -256,16 +258,16 @@ export default function AdminProducts() {
       ))}
 
       <Dialog open={Boolean(editing)} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent className="max-h-[90dvh] overflow-y-auto border-zinc-800 bg-zinc-950">
+        <DialogContent className="menu-page max-h-[90dvh] overflow-y-auto border-[#d9c9a3] text-[#1A1A1A]">
           <DialogHeader>
             <DialogTitle>Editar producto</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-[#6b6256]">
               Precios en pesos, sin puntos: 10000 = $ 10.000.
             </DialogDescription>
           </DialogHeader>
           {editing && (
             <div className="space-y-4 py-2">
-              <div className="overflow-hidden rounded-lg border border-zinc-800">
+              <div className="overflow-hidden border border-[#d9c9a3]">
                 <img
                   src={photoUrl || BRAND.placeholderProductSrc}
                   alt=""
@@ -323,7 +325,7 @@ export default function AdminProducts() {
               />
               {variantes.length > 0
                 ? variantes.map((variante, index) => (
-                    <label key={variante.nombre} className="block space-y-1 text-sm text-zinc-400">
+                    <label key={variante.nombre} className="block space-y-1 text-sm text-[#6b6256]">
                       Precio {variante.nombre}
                       <Input
                         type="number"
@@ -341,7 +343,7 @@ export default function AdminProducts() {
                     </label>
                   ))
                 : (
-                    <label className="block space-y-1 text-sm text-zinc-400">
+                    <label className="block space-y-1 text-sm text-[#6b6256]">
                       Precio
                       <Input
                         type="number"
@@ -359,7 +361,7 @@ export default function AdminProducts() {
             <Button
               onClick={() => void handleSave()}
               disabled={saving}
-              className="border border-amber-200/30 bg-amber-200/10 text-amber-100/90 hover:bg-amber-200/20"
+              className="rounded-none bg-[#9B2B2B] text-[#F9F7F2] hover:bg-[#7f2020]"
             >
               {saving ? "Guardando..." : "Guardar"}
             </Button>

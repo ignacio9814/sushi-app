@@ -25,7 +25,9 @@ export default function ProductCard({ producto }: { producto: Producto }) {
     .filter(Boolean);
 
   return (
-    <article>
+    <article className="relative overflow-hidden border border-[#e0d2b0] bg-white/50 p-5 shadow-[0_12px_28px_rgba(26,26,26,0.06)]">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/80 via-[#F9F7F2]/20 to-[#C5A059]/15" />
+      <div className="relative">
       <div className="flex items-baseline justify-between gap-4">
         <h3 className="text-base font-semibold tracking-wide text-[#1A1A1A] uppercase">
           {producto.nombre}
@@ -91,6 +93,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
             Agregar
           </Button>
         )}
+      </div>
       </div>
     </article>
   );

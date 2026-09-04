@@ -17,14 +17,22 @@ export default function AdminPage() {
       <div className="mb-6 grid grid-cols-2 gap-2">
         <Button
           variant={tab === "pedidos" ? "default" : "outline"}
-          className="h-11"
+          className={`h-11 rounded-none ${
+            tab === "pedidos"
+              ? "bg-[#9B2B2B] text-[#F9F7F2] hover:bg-[#7f2020]"
+              : "border-[#d9c9a3] bg-transparent text-[#1A1A1A]"
+          }`}
           onClick={() => setTab("pedidos")}
         >
           Pedidos
         </Button>
         <Button
           variant={tab === "menu" ? "default" : "outline"}
-          className="h-11"
+          className={`h-11 rounded-none ${
+            tab === "menu"
+              ? "bg-[#9B2B2B] text-[#F9F7F2] hover:bg-[#7f2020]"
+              : "border-[#d9c9a3] bg-transparent text-[#1A1A1A]"
+          }`}
           onClick={() => setTab("menu")}
         >
           Menú
