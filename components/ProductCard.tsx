@@ -25,7 +25,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
     .filter(Boolean);
 
   return (
-    <article className="relative overflow-hidden border border-[#e0d2b0] bg-white/50 p-5 shadow-[0_12px_28px_rgba(26,26,26,0.06)]">
+    <article className="relative overflow-hidden rounded-2xl border border-[#e0d2b0] bg-white/50 p-5 shadow-[0_12px_28px_rgba(26,26,26,0.06)]">
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/80 via-[#F9F7F2]/20 to-[#C5A059]/15" />
       <div className="relative">
       <div className="flex items-baseline justify-between gap-4">
@@ -63,7 +63,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
                 key={option.nombre}
                 type="button"
                 onClick={() => setVariante(option)}
-                className={`flex-1 border px-3 py-2 text-left text-xs tracking-wide uppercase transition ${
+                className={`flex-1 rounded-xl border px-3 py-2 text-left text-xs tracking-wide uppercase transition ${
                   selected
                     ? "border-[#9B2B2B] bg-[#9B2B2B]/8 text-[#9B2B2B]"
                     : "border-[#d9c9a3] text-[#6b6256]"
@@ -83,7 +83,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
         ) : (
           <Button
             size="sm"
-            className="h-9 rounded-none bg-[#9B2B2B] px-4 text-xs tracking-[0.16em] text-[#F9F7F2] uppercase hover:bg-[#7f2020]"
+            className="h-9 rounded-full bg-[#9B2B2B] px-4 text-xs tracking-[0.16em] text-[#F9F7F2] uppercase hover:bg-[#7f2020]"
             onClick={() => {
               addItem(producto, variante);
               toast.success("Agregado al pedido");

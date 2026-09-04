@@ -41,7 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
           <Button
             variant="outline"
-            className="rounded-none border-[#d9c9a3]"
+            className="rounded-full border-[#d9c9a3]"
             onClick={handleLogout}
           >
             Salir

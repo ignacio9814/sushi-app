@@ -39,7 +39,7 @@ export default function ExtraRow({ producto }: { producto: Producto }) {
       ) : (
         <Button
           size="sm"
-          className="h-9 rounded-none bg-[#9B2B2B] px-4 text-xs tracking-[0.14em] text-[#F9F7F2] uppercase hover:bg-[#7f2020]"
+          className="h-9 rounded-full bg-[#9B2B2B] px-4 text-xs tracking-[0.14em] text-[#F9F7F2] uppercase hover:bg-[#7f2020]"
           onClick={() => addItem(producto)}
         >
           Agregar

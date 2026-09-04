@@ -34,7 +34,7 @@ export default function LoginPage() {
     <div className="menu-page flex min-h-screen items-center justify-center p-4">
       <form
         onSubmit={handleLogin}
-        className="w-full max-w-md space-y-4 border border-[#d9c9a3] bg-[#F9F7F2]/90 p-8"
+        className="w-full max-w-md space-y-4 rounded-2xl border border-[#d9c9a3] bg-[#F9F7F2]/90 p-8"
       >
         <div className="text-center">
           <BrandLogo size="lg" className="mx-auto" />
@@ -64,7 +64,7 @@ export default function LoginPage() {
         <Button
           type="submit"
           disabled={loading}
-          className="h-11 w-full rounded-none bg-[#9B2B2B] text-[#F9F7F2] tracking-[0.16em] uppercase hover:bg-[#7f2020]"
+          className="h-11 w-full rounded-full bg-[#9B2B2B] text-[#F9F7F2] tracking-[0.16em] uppercase hover:bg-[#7f2020]"
         >
           {loading ? "Entrando..." : "Entrar"}
         </Button>

@@ -195,7 +195,7 @@ export default function AdminProducts() {
         </Button>
       )}
       {!isFirebaseConfigured && (
-        <p className="border border-[#d9c9a3] bg-white/50 px-3 py-2 text-sm text-[#6b6256]">
+        <p className="rounded-2xl border border-[#d9c9a3] bg-white/50 px-3 py-2 text-sm text-[#6b6256]">
           Modo demo: los cambios quedan en este celular/computadora hasta conectar Firebase.
         </p>
       )}
@@ -209,7 +209,7 @@ export default function AdminProducts() {
               return (
                 <div
                   key={producto.id}
-                  className={`relative overflow-hidden border bg-white/55 p-3 ${
+                  className={`relative overflow-hidden rounded-2xl border bg-white/55 p-3 ${
                     producto.disponible ? "border-[#d9c9a3]" : "border-[#d9c9a3] opacity-70"
                   }`}
                 >
@@ -232,7 +232,7 @@ export default function AdminProducts() {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="rounded-none border-[#d9c9a3]"
+                          className="rounded-full border-[#d9c9a3]"
                           onClick={() => openEdit(producto)}
                         >
                           <Pencil className="size-4" />
@@ -267,7 +267,7 @@ export default function AdminProducts() {
           </DialogHeader>
           {editing && (
             <div className="space-y-4 py-2">
-              <div className="overflow-hidden border border-[#d9c9a3]">
+              <div className="overflow-hidden rounded-2xl border border-[#d9c9a3]">
                 <img
                   src={photoUrl || BRAND.placeholderProductSrc}
                   alt=""
@@ -361,7 +361,7 @@ export default function AdminProducts() {
             <Button
               onClick={() => void handleSave()}
               disabled={saving}
-              className="rounded-none bg-[#9B2B2B] text-[#F9F7F2] hover:bg-[#7f2020]"
+              className="rounded-full bg-[#9B2B2B] text-[#F9F7F2] hover:bg-[#7f2020]"
             >
               {saving ? "Guardando..." : "Guardar"}
             </Button>

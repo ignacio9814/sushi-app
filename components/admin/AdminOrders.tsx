@@ -140,7 +140,7 @@ export default function AdminOrders() {
         return (
           <article
             key={pedido.id}
-            className="border border-[#d9c9a3] bg-white/50 p-4"
+            className="rounded-2xl border border-[#d9c9a3] bg-white/50 p-4"
           >
             <div className="mb-3 flex items-start justify-between gap-3">
               <div>
