@@ -2,12 +2,16 @@ import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
 import { BRAND } from "@/lib/brand";
 import { MEDIO_PAGO_LABEL, type Pedido } from "@/types";
 
-export function getWhatsAppPhone() {
-  const raw = (process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "3816025882").replace(/\D/g, "");
+export function toWhatsAppPhone(value: string) {
+  const raw = value.replace(/\D/g, "");
   if (raw.startsWith("54")) return raw;
   if (raw.startsWith("9") && raw.length >= 11) return `54${raw}`;
   if (raw.length === 10) return `549${raw}`;
-  return raw || "5493816025882";
+  return raw;
+}
+
+export function getWhatsAppPhone() {
+  return toWhatsAppPhone(process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "3816025882") || "5493816025882";
 }
 
 export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
@@ -62,15 +66,15 @@ export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
   return lines.join("\n");
 }
 
-export function getWhatsAppUrl(pedido: Pedido, boletaUrl?: string) {
-  const phone = getWhatsAppPhone();
+export function getWhatsAppUrl(pedido: Pedido, boletaUrl?: string, phone?: string) {
+  const destino = toWhatsAppPhone(phone || "") || getWhatsAppPhone();
   const params = new URLSearchParams({
-    phone,
+    phone: destino,
     text: buildWhatsAppMessage(pedido, boletaUrl),
   });
   return `https://api.whatsapp.com/send?${params.toString()}`;
 }
 
-export function openWhatsApp(pedido: Pedido, boletaUrl?: string) {
-  window.location.assign(getWhatsAppUrl(pedido, boletaUrl));
+export function openWhatsApp(pedido: Pedido, boletaUrl?: string, phone?: string) {
+  window.location.assign(getWhatsAppUrl(pedido, boletaUrl, phone));
 }

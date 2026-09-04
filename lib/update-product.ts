@@ -17,15 +17,14 @@ function payloadFromProduct(producto: Producto) {
 }
 
 export async function saveProductChanges(next: Producto) {
+  upsertLocalProducto(getSeedCatalog().productos, next);
   if (db) {
     try {
       await updateDoc(doc(db, "productos", next.id), payloadFromProduct(next));
-      return;
     } catch {
-      // Sin menú en Firebase todavía: se guarda en el dispositivo.
+      // Sin menú en Firebase todavía: queda guardado en este dispositivo.
     }
   }
-  upsertLocalProducto(getSeedCatalog().productos, next);
 }
 
 export async function saveProductStock(producto: Producto, disponible: boolean) {

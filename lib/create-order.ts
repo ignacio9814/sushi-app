@@ -120,14 +120,18 @@ export async function updatePedidoRecord(
   }
 ) {
   const next: Pedido = { ...pedido, ...data };
+  saveLocalPedido(next);
 
   if (!isFirebaseConfigured || !db || pedido.id.startsWith("local-")) {
-    saveLocalPedido(next);
     return next;
   }
 
-  const { id: _id, createdAt: _createdAt, ...rest } = next;
-  await updateDoc(doc(db, "pedidos", pedido.id), rest);
+  try {
+    const { id: _id, createdAt: _createdAt, ...rest } = next;
+    await updateDoc(doc(db, "pedidos", pedido.id), JSON.parse(JSON.stringify(rest)));
+  } catch (error) {
+    console.error("No se pudo actualizar el pedido en Firebase; queda en este dispositivo.", error);
+  }
   return next;
 }
 

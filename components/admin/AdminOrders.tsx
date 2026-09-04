@@ -127,7 +127,7 @@ export default function AdminOrders() {
   };
 
   if (pedidos.length === 0) {
-    return <p className="text-zinc-400">Todavía no hay pedidos.</p>;
+    return <p className="text-[#6b6256]">Todavía no hay pedidos.</p>;
   }
 
   return (
@@ -166,7 +166,7 @@ export default function AdminOrders() {
                 </p>
               </div>
             </div>
-            <ul className="mb-3 space-y-1 text-sm text-zinc-300">
+            <ul className="mb-3 space-y-1 text-sm text-[#1A1A1A]">
               {pedido.items.map((item, index) => (
                 <li key={`${pedido.id}-${index}`}>
                   {item.cantidad}x {item.nombre}
@@ -176,13 +176,13 @@ export default function AdminOrders() {
               ))}
             </ul>
             {pedido.incluyeSalsasGratis && (
-              <p className="mb-3 text-xs text-amber-400">Salsas gratis incluidas</p>
+              <p className="mb-3 text-xs text-[#9B2B2B]">Salsas gratis incluidas</p>
             )}
             {pedido.notas && (
-              <p className="mb-3 text-xs text-zinc-400">Notas: {pedido.notas}</p>
+              <p className="mb-3 text-xs text-[#6b6256]">Notas: {pedido.notas}</p>
             )}
 
-            <p className="mb-2 text-xs tracking-wide text-zinc-500 uppercase">Estado</p>
+            <p className="mb-2 text-xs tracking-wide text-[#8a8174] uppercase">Estado</p>
             <div className="mb-4 flex flex-wrap gap-2">
               {ESTADOS.map((estado) => (
                 <Button
@@ -197,13 +197,18 @@ export default function AdminOrders() {
             </div>
 
             {!emitida && pedido.estado !== "cancelado" && (
-              <div className="space-y-3 rounded-lg border border-white/10 bg-black/30 p-3">
-                <p className="text-sm text-zinc-300">Cerrar pedido y emitir boleta</p>
+              <div className="space-y-3 rounded-2xl border border-[#d9c9a3] bg-white/70 p-3">
+                <p className="text-sm text-[#1A1A1A]">Cerrar pedido y emitir boleta</p>
                 <div className="flex flex-wrap gap-2">
                   {MEDIOS.map((opcion) => (
                     <Button
                       key={opcion}
                       size="sm"
+                      className={`rounded-full ${
+                        medio === opcion
+                          ? "bg-[#9B2B2B] text-[#F9F7F2] hover:bg-[#7f2020]"
+                          : "border-[#d9c9a3]"
+                      }`}
                       variant={medio === opcion ? "default" : "outline"}
                       onClick={() =>
                         setMedioPorPedido((current) => ({
@@ -217,7 +222,7 @@ export default function AdminOrders() {
                   ))}
                 </div>
                 <Button
-                  className="h-11 w-full border border-amber-200/30 bg-amber-200/10 text-amber-100 hover:bg-amber-200/20"
+                  className="h-11 w-full rounded-full bg-[#9B2B2B] text-[#F9F7F2] hover:bg-[#7f2020]"
                   disabled={cerrando === pedido.id}
                   onClick={() => void handleCerrar(pedido)}
                 >
@@ -227,24 +232,24 @@ export default function AdminOrders() {
             )}
 
             {emitida && (
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <a
                   href={`/pedido/${pedido.id}`}
-                  className="inline-flex h-9 items-center rounded-lg border border-zinc-700 px-3 text-sm text-amber-400"
+                  className="inline-flex h-11 items-center justify-center rounded-full border border-[#d9c9a3] px-3 text-sm text-[#1A1A1A]"
                 >
                   Ver / imprimir boleta
                 </a>
                 <Button
-                  size="sm"
-                  variant="outline"
+                  className="h-11 rounded-full bg-[#25D366] text-white hover:bg-[#20bd5a]"
                   onClick={() =>
                     openWhatsApp(
-                      pedido,
-                      `${window.location.origin}/pedido/${pedido.id}`
+                      { ...pedido, boletaEmitida: true },
+                      `${window.location.origin}/pedido/${pedido.id}`,
+                      pedido.clienteTelefono
                     )
                   }
                 >
-                  Enviar boleta por WhatsApp
+                  Enviar recibo por WhatsApp
                 </Button>
               </div>
             )}
