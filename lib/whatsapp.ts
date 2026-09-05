@@ -44,7 +44,7 @@ export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
   });
 
   if (pedido.incluyeSalsasGratis) {
-    lines.push("", "Incluye 1 salsa soja y 1 teriyaki");
+    lines.push("", "Incluye un palito, una salsa soja y una salsa teriyaki");
   }
 
   if (pedido.notas) {

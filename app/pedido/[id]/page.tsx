@@ -102,7 +102,7 @@ export default function PedidoPage() {
 
         {pedido.incluyeSalsasGratis && (
           <p className="mt-4 text-sm text-amber-400 print:text-black">
-            Incluye 1 salsa soja y 1 teriyaki
+            Incluye un palito, una salsa soja y una salsa teriyaki
           </p>
         )}
 

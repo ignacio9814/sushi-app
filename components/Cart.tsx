@@ -293,7 +293,7 @@ export default function Cart() {
                 })}
                 {qualifiesForFreeSauces && (
                   <div className="rounded-2xl border border-[#d9c9a3] bg-white p-3 text-sm text-[#6b6256]">
-                    Pedidos de hasta {totalPieces} piezas incluyen 1 soja y 1 teriyaki
+                    Hasta 20 piezas incluye un palito, una salsa soja y una salsa teriyaki.
                   </div>
                 )}
               </div>

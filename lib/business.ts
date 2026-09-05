@@ -3,6 +3,6 @@ export const BUSINESS = {
   tagline: "Cocina nikkei · Pedí y confirmá por WhatsApp",
   rebozadoPesos: 3000,
   salsaMaxPiezas: 20,
-  salsaTexto: "Hasta 20 piezas incluye 1 salsa soja y 1 teriyaki",
+  salsaTexto: "Hasta 20 piezas incluye un palito, una salsa soja y una salsa teriyaki.",
   whatsapp: (process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "5493816025882").replace(/\D/g, ""),
 } as const;

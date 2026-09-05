@@ -6,6 +6,7 @@ import ProductCard from "@/components/ProductCard";
 import BrandLogo, { MenuDivider } from "@/components/BrandLogo";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { BRAND } from "@/lib/brand";
+import { BUSINESS } from "@/lib/business";
 import type { Categoria, Producto } from "@/types";
 import { Lock } from "lucide-react";
 import Link from "next/link";
@@ -96,6 +97,11 @@ export default function Home() {
                 {categoria.descripcion && (
                   <p className="mx-auto mt-3 max-w-sm text-[13px] leading-relaxed text-[#1A1A1A]">
                     {categoria.descripcion}
+                  </p>
+                )}
+                {categoria.id === "cat_infaltables" && (
+                  <p className="mx-auto mt-2 max-w-sm text-[13px] leading-relaxed text-[#1A1A1A]">
+                    {BUSINESS.salsaTexto}
                   </p>
                 )}
                 <MenuDivider className="mx-auto mt-4 max-w-56" />
