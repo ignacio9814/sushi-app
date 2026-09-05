@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import BatterDialog from "@/components/BatterDialog";
+import { BUSINESS } from "@/lib/business";
 import { formatMoney } from "@/lib/money";
 import { useCart } from "@/store/useCart";
 import type { Producto, Variante } from "@/types";
@@ -48,8 +49,12 @@ export default function ProductCard({ producto }: { producto: Producto }) {
         </ul>
       )}
 
+      <p className="mt-2 text-[12px] leading-relaxed text-[#6b6256]">
+        {BUSINESS.retiroTexto}
+      </p>
+
       {producto.permite_rebozado && (
-        <p className="mt-2 text-[11px] tracking-[0.18em] text-[#C5A059] uppercase">
+        <p className="mt-1 text-[11px] tracking-[0.18em] text-[#C5A059] uppercase">
           Se puede rebozar
         </p>
       )}

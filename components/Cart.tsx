@@ -346,7 +346,7 @@ export default function Cart() {
                   <div className="space-y-2">
                     <p className="text-sm text-[#1A1A1A]">Franja horaria de retiro</p>
                     <p className="text-xs text-[#8a8174]">
-                      Pedí con anticipación. Indicá entre qué horas pasás a buscar.
+                      Pedí con anticipación. El retiro es solo jueves y viernes.
                     </p>
                     <div className="grid grid-cols-2 gap-2">
                       <label className="space-y-1">
