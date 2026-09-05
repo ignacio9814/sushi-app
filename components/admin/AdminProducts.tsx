@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
+import { isAvailable } from "@/lib/local-stock";
 import { formatMoney } from "@/lib/money";
 import { saveProductChanges, saveProductStock } from "@/lib/update-product";
 import type { Categoria, Producto } from "@/types";
@@ -34,7 +35,6 @@ export default function AdminProducts() {
   const [productos, setProductos] = useState<Producto[]>(seed.productos);
   const [editing, setEditing] = useState<Producto | null>(null);
   const [saving, setSaving] = useState(false);
-  const [stockBusyId, setStockBusyId] = useState<string | null>(null);
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState("");
@@ -106,16 +106,15 @@ export default function AdminProducts() {
     }
   };
 
-  const handleStock = async (producto: Producto, disponible: boolean) => {
-    if (producto.disponible === disponible || stockBusyId) return;
-    setStockBusyId(producto.id);
+  const handleStock = (producto: Producto, disponible: boolean) => {
+    if (isAvailable(producto) === disponible) return;
+    setProductos((current) =>
+      current.map((item) =>
+        item.id === producto.id ? { ...item, disponible } : item
+      )
+    );
     try {
-      await saveProductStock(producto, disponible);
-      setProductos((current) =>
-        current.map((item) =>
-          item.id === producto.id ? { ...item, disponible } : item
-        )
-      );
+      void saveProductStock(producto, disponible);
       toast.success(
         disponible
           ? "Guardado: volvió al menú del cliente"
@@ -123,8 +122,6 @@ export default function AdminProducts() {
       );
     } catch {
       toast.error("No se pudo guardar el stock. Probá de nuevo.");
-    } finally {
-      setStockBusyId(null);
     }
   };
 
@@ -144,7 +141,7 @@ export default function AdminProducts() {
               <div
                 key={producto.id}
                 className={`rounded-2xl border bg-white p-4 ${
-                  producto.disponible ? "border-[#d9c9a3]" : "border-[#9B2B2B]"
+                  isAvailable(producto) ? "border-[#d9c9a3]" : "border-[#9B2B2B]"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
@@ -153,12 +150,12 @@ export default function AdminProducts() {
                     <p className="text-sm text-[#9B2B2B]">{priceLabel(producto)}</p>
                     <p
                       className={`mt-2 inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide uppercase ${
-                        producto.disponible
+                        isAvailable(producto)
                           ? "bg-[#E7F6EC] text-[#1F8A4C]"
                           : "bg-[#F8E8E8] text-[#9B2B2B]"
                       }`}
                     >
-                      {producto.disponible ? "En stock" : "Sin stock"}
+                      {isAvailable(producto) ? "En stock" : "Sin stock"}
                     </p>
                   </div>
                   <Button
@@ -171,28 +168,26 @@ export default function AdminProducts() {
                     Editar
                   </Button>
                 </div>
-                <div className="mt-4 grid grid-cols-2 gap-1 rounded-full bg-[#efe6d4] p-1">
+                <div className="mt-4 grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    disabled={stockBusyId === producto.id}
-                    className={`h-11 rounded-full text-sm font-semibold transition ${
-                      producto.disponible
-                        ? "bg-[#1F8A4C] text-white shadow-sm"
-                        : "bg-transparent text-[#6b6256]"
+                    className={`h-12 rounded-full text-sm font-semibold ${
+                      isAvailable(producto)
+                        ? "bg-[#1F8A4C] text-white"
+                        : "border border-[#d9c9a3] bg-white text-[#6b6256]"
                     }`}
-                    onClick={() => void handleStock(producto, true)}
+                    onClick={() => handleStock(producto, true)}
                   >
                     En stock
                   </button>
                   <button
                     type="button"
-                    disabled={stockBusyId === producto.id}
-                    className={`h-11 rounded-full text-sm font-semibold transition ${
-                      !producto.disponible
-                        ? "bg-[#9B2B2B] text-white shadow-sm"
-                        : "bg-transparent text-[#6b6256]"
+                    className={`h-12 rounded-full text-sm font-semibold ${
+                      !isAvailable(producto)
+                        ? "bg-[#9B2B2B] text-white"
+                        : "border border-[#d9c9a3] bg-white text-[#6b6256]"
                     }`}
-                    onClick={() => void handleStock(producto, false)}
+                    onClick={() => handleStock(producto, false)}
                   >
                     Sin stock
                   </button>
@@ -224,6 +219,36 @@ export default function AdminProducts() {
                 placeholder="Descripción"
                 rows={3}
               />
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  className={`h-12 rounded-full text-sm font-semibold ${
+                    isAvailable(editing)
+                      ? "bg-[#1F8A4C] text-white"
+                      : "border border-[#d9c9a3] bg-white text-[#6b6256]"
+                  }`}
+                  onClick={() => {
+                    setEditing({ ...editing, disponible: true });
+                    handleStock(editing, true);
+                  }}
+                >
+                  En stock
+                </button>
+                <button
+                  type="button"
+                  className={`h-12 rounded-full text-sm font-semibold ${
+                    !isAvailable(editing)
+                      ? "bg-[#9B2B2B] text-white"
+                      : "border border-[#d9c9a3] bg-white text-[#6b6256]"
+                  }`}
+                  onClick={() => {
+                    setEditing({ ...editing, disponible: false });
+                    handleStock(editing, false);
+                  }}
+                >
+                  Sin stock
+                </button>
+              </div>
               {variantes.length > 0
                 ? variantes.map((variante, index) => (
                     <label key={variante.nombre} className="block space-y-1 text-sm text-[#6b6256]">

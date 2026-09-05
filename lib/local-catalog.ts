@@ -29,9 +29,13 @@ export function mergeLocalProductos(seedProductos: Producto[]) {
 
 export function upsertLocalProducto(seedProductos: Producto[], next: Producto) {
   const current = mergeLocalProductos(seedProductos);
-  const productos = current.map((producto) =>
-    producto.id === next.id ? next : producto
-  );
+  let found = false;
+  const productos = current.map((producto) => {
+    if (producto.id !== next.id) return producto;
+    found = true;
+    return next;
+  });
+  if (!found) productos.push(next);
   writeLocalProductos(productos);
   return productos;
 }

@@ -5,6 +5,7 @@ import {
   CATALOG_UPDATED_EVENT,
   mergeLocalProductos,
 } from "@/lib/local-catalog";
+import { applyLocalStock, STOCK_UPDATED_EVENT } from "@/lib/local-stock";
 import { applyProductPatches, subscribeMenuOverrides, type ProductPatch } from "@/lib/menu-overrides";
 import type { Categoria, Producto, SushiData } from "@/types";
 
@@ -22,7 +23,7 @@ export function getLocalCatalog() {
   const fallback = getSeedCatalog();
   return {
     categorias: fallback.categorias,
-    productos: mergeLocalProductos(fallback.productos),
+    productos: applyLocalStock(mergeLocalProductos(fallback.productos)),
   };
 }
 
@@ -43,12 +44,13 @@ export function subscribeCatalog(
     );
     onData({
       categorias,
-      productos: mergeLocalProductos(base),
+      productos: applyLocalStock(mergeLocalProductos(base)),
     });
   };
 
   if (typeof window !== "undefined") {
     window.addEventListener(CATALOG_UPDATED_EVENT, emit);
+    window.addEventListener(STOCK_UPDATED_EVENT, emit);
   }
 
   const unsubCategorias =
@@ -88,6 +90,7 @@ export function subscribeCatalog(
     unsubOverrides();
     if (typeof window !== "undefined") {
       window.removeEventListener(CATALOG_UPDATED_EVENT, emit);
+      window.removeEventListener(STOCK_UPDATED_EVENT, emit);
     }
   };
 }
