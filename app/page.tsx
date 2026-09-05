@@ -36,9 +36,6 @@ export default function Home() {
       <header>
         <div className="mx-auto flex max-w-2xl flex-col items-center px-5 pt-8 pb-5 text-center">
           <BrandLogo priority size="lg" />
-          <p className="mt-2 text-[11px] font-medium tracking-[0.32em] text-[#9B2B2B] uppercase">
-            {BRAND.tagline}
-          </p>
           <MenuDivider className="mt-4 w-40" />
           <p className="mt-3 text-sm text-[#6b6256]">
             Elegí, armá el pedido y confirmá por WhatsApp
@@ -115,7 +112,6 @@ export default function Home() {
 
       <footer className="mx-auto flex max-w-2xl flex-col items-center gap-2 px-5 pb-10 text-center text-[11px] tracking-[0.2em] text-[#C5A059] uppercase">
         <MenuDivider className="mb-2 w-32" />
-        <p>Sabor, calidad y pasión</p>
         <p>WhatsApp {BRAND.whatsappLocal}</p>
         <a href={BRAND.instagramUrl} target="_blank" rel="noreferrer" className="hover:text-[#9B2B2B]">
           @{BRAND.instagram}
