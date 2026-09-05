@@ -51,7 +51,10 @@ export default function BatterDialog({ producto, variante }: BatterDialogProps) 
         <Plus className="size-4" />
         Agregar
       </DialogTrigger>
-      <DialogContent className="menu-page border-[#d9c9a3] text-[#1A1A1A] sm:max-w-md">
+      <DialogContent
+        overlayClassName="bg-black/45 backdrop-blur-none"
+        className="border-[#d9c9a3] bg-[#F9F7F2] text-[#1A1A1A] sm:max-w-md"
+      >
         <DialogHeader className="space-y-3">
           <DialogTitle className="text-center font-heading text-xl">
             ¿Rebozar y freír?
@@ -64,7 +67,7 @@ export default function BatterDialog({ producto, variante }: BatterDialogProps) 
             extra, el roll sale rebozado y frito.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="mt-2 flex-col gap-2 sm:flex-col">
+        <DialogFooter className="mt-2 flex-col gap-2 border-[#d9c9a3] bg-[#F9F7F2] sm:flex-col">
           <Button
             onClick={handleAddClassic}
             variant="outline"

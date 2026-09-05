@@ -199,7 +199,10 @@ export default function AdminProducts() {
       ))}
 
       <Dialog open={Boolean(editing)} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent className="max-h-[90dvh] overflow-y-auto border-[#d9c9a3] bg-[#F9F7F2] text-[#1A1A1A]">
+        <DialogContent
+          overlayClassName="bg-black/45 backdrop-blur-none"
+          className="max-h-[90dvh] overflow-y-auto border-[#d9c9a3] bg-[#F9F7F2] text-[#1A1A1A]"
+        >
           <DialogHeader>
             <DialogTitle>Editar producto</DialogTitle>
             <DialogDescription className="text-[#6b6256]">
