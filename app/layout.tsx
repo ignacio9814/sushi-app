@@ -17,9 +17,35 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://sushi-app-five.vercel.app"),
   title: "Adan Reymundo · Pedidos",
   description: "Cocina nikkei. Pedí por WhatsApp; el local emite la boleta al cerrar el pedido.",
-  icons: { icon: "/logo.png" },
+  applicationName: "Adan Reymundo",
+  icons: {
+    icon: [{ url: "/logo.png", type: "image/png" }],
+    apple: "/logo.png",
+  },
+  openGraph: {
+    type: "website",
+    locale: "es_AR",
+    siteName: "Adan Reymundo",
+    title: "Adan Reymundo · Cocina nikkei",
+    description: "Pedí rolls, nigiri y ceviche. Confirmá por WhatsApp.",
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Adan Reymundo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Adan Reymundo · Cocina nikkei",
+    description: "Pedí rolls, nigiri y ceviche. Confirmá por WhatsApp.",
+    images: ["/og.jpg"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
