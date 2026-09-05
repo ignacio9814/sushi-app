@@ -97,7 +97,7 @@ export default function Home() {
                   {categoria.nombre}
                 </h2>
                 {categoria.descripcion && (
-                  <p className="mt-2 text-[11px] tracking-[0.28em] text-[#9B2B2B] uppercase">
+                  <p className="mx-auto mt-3 max-w-sm text-[13px] leading-relaxed text-[#1A1A1A]">
                     {categoria.descripcion}
                   </p>
                 )}
