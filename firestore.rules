@@ -22,6 +22,10 @@ service cloud.firestore {
       allow update: if request.resource.data.ultimoBoleta == resource.data.ultimoBoleta + 1;
     }
 
+    match /config/menu_overrides {
+      allow read, write: if true;
+    }
+
     match /pedidos/{id} {
       allow create: if true;
       allow read: if true;

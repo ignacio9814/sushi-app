@@ -34,6 +34,7 @@ export default function AdminProducts() {
   const [productos, setProductos] = useState<Producto[]>(seed.productos);
   const [editing, setEditing] = useState<Producto | null>(null);
   const [saving, setSaving] = useState(false);
+  const [stockBusyId, setStockBusyId] = useState<string | null>(null);
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState("");
@@ -106,6 +107,8 @@ export default function AdminProducts() {
   };
 
   const handleStock = async (producto: Producto, disponible: boolean) => {
+    if (producto.disponible === disponible || stockBusyId) return;
+    setStockBusyId(producto.id);
     try {
       await saveProductStock(producto, disponible);
       setProductos((current) =>
@@ -113,16 +116,22 @@ export default function AdminProducts() {
           item.id === producto.id ? { ...item, disponible } : item
         )
       );
-      toast.success(disponible ? "En stock" : "Sacado de stock");
+      toast.success(
+        disponible
+          ? "Guardado: volvió al menú del cliente"
+          : "Guardado: el cliente ya no lo ve"
+      );
     } catch {
-      toast.error("No se pudo cambiar el stock");
+      toast.error("No se pudo guardar el stock. Probá de nuevo.");
+    } finally {
+      setStockBusyId(null);
     }
   };
 
   return (
     <div className="space-y-6">
       <p className="text-sm text-[#6b6256]">
-        Editá precios y sacá de stock lo que no haya. El menú del cliente se actualiza al toque.
+        Verde = se vende. Rojo = el cliente no lo ve. El cambio queda guardado al tocarlo.
       </p>
 
       {grouped.map(({ categoria, productos: items }) => (
@@ -134,53 +143,59 @@ export default function AdminProducts() {
             {items.map((producto) => (
               <div
                 key={producto.id}
-                className={`rounded-2xl border bg-white/70 p-4 ${
-                  producto.disponible ? "border-[#d9c9a3]" : "border-[#9B2B2B]/40 opacity-80"
+                className={`rounded-2xl border bg-white p-4 ${
+                  producto.disponible ? "border-[#d9c9a3]" : "border-[#9B2B2B]"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h4 className="font-heading text-base text-[#1A1A1A]">{producto.nombre}</h4>
                     <p className="text-sm text-[#9B2B2B]">{priceLabel(producto)}</p>
-                    {!producto.disponible && (
-                      <p className="mt-1 text-xs font-medium text-[#9B2B2B]">Sin stock</p>
-                    )}
+                    <p
+                      className={`mt-2 inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide uppercase ${
+                        producto.disponible
+                          ? "bg-[#E7F6EC] text-[#1F8A4C]"
+                          : "bg-[#F8E8E8] text-[#9B2B2B]"
+                      }`}
+                    >
+                      {producto.disponible ? "En stock" : "Sin stock"}
+                    </p>
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="rounded-full border-[#d9c9a3]"
+                    className="rounded-full border-[#d9c9a3] bg-white"
                     onClick={() => openEdit(producto)}
                   >
                     <Pencil className="size-4" />
                     Editar
                   </Button>
                 </div>
-                <div className="mt-4 grid grid-cols-2 gap-2">
-                  <Button
+                <div className="mt-4 grid grid-cols-2 gap-1 rounded-full bg-[#efe6d4] p-1">
+                  <button
                     type="button"
-                    className={`h-11 rounded-full ${
+                    disabled={stockBusyId === producto.id}
+                    className={`h-11 rounded-full text-sm font-semibold transition ${
                       producto.disponible
-                        ? "bg-[#9B2B2B] text-[#F9F7F2] hover:bg-[#7f2020]"
-                        : "border border-[#d9c9a3] bg-transparent text-[#6b6256]"
+                        ? "bg-[#1F8A4C] text-white shadow-sm"
+                        : "bg-transparent text-[#6b6256]"
                     }`}
-                    variant={producto.disponible ? "default" : "outline"}
                     onClick={() => void handleStock(producto, true)}
                   >
                     En stock
-                  </Button>
-                  <Button
+                  </button>
+                  <button
                     type="button"
-                    className={`h-11 rounded-full ${
+                    disabled={stockBusyId === producto.id}
+                    className={`h-11 rounded-full text-sm font-semibold transition ${
                       !producto.disponible
-                        ? "bg-[#9B2B2B] text-[#F9F7F2] hover:bg-[#7f2020]"
-                        : "border border-[#d9c9a3] bg-transparent text-[#6b6256]"
+                        ? "bg-[#9B2B2B] text-white shadow-sm"
+                        : "bg-transparent text-[#6b6256]"
                     }`}
-                    variant={!producto.disponible ? "default" : "outline"}
                     onClick={() => void handleStock(producto, false)}
                   >
-                    Sacar de stock
-                  </Button>
+                    Sin stock
+                  </button>
                 </div>
               </div>
             ))}
@@ -189,7 +204,7 @@ export default function AdminProducts() {
       ))}
 
       <Dialog open={Boolean(editing)} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent className="menu-page max-h-[90dvh] overflow-y-auto border-[#d9c9a3] text-[#1A1A1A]">
+        <DialogContent className="max-h-[90dvh] overflow-y-auto border-[#d9c9a3] bg-[#F9F7F2] text-[#1A1A1A]">
           <DialogHeader>
             <DialogTitle>Editar producto</DialogTitle>
             <DialogDescription className="text-[#6b6256]">

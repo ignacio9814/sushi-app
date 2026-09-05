@@ -2,6 +2,7 @@ import { deleteField, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { getSeedCatalog } from "@/lib/catalog";
 import { upsertLocalProducto } from "@/lib/local-catalog";
+import { saveMenuOverride } from "@/lib/menu-overrides";
 import { saveProductPhoto } from "@/lib/product-image";
 import type { Producto } from "@/types";
 
@@ -20,9 +21,14 @@ export async function saveProductChanges(next: Producto) {
   upsertLocalProducto(getSeedCatalog().productos, next);
   if (db) {
     try {
+      await saveMenuOverride(next);
+    } catch {
+      // Si Firebase no acepta el override, queda guardado en este dispositivo.
+    }
+    try {
       await updateDoc(doc(db, "productos", next.id), payloadFromProduct(next));
     } catch {
-      // Sin menú en Firebase todavía: queda guardado en este dispositivo.
+      // El menú canónico puede pedir login; el override ya cubre stock y precios.
     }
   }
 }

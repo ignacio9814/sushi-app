@@ -5,6 +5,7 @@ import {
   CATALOG_UPDATED_EVENT,
   mergeLocalProductos,
 } from "@/lib/local-catalog";
+import { applyProductPatches, subscribeMenuOverrides, type ProductPatch } from "@/lib/menu-overrides";
 import type { Categoria, Producto, SushiData } from "@/types";
 
 const seed = sushiData as SushiData;
@@ -17,7 +18,7 @@ export function getSeedCatalog() {
   };
 }
 
-function localCatalog() {
+export function getLocalCatalog() {
   const fallback = getSeedCatalog();
   return {
     categorias: fallback.categorias,
@@ -28,53 +29,65 @@ function localCatalog() {
 export function subscribeCatalog(
   onData: (data: { categorias: Categoria[]; productos: Producto[] }) => void
 ) {
-  const fallback = localCatalog();
+  const fallback = getLocalCatalog();
   onData(fallback);
 
-  const emitLocal = () => onData(localCatalog());
+  let categorias = fallback.categorias;
+  let remoteProductos: Producto[] | null = null;
+  let remotePatches: Record<string, ProductPatch> | null = null;
 
-  if (!isFirebaseConfigured || !db) {
-    if (typeof window !== "undefined") {
-      window.addEventListener(CATALOG_UPDATED_EVENT, emitLocal);
-    }
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener(CATALOG_UPDATED_EVENT, emitLocal);
-      }
-    };
+  const emit = () => {
+    const base = applyProductPatches(
+      remoteProductos ?? getSeedCatalog().productos,
+      remotePatches
+    );
+    onData({
+      categorias,
+      productos: mergeLocalProductos(base),
+    });
+  };
+
+  if (typeof window !== "undefined") {
+    window.addEventListener(CATALOG_UPDATED_EVENT, emit);
   }
 
-  let categorias = fallback.categorias;
-  let productos = fallback.productos;
+  const unsubCategorias =
+    isFirebaseConfigured && db
+      ? onSnapshot(query(collection(db, "categorias"), orderBy("orden")), (snapshot) => {
+          if (!snapshot.empty) {
+            categorias = snapshot.docs.map((docSnap) => ({
+              id: docSnap.id,
+              ...(docSnap.data() as Omit<Categoria, "id">),
+            }));
+            emit();
+          }
+        })
+      : () => {};
 
-  const unsubCategorias = onSnapshot(
-    query(collection(db, "categorias"), orderBy("orden")),
-    (snapshot) => {
-      if (!snapshot.empty) {
-        categorias = snapshot.docs.map((docSnap) => ({
-          id: docSnap.id,
-          ...(docSnap.data() as Omit<Categoria, "id">),
-        }));
-        onData({ categorias, productos });
-      }
-    }
-  );
+  const unsubProductos =
+    isFirebaseConfigured && db
+      ? onSnapshot(query(collection(db, "productos"), orderBy("nombre")), (snapshot) => {
+          if (!snapshot.empty) {
+            remoteProductos = snapshot.docs.map((docSnap) => ({
+              id: docSnap.id,
+              ...(docSnap.data() as Omit<Producto, "id">),
+            }));
+            emit();
+          }
+        })
+      : () => {};
 
-  const unsubProductos = onSnapshot(
-    query(collection(db, "productos"), orderBy("nombre")),
-    (snapshot) => {
-      if (!snapshot.empty) {
-        productos = snapshot.docs.map((docSnap) => ({
-          id: docSnap.id,
-          ...(docSnap.data() as Omit<Producto, "id">),
-        }));
-        onData({ categorias, productos });
-      }
-    }
-  );
+  const unsubOverrides = subscribeMenuOverrides((patches) => {
+    remotePatches = patches;
+    emit();
+  });
 
   return () => {
     unsubCategorias();
     unsubProductos();
+    unsubOverrides();
+    if (typeof window !== "undefined") {
+      window.removeEventListener(CATALOG_UPDATED_EVENT, emit);
+    }
   };
 }
