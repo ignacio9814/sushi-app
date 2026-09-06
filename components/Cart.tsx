@@ -18,7 +18,7 @@ import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { createOrder } from "@/lib/create-order";
 import { formatMoney } from "@/lib/money";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
-import { formatRetiroFranja } from "@/lib/retiro";
+import { formatRetiroEstimado } from "@/lib/retiro";
 import { useCart } from "@/store/useCart";
 import { isExtraProduct, type Producto } from "@/types";
 
@@ -44,8 +44,7 @@ export default function Cart() {
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [direccion, setDireccion] = useState("");
-  const [retiroDesde, setRetiroDesde] = useState("");
-  const [retiroHasta, setRetiroHasta] = useState("");
+  const [retiroHora, setRetiroHora] = useState("");
   const [notas, setNotas] = useState("");
   const [extras, setExtras] = useState<Producto[]>(() =>
     getSeedCatalog().productos.filter(
@@ -82,7 +81,7 @@ export default function Cart() {
   const hints: Record<CheckoutStep, string> = {
     comida: "Revisá cantidades y seguí al siguiente paso.",
     extras: "Opcional. Sumá palitos o salsas, o continuá sin nada más.",
-    datos: "Nombre, WhatsApp y en qué horario pasás a retirar.",
+    datos: "Nombre, WhatsApp y un horario estimado de retiro.",
   };
 
   const handleOpenChange = (next: boolean) => {
@@ -100,8 +99,8 @@ export default function Cart() {
       toast.error("Dejanos nombre y WhatsApp para confirmar el pedido.");
       return;
     }
-    if (!retiroDesde || !retiroHasta) {
-      toast.error("Completá la franja horaria de retiro.");
+    if (!retiroHora) {
+      toast.error("Indicá un horario estimado de retiro.");
       return;
     }
 
@@ -111,7 +110,7 @@ export default function Cart() {
         clienteNombre: nombre,
         clienteTelefono: telefono,
         direccion,
-        horarioRetiro: formatRetiroFranja(retiroDesde, retiroHasta),
+        horarioRetiro: formatRetiroEstimado(retiroHora),
         notas,
       });
       clearCart();
@@ -119,8 +118,7 @@ export default function Cart() {
       setNombre("");
       setTelefono("");
       setDireccion("");
-      setRetiroDesde("");
-      setRetiroHasta("");
+      setRetiroHora("");
       setNotas("");
       toast.success(`Pedido ${pedido.numeroFormateado} enviado a cocina`);
       window.location.assign(getWhatsAppUrl(pedido));
@@ -345,28 +343,17 @@ export default function Cart() {
                     onChange={(e) => setDireccion(e.target.value)}
                   />
                   <div className="space-y-2">
-                    <p className="text-sm text-[#1A1A1A]">Franja horaria de retiro</p>
+                    <p className="text-sm text-[#1A1A1A]">Horario estimado de retiro</p>
                     <CheckoutNotice title="Importante">Jueves y viernes · Pedí con anticipación</CheckoutNotice>
-                    <div className="grid grid-cols-2 gap-2">
-                      <label className="space-y-1">
-                        <span className="text-xs text-[#8a8174]">Desde</span>
-                        <Input
-                          type="time"
-                          value={retiroDesde}
-                          onChange={(e) => setRetiroDesde(e.target.value)}
-                          required
-                        />
-                      </label>
-                      <label className="space-y-1">
-                        <span className="text-xs text-[#8a8174]">Hasta</span>
-                        <Input
-                          type="time"
-                          value={retiroHasta}
-                          onChange={(e) => setRetiroHasta(e.target.value)}
-                          required
-                        />
-                      </label>
-                    </div>
+                    <label className="block space-y-1">
+                      <span className="text-xs text-[#8a8174]">Aproximadamente a las</span>
+                      <Input
+                        type="time"
+                        value={retiroHora}
+                        onChange={(e) => setRetiroHora(e.target.value)}
+                        required
+                      />
+                    </label>
                   </div>
                   <Textarea
                     placeholder="Notas para cocina (opcional)"
