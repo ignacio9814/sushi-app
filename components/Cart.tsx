@@ -139,6 +139,7 @@ export default function Cart() {
   };
 
   return (
+    <>
     <Sheet open={open} onOpenChange={handleOpenChange}>
       {totalItems > 0 && !open && (
         <button
@@ -455,5 +456,6 @@ export default function Cart() {
         )}
       </DialogContent>
     </Dialog>
+    </>
   );
 }
