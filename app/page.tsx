@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Cart from "@/components/Cart";
 import ProductCard from "@/components/ProductCard";
 import BrandLogo, { MenuDivider } from "@/components/BrandLogo";
-import { IncludeStrip, RulesBar } from "@/components/MenuNotice";
+import MenuRules from "@/components/MenuNotice";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { BRAND } from "@/lib/brand";
 import type { Categoria, Producto } from "@/types";
@@ -49,6 +49,9 @@ export default function Home() {
           >
             @{BRAND.instagram} · dudas
           </a>
+          <div className="mt-5 w-full max-w-md">
+            <MenuRules />
+          </div>
         </div>
         <div className="sticky top-0 z-40 border-y border-[#d9c9a3] bg-[#F9F7F2]/95 backdrop-blur">
           <div className="mx-auto flex max-w-2xl gap-2 overflow-x-auto px-4 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -78,7 +81,6 @@ export default function Home() {
               </button>
             ))}
           </div>
-          <RulesBar />
         </div>
       </header>
 
@@ -100,7 +102,6 @@ export default function Home() {
                     {categoria.descripcion}
                   </p>
                 )}
-                {categoria.id === "cat_infaltables" && <IncludeStrip />}
                 <MenuDivider className="mx-auto mt-4 max-w-56" />
               </div>
               <div className="space-y-4">

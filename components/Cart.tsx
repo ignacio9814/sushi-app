@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { toast } from "sonner";
 import ExtraRow from "@/components/ExtraRow";
-import { CheckoutNotice } from "@/components/MenuNotice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,9 +31,7 @@ export default function Cart() {
     removeItem,
     updateQuantity,
     getTotal,
-    getTotalPieces,
     getTotalItems,
-    includesFreeSauces,
     clearCart,
     clearExtras,
   } = useCart();
@@ -67,9 +64,7 @@ export default function Cart() {
   const foodItems = items.filter((item) => !isExtraProduct(item.producto));
   const extraItems = items.filter((item) => isExtraProduct(item.producto));
   const total = getTotal();
-  const totalPieces = getTotalPieces();
   const totalItems = getTotalItems();
-  const qualifiesForFreeSauces = includesFreeSauces();
   const stepIndex = STEPS.indexOf(step);
 
   const titles: Record<CheckoutStep, string> = {
@@ -290,11 +285,6 @@ export default function Cart() {
                     </div>
                   );
                 })}
-                {qualifiesForFreeSauces && (
-                  <CheckoutNotice title="Hasta 20 pz">
-                    Palito, soja y teriyaki
-                  </CheckoutNotice>
-                )}
               </div>
             ) : step === "extras" ? (
               <div className="space-y-3">
@@ -343,10 +333,8 @@ export default function Cart() {
                     onChange={(e) => setDireccion(e.target.value)}
                   />
                   <div className="space-y-2">
-                    <p className="text-sm text-[#1A1A1A]">Horario estimado de retiro</p>
-                    <CheckoutNotice title="Importante">Jueves y viernes · Pedí con anticipación</CheckoutNotice>
                     <label className="block space-y-1">
-                      <span className="text-xs text-[#8a8174]">Aproximadamente a las</span>
+                      <span className="text-sm text-[#1A1A1A]">Horario estimado de retiro</span>
                       <Input
                         type="time"
                         value={retiroHora}

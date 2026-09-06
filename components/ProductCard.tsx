@@ -5,7 +5,6 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import BatterDialog from "@/components/BatterDialog";
-import { DayChip } from "@/components/MenuNotice";
 import { formatMoney } from "@/lib/money";
 import { useCart } from "@/store/useCart";
 import type { Producto, Variante } from "@/types";
@@ -49,14 +48,9 @@ export default function ProductCard({ producto }: { producto: Producto }) {
         </ul>
       )}
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        <DayChip />
-        {producto.permite_rebozado && (
-          <span className="inline-flex rounded-full bg-[#F3EBD8] px-2.5 py-1 text-[11px] font-semibold tracking-wide text-[#8A6E2F]">
-            Se puede rebozar
-          </span>
-        )}
-      </div>
+      {producto.permite_rebozado && (
+        <p className="mt-2 text-[12px] text-[#8A6E2F]">Se puede rebozar</p>
+      )}
 
       {producto.variantes && producto.variantes.length > 0 ? (
         <div className="mt-3 flex gap-2">
