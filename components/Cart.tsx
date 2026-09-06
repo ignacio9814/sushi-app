@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { toast } from "sonner";
 import ExtraRow from "@/components/ExtraRow";
+import { CheckoutNotice } from "@/components/MenuNotice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -292,9 +293,9 @@ export default function Cart() {
                   );
                 })}
                 {qualifiesForFreeSauces && (
-                  <div className="rounded-2xl border border-[#d9c9a3] bg-white p-3 text-sm text-[#6b6256]">
-                    Hasta 20 piezas incluye un palito, una salsa soja y una salsa teriyaki.
-                  </div>
+                  <CheckoutNotice title="Hasta 20 pz">
+                    Palito, soja y teriyaki
+                  </CheckoutNotice>
                 )}
               </div>
             ) : step === "extras" ? (
@@ -345,9 +346,7 @@ export default function Cart() {
                   />
                   <div className="space-y-2">
                     <p className="text-sm text-[#1A1A1A]">Franja horaria de retiro</p>
-                    <p className="text-xs text-[#8a8174]">
-                      Pedí con anticipación. El retiro es solo jueves y viernes.
-                    </p>
+                    <CheckoutNotice title="Importante">Jueves y viernes · Pedí con anticipación</CheckoutNotice>
                     <div className="grid grid-cols-2 gap-2">
                       <label className="space-y-1">
                         <span className="text-xs text-[#8a8174]">Desde</span>
