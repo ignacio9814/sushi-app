@@ -5,6 +5,13 @@ import { ArrowLeft, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { toast } from "sonner";
 import ExtraRow from "@/components/ExtraRow";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -17,6 +24,7 @@ import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { createOrder } from "@/lib/create-order";
 import { formatMoney } from "@/lib/money";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
+import type { Pedido } from "@/types";
 import { formatRetiroEstimado } from "@/lib/retiro";
 import { useCart } from "@/store/useCart";
 import { isExtraProduct, type Producto } from "@/types";
@@ -36,6 +44,7 @@ export default function Cart() {
     clearExtras,
   } = useCart();
   const [open, setOpen] = useState(false);
+  const [sentPedido, setSentPedido] = useState<Pedido | null>(null);
   const [step, setStep] = useState<CheckoutStep>("comida");
   const [sending, setSending] = useState(false);
   const [nombre, setNombre] = useState("");
@@ -115,8 +124,7 @@ export default function Cart() {
       setDireccion("");
       setRetiroHora("");
       setNotas("");
-      toast.success(`Pedido ${pedido.numeroFormateado} enviado a cocina`);
-      window.location.assign(getWhatsAppUrl(pedido));
+      setSentPedido(pedido);
     } catch (error) {
       console.error(error);
       toast.error("No se pudo registrar el pedido. Intentá de nuevo.");
@@ -410,5 +418,42 @@ export default function Cart() {
         </div>
       </SheetContent>
     </Sheet>
+
+    <Dialog open={Boolean(sentPedido)} onOpenChange={(next) => !next && setSentPedido(null)}>
+      <DialogContent
+        overlayClassName="bg-black/45 backdrop-blur-none"
+        className="border-[#d9c9a3] bg-[#F9F7F2] text-[#1A1A1A] sm:max-w-md"
+      >
+        <DialogHeader className="space-y-3 text-center">
+          <DialogTitle className="font-heading text-2xl">Pedido enviado</DialogTitle>
+          <DialogDescription className="text-base text-[#6b6256]">
+            {sentPedido ? (
+              <>
+                Pedido {sentPedido.numeroFormateado}. Te confirmamos por WhatsApp.
+              </>
+            ) : null}
+          </DialogDescription>
+        </DialogHeader>
+        {sentPedido && (
+          <div className="flex flex-col gap-2">
+            <a
+              href={getWhatsAppUrl(sentPedido)}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#25D366] text-base font-semibold text-white hover:bg-[#20bd5a]"
+            >
+              Abrir WhatsApp
+            </a>
+            <Button
+              variant="ghost"
+              className="w-full text-[#6b6256]"
+              onClick={() => setSentPedido(null)}
+            >
+              Seguir en el menú
+            </Button>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -66,6 +66,11 @@ export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
   return lines.join("\n");
 }
 
+export function getWhatsAppChatUrl(phone?: string) {
+  const destino = toWhatsAppPhone(phone || "") || getWhatsAppPhone();
+  return `https://wa.me/${destino}`;
+}
+
 export function getWhatsAppUrl(pedido: Pedido, boletaUrl?: string, phone?: string) {
   const destino = toWhatsAppPhone(phone || "") || getWhatsAppPhone();
   const params = new URLSearchParams({

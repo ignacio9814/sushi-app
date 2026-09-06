@@ -7,6 +7,7 @@ import BrandLogo, { MenuDivider } from "@/components/BrandLogo";
 import MenuRules from "@/components/MenuNotice";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { BRAND } from "@/lib/brand";
+import { getWhatsAppChatUrl } from "@/lib/whatsapp";
 import type { Categoria, Producto } from "@/types";
 import { Lock } from "lucide-react";
 import Link from "next/link";
@@ -114,10 +115,22 @@ export default function Home() {
         })}
       </main>
 
-      <footer className="mx-auto flex max-w-2xl flex-col items-center gap-2 px-5 pb-10 text-center text-[11px] tracking-[0.2em] text-[#C5A059] uppercase">
-        <MenuDivider className="mb-2 w-32" />
-        <p>WhatsApp {BRAND.whatsappLocal}</p>
-        <a href={BRAND.instagramUrl} target="_blank" rel="noreferrer" className="hover:text-[#9B2B2B]">
+      <footer className="mx-auto flex max-w-2xl flex-col items-center gap-3 px-5 pb-10 text-center">
+        <MenuDivider className="mb-1 w-32" />
+        <a
+          href={getWhatsAppChatUrl()}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-6 text-sm font-semibold text-white hover:bg-[#20bd5a]"
+        >
+          WhatsApp {BRAND.whatsappLocal}
+        </a>
+        <a
+          href={BRAND.instagramUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="text-[11px] tracking-[0.2em] text-[#C5A059] uppercase hover:text-[#9B2B2B]"
+        >
           @{BRAND.instagram}
         </a>
         <Link href="/login" className="inline-flex items-center gap-1 text-[#8a8174] hover:text-[#9B2B2B]">
