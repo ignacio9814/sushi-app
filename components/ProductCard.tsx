@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plus } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import BatterDialog from "@/components/BatterDialog";
@@ -63,12 +63,17 @@ export default function ProductCard({ producto }: { producto: Producto }) {
                 onClick={() => setVariante(option)}
                 className={`flex-1 rounded-xl border px-3 py-2 text-left text-xs tracking-wide uppercase transition ${
                   selected
-                    ? "border-[#9B2B2B] bg-[#9B2B2B]/8 text-[#9B2B2B]"
-                    : "border-[#d9c9a3] text-[#6b6256]"
+                    ? "border-[#25D366] bg-[#25D366]/15 text-[#146C38]"
+                    : "border-[#d9c9a3] bg-white/80 text-[#6b6256]"
                 }`}
               >
-                <span className="block font-medium">{option.nombre}</span>
-                <span className="text-[#9B2B2B]">{formatMoney(option.precio)}</span>
+                <span className="flex items-center gap-1 font-medium">
+                  {selected && <Check className="size-3.5" />}
+                  {option.nombre}
+                </span>
+                <span className={selected ? "text-[#146C38]" : "text-[#6b6256]"}>
+                  {formatMoney(option.precio)}
+                </span>
               </button>
             );
           })}
