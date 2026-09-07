@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Cart from "@/components/Cart";
 import ProductCard from "@/components/ProductCard";
 import BrandLogo, { MenuDivider } from "@/components/BrandLogo";
-import MenuRules from "@/components/MenuNotice";
+import WelcomeGate from "@/components/WelcomeGate";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { BRAND } from "@/lib/brand";
 import { getWhatsAppChatUrl } from "@/lib/whatsapp";
@@ -13,11 +13,19 @@ import { Lock } from "lucide-react";
 import Link from "next/link";
 
 const initialCatalog = getSeedCatalog();
+const WELCOME_KEY = "sushi_welcome_seen";
 
 export default function Home() {
+  const [ready, setReady] = useState(false);
+  const [entered, setEntered] = useState(false);
   const [categorias, setCategorias] = useState<Categoria[]>(initialCatalog.categorias);
   const [productos, setProductos] = useState<Producto[]>(initialCatalog.productos);
   const [activeCategory, setActiveCategory] = useState<string>("all");
+
+  useEffect(() => {
+    setEntered(window.sessionStorage.getItem(WELCOME_KEY) === "1");
+    setReady(true);
+  }, []);
 
   useEffect(() => {
     return subscribeCatalog(({ categorias: cats, productos: prods }) => {
@@ -26,12 +34,25 @@ export default function Home() {
     });
   }, []);
 
+  const enterMenu = () => {
+    window.sessionStorage.setItem(WELCOME_KEY, "1");
+    setEntered(true);
+  };
+
   const visibleProductos = productos.filter((producto) => producto.disponible);
   const foodCategorias = categorias.filter((categoria) => categoria.id !== "cat_extras");
   const filteredCategorias =
     activeCategory === "all"
       ? foodCategorias
       : foodCategorias.filter((categoria) => categoria.id === activeCategory);
+
+  if (!ready) {
+    return <div className="min-h-screen bg-[#F9F7F2]" />;
+  }
+
+  if (!entered) {
+    return <WelcomeGate onEnter={enterMenu} />;
+  }
 
   return (
     <div className="menu-page relative min-h-screen pb-32 text-[#1A1A1A]">
@@ -50,9 +71,6 @@ export default function Home() {
           >
             @{BRAND.instagram} · dudas
           </a>
-          <div className="mt-5 w-full max-w-md">
-            <MenuRules />
-          </div>
         </div>
         <div className="sticky top-0 z-40 border-y border-[#d9c9a3] bg-[#F9F7F2]/95 backdrop-blur">
           <div className="mx-auto flex max-w-2xl gap-2 overflow-x-auto px-4 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -117,6 +135,14 @@ export default function Home() {
 
       <footer className="mx-auto flex max-w-2xl flex-col items-center gap-3 px-5 pb-10 text-center">
         <MenuDivider className="mb-1 w-32" />
+        <a
+          href={BRAND.mapsUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm text-[#1A1A1A] hover:text-[#9B2B2B]"
+        >
+          {BRAND.address}, {BRAND.city}
+        </a>
         <a
           href={getWhatsAppChatUrl()}
           target="_blank"
