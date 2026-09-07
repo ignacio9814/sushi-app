@@ -186,7 +186,7 @@ export default function Cart() {
                     <span
                       className={`flex h-6 min-w-6 items-center justify-center rounded-full ${
                         index <= stepIndex
-                          ? "bg-[#9B2B2B] text-[#F9F7F2]"
+                          ? "bg-[#C5A059] text-[#1A1A1A]"
                           : "bg-[#eee6d6] text-[#8a8174]"
                       }`}
                     >
@@ -372,7 +372,7 @@ export default function Cart() {
               {step === "comida" && (
                 <Button
                   onClick={() => setStep("extras")}
-                  className="h-14 w-full bg-[#25D366] text-base font-semibold text-white hover:bg-[#20bd5a]"
+                  className="h-14 w-full bg-[#1A1A1A] text-base font-semibold text-white hover:bg-[#333]"
                 >
                   Siguiente
                 </Button>
@@ -381,7 +381,7 @@ export default function Cart() {
                 <>
                   <Button
                     onClick={() => setStep("datos")}
-                    className="h-14 w-full bg-[#25D366] text-base font-semibold text-white hover:bg-[#20bd5a]"
+                    className="h-14 w-full bg-[#1A1A1A] text-base font-semibold text-white hover:bg-[#333]"
                   >
                     {extraItems.length > 0 ? "Siguiente" : "Siguiente, sin extras"}
                   </Button>

@@ -71,7 +71,7 @@ export default function Home() {
               onClick={() => setActiveCategory("all")}
               className={`rounded-full px-4 py-2 text-sm font-medium tracking-wide whitespace-nowrap transition ${
                 activeCategory === "all"
-                  ? "bg-[#9B2B2B] text-[#F9F7F2]"
+                  ? "bg-[#1A1A1A] text-[#F9F7F2]"
                   : "border border-[#d9c9a3] text-[#6b6256] hover:border-[#C5A059]"
               }`}
             >
@@ -84,7 +84,7 @@ export default function Home() {
                 onClick={() => setActiveCategory(categoria.id)}
                 className={`rounded-full px-4 py-2 text-sm font-medium tracking-wide whitespace-nowrap transition ${
                   activeCategory === categoria.id
-                    ? "bg-[#9B2B2B] text-[#F9F7F2]"
+                    ? "bg-[#1A1A1A] text-[#F9F7F2]"
                     : "border border-[#d9c9a3] text-[#6b6256] hover:border-[#C5A059]"
                 }`}
               >

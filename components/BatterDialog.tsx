@@ -44,7 +44,7 @@ export default function BatterDialog({ producto, variante }: BatterDialogProps) 
         render={
           <Button
             size="sm"
-            className="h-9 rounded-full bg-[#9B2B2B] px-4 text-xs tracking-[0.16em] text-[#F9F7F2] uppercase hover:bg-[#7f2020]"
+            className="h-9 rounded-full bg-[#1A1A1A] px-4 text-xs tracking-[0.16em] text-[#F9F7F2] uppercase hover:bg-[#333]"
           />
         }
       >
@@ -78,7 +78,7 @@ export default function BatterDialog({ producto, variante }: BatterDialogProps) 
           </Button>
           <Button
             onClick={handleAddBattered}
-            className="h-11 w-full bg-[#9B2B2B] text-[#F9F7F2] hover:bg-[#7f2020]"
+            className="h-11 w-full bg-[#1A1A1A] text-[#F9F7F2] hover:bg-[#333]"
           >
             <Flame className="mr-2 size-4" />
             Agregar rebozado (+{formatMoney(REBOZADO_CENTAVOS)})

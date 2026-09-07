@@ -63,15 +63,15 @@ export default function ProductCard({ producto }: { producto: Producto }) {
                 onClick={() => setVariante(option)}
                 className={`flex-1 rounded-xl border px-3 py-2 text-left text-xs tracking-wide uppercase transition ${
                   selected
-                    ? "border-[#25D366] bg-[#25D366]/15 text-[#146C38]"
+                    ? "border-[#C5A059] bg-[#C5A059]/20 text-[#1A1A1A]"
                     : "border-[#d9c9a3] bg-white/80 text-[#6b6256]"
                 }`}
               >
                 <span className="flex items-center gap-1 font-medium">
-                  {selected && <Check className="size-3.5" />}
+                  {selected && <Check className="size-3.5 text-[#C5A059]" />}
                   {option.nombre}
                 </span>
-                <span className={selected ? "text-[#146C38]" : "text-[#6b6256]"}>
+                <span className={selected ? "text-[#1A1A1A]" : "text-[#6b6256]"}>
                   {formatMoney(option.precio)}
                 </span>
               </button>
@@ -86,7 +86,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
         ) : (
           <Button
             size="sm"
-            className="h-9 rounded-full bg-[#9B2B2B] px-4 text-xs tracking-[0.16em] text-[#F9F7F2] uppercase hover:bg-[#7f2020]"
+            className="h-9 rounded-full bg-[#1A1A1A] px-4 text-xs tracking-[0.16em] text-[#F9F7F2] uppercase hover:bg-[#333]"
             onClick={() => {
               addItem(producto, variante);
               toast.success("Agregado al pedido");
