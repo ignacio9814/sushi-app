@@ -47,7 +47,7 @@ export default function WelcomeGate({ onEnter }: { onEnter: () => void }) {
         <button
           type="button"
           onClick={onEnter}
-          className="mt-8 h-12 w-full rounded-full bg-[#9B2B2B] text-sm font-semibold tracking-wide text-[#F9F7F2] uppercase hover:bg-[#7f2020]"
+          className="mt-8 h-12 w-full rounded-full bg-[#25D366] text-sm font-semibold tracking-wide text-white hover:bg-[#20bd5a]"
         >
           Ver el menú
         </button>
