@@ -40,6 +40,8 @@ export default function Cart() {
     updateQuantity,
     getTotal,
     getTotalItems,
+    getTotalPieces,
+    includesFreeSauces,
     clearCart,
     clearExtras,
   } = useCart();
@@ -74,6 +76,8 @@ export default function Cart() {
   const extraItems = items.filter((item) => isExtraProduct(item.producto));
   const total = getTotal();
   const totalItems = getTotalItems();
+  const totalPieces = getTotalPieces();
+  const includesSet = includesFreeSauces();
   const stepIndex = STEPS.indexOf(step);
 
   const titles: Record<CheckoutStep, string> = {
@@ -84,7 +88,7 @@ export default function Cart() {
 
   const hints: Record<CheckoutStep, string> = {
     comida: "Revisá cantidades y seguí al siguiente paso.",
-    extras: "Opcional. Sumá palitos o salsas, o continuá sin nada más.",
+    extras: "Opcional. Solo si querés de más.",
     datos: "Nombre, WhatsApp y un horario estimado de retiro.",
   };
 
@@ -297,9 +301,27 @@ export default function Cart() {
               </div>
             ) : step === "extras" ? (
               <div className="space-y-3">
-                <p className="text-sm text-[#6b6256]">
-                  Palitos, wasabi, salsas extra… o seguí sin nada más.
-                </p>
+                <div className="rounded-2xl border border-[#C5A059] bg-[#C5A059]/12 px-4 py-3">
+                  {includesSet ? (
+                    <>
+                      <p className="text-sm font-medium text-[#1A1A1A]">
+                        Tu pedido ({totalPieces} pz) ya incluye palito, soja y teriyaki.
+                      </p>
+                      <p className="mt-1 text-sm text-[#6b6256]">
+                        Agregá extras solo si querés de más.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-sm font-medium text-[#1A1A1A]">
+                        Pedidos de más de 20 pz no incluyen palito ni salsas.
+                      </p>
+                      <p className="mt-1 text-sm text-[#6b6256]">
+                        Podés sumarlos acá si los necesitás.
+                      </p>
+                    </>
+                  )}
+                </div>
                 <div className="rounded-2xl border border-[#d9c9a3] bg-white px-4">
                   {extras.map((producto) => (
                     <ExtraRow key={producto.id} producto={producto} />
