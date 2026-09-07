@@ -53,7 +53,6 @@ export default function Cart() {
   const [telefono, setTelefono] = useState("");
   const [direccion, setDireccion] = useState("");
   const [retiroHora, setRetiroHora] = useState("");
-  const [retiroAmPm, setRetiroAmPm] = useState<"AM" | "PM" | "">("");
   const [notas, setNotas] = useState("");
   const [extras, setExtras] = useState<Producto[]>(() =>
     getSeedCatalog().productos.filter(
@@ -108,8 +107,8 @@ export default function Cart() {
       toast.error("Dejanos nombre y WhatsApp para confirmar el pedido.");
       return;
     }
-    if (!retiroHora || !retiroAmPm) {
-      toast.error("Indicá la hora y si es AM o PM.");
+    if (!retiroHora) {
+      toast.error("Indicá el horario estimado de retiro.");
       return;
     }
 
@@ -119,7 +118,7 @@ export default function Cart() {
         clienteNombre: nombre,
         clienteTelefono: telefono,
         direccion,
-        horarioRetiro: formatRetiroEstimado(retiroHora, retiroAmPm),
+        horarioRetiro: formatRetiroEstimado(retiroHora),
         notas,
       });
       clearCart();
@@ -128,7 +127,6 @@ export default function Cart() {
       setTelefono("");
       setDireccion("");
       setRetiroHora("");
-      setRetiroAmPm("");
       setNotas("");
       setSentPedido(pedido);
     } catch (error) {
@@ -366,40 +364,25 @@ export default function Cart() {
                     onChange={(e) => setDireccion(e.target.value)}
                   />
                   <div className="space-y-2">
-                    <p className="text-sm text-[#1A1A1A]">Horario estimado de retiro</p>
-                    <div className="grid grid-cols-2 gap-2">
+                    <label className="block space-y-1">
+                      <span className="text-sm text-[#1A1A1A]">Horario estimado de retiro</span>
                       <select
                         value={retiroHora}
                         onChange={(e) => setRetiroHora(e.target.value)}
                         required
                         className="h-10 w-full rounded-xl border border-[#d9c9a3] bg-[#F9F7F2] px-3 text-sm text-[#1A1A1A]"
                       >
-                        <option value="">Hora</option>
-                        {["12", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"].map(
-                          (hora) => (
-                            <option key={hora} value={hora}>
-                              {hora}
+                        <option value="">Elegí la hora</option>
+                        {Array.from({ length: 25 }, (_, hour) => {
+                          const label = String(hour).padStart(2, "0");
+                          return (
+                            <option key={label} value={label}>
+                              {label} hs
                             </option>
-                          )
-                        )}
+                          );
+                        })}
                       </select>
-                      <div className="grid grid-cols-2 gap-1">
-                        {(["AM", "PM"] as const).map((periodo) => (
-                          <button
-                            key={periodo}
-                            type="button"
-                            onClick={() => setRetiroAmPm(periodo)}
-                            className={`h-10 rounded-xl border text-sm font-medium ${
-                              retiroAmPm === periodo
-                                ? "border-[#C5A059] bg-[#C5A059]/20 text-[#1A1A1A]"
-                                : "border-[#d9c9a3] bg-[#F9F7F2] text-[#6b6256]"
-                            }`}
-                          >
-                            {periodo}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                    </label>
                   </div>
                   <Textarea
                     placeholder="Notas para cocina (opcional)"
