@@ -9,7 +9,7 @@ import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { BRAND } from "@/lib/brand";
 import { getWhatsAppChatUrl } from "@/lib/whatsapp";
 import type { Categoria, Producto } from "@/types";
-import { Lock } from "lucide-react";
+import { Instagram, Lock } from "lucide-react";
 import Link from "next/link";
 
 const initialCatalog = getSeedCatalog();
@@ -135,25 +135,32 @@ export default function Home() {
         >
           {BRAND.address}, {BRAND.city}
         </a>
-        <a
-          href={getWhatsAppChatUrl()}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-6 text-sm font-semibold text-white hover:bg-[#20bd5a]"
+        <div className="mt-1 grid w-full max-w-sm grid-cols-2 gap-2">
+          <a
+            href={getWhatsAppChatUrl()}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex h-11 items-center justify-center rounded-full border border-[#d9c9a3] bg-white text-sm font-medium text-[#1A1A1A] hover:border-[#C5A059]"
+          >
+            WhatsApp
+          </a>
+          <a
+            href={BRAND.instagramUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex h-11 items-center justify-center gap-1.5 rounded-full border border-[#d9c9a3] bg-white text-sm font-medium text-[#1A1A1A] hover:border-[#C5A059]"
+          >
+            <Instagram className="size-4" />
+            Instagram
+          </a>
+        </div>
+        <p className="text-xs text-[#6b6256]">{BRAND.whatsappLocal}</p>
+        <Link
+          href="/login"
+          className="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-full border border-[#C5A059] px-4 text-sm font-medium text-[#1A1A1A] hover:bg-[#C5A059]/15"
         >
-          WhatsApp {BRAND.whatsappLocal}
-        </a>
-        <a
-          href={BRAND.instagramUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="text-[11px] tracking-[0.2em] text-[#C5A059] uppercase hover:text-[#9B2B2B]"
-        >
-          @{BRAND.instagram}
-        </a>
-        <Link href="/login" className="inline-flex items-center gap-1 text-[#8a8174] hover:text-[#9B2B2B]">
-          <Lock className="size-3" />
-          Cocina
+          <Lock className="size-3.5" />
+          Acceso cocina
         </Link>
       </footer>
       <Cart />
