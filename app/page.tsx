@@ -9,7 +9,7 @@ import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { BRAND } from "@/lib/brand";
 import { getWhatsAppChatUrl } from "@/lib/whatsapp";
 import type { Categoria, Producto } from "@/types";
-import { Instagram, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import Link from "next/link";
 
 const initialCatalog = getSeedCatalog();
@@ -148,9 +148,8 @@ export default function Home() {
             href={BRAND.instagramUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-11 items-center justify-center gap-1.5 rounded-full border border-[#d9c9a3] bg-white text-sm font-medium text-[#1A1A1A] hover:border-[#C5A059]"
+            className="inline-flex h-11 items-center justify-center rounded-full border border-[#d9c9a3] bg-white text-sm font-medium text-[#1A1A1A] hover:border-[#C5A059]"
           >
-            <Instagram className="size-4" />
             Instagram
           </a>
         </div>
