@@ -63,14 +63,6 @@ export default function Home() {
           <p className="mt-3 text-sm text-[#6b6256]">
             Elegí, armá el pedido y confirmá por WhatsApp
           </p>
-          <a
-            href={BRAND.instagramUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-2 text-sm tracking-wide text-[#C5A059] hover:text-[#9B2B2B]"
-          >
-            @{BRAND.instagram} · dudas
-          </a>
         </div>
         <div className="sticky top-0 z-40 border-y border-[#d9c9a3] bg-[#F9F7F2]/95 backdrop-blur">
           <div className="mx-auto flex max-w-2xl gap-2 overflow-x-auto px-4 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
