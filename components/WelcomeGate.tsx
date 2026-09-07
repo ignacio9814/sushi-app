@@ -2,6 +2,7 @@
 
 import BrandLogo, { MenuDivider } from "@/components/BrandLogo";
 import { BRAND } from "@/lib/brand";
+import { BUSINESS } from "@/lib/business";
 
 export default function WelcomeGate({ onEnter }: { onEnter: () => void }) {
   return (
@@ -38,9 +39,9 @@ export default function WelcomeGate({ onEnter }: { onEnter: () => void }) {
           </div>
           <div>
             <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
-              Hasta 20 piezas
+              Incluido
             </p>
-            <p className="mt-1 text-base font-medium">Palito, soja y teriyaki</p>
+            <p className="mt-1 text-base font-medium leading-snug">{BUSINESS.salsaTexto}</p>
           </div>
         </div>
 

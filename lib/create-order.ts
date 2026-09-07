@@ -6,10 +6,10 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
+import { includedSets } from "@/lib/business";
 import { formatPedido, itemUnitPrice, piecesOfLine } from "@/lib/money";
 import {
   REBOZADO_CENTAVOS,
-  SALSAS_MAX_PIEZAS,
   type CartItem,
   type MedioPago,
   type Pedido,
@@ -67,7 +67,7 @@ function buildPedidoDraft(
     items: pedidoItems,
     totalCentavos,
     piezas,
-    incluyeSalsasGratis: piezas > 0 && piezas <= SALSAS_MAX_PIEZAS,
+    incluyeSalsasGratis: includedSets(piezas) > 0,
     estado: "pendiente",
     pago: "pendiente",
     boletaEmitida: false,

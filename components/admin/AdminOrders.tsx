@@ -17,6 +17,7 @@ import {
 } from "@/lib/create-order";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
 import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
+import { BUSINESS, formatIncluyePedido, includedSets } from "@/lib/business";
 import { openWhatsApp } from "@/lib/whatsapp";
 import {
   MEDIO_PAGO_LABEL,
@@ -175,8 +176,12 @@ export default function AdminOrders() {
                 </li>
               ))}
             </ul>
-            {pedido.incluyeSalsasGratis && (
-              <p className="mb-3 text-xs text-[#9B2B2B]">Salsas gratis incluidas</p>
+            {pedido.piezas > 0 && (
+              <p className="mb-3 text-xs text-[#9B2B2B]">
+                {includedSets(pedido.piezas) > 1
+                  ? formatIncluyePedido(pedido.piezas)
+                  : BUSINESS.salsaTexto}
+              </p>
             )}
             {pedido.notas && (
               <p className="mb-3 text-xs text-[#6b6256]">Notas: {pedido.notas}</p>

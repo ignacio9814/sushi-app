@@ -25,6 +25,7 @@ import { createOrder } from "@/lib/create-order";
 import { formatMoney } from "@/lib/money";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 import type { Pedido } from "@/types";
+import { BUSINESS } from "@/lib/business";
 import { formatRetiroEstimado } from "@/lib/retiro";
 import { useCart } from "@/store/useCart";
 import { isExtraProduct, type Producto } from "@/types";
@@ -40,8 +41,6 @@ export default function Cart() {
     updateQuantity,
     getTotal,
     getTotalItems,
-    getTotalPieces,
-    includesFreeSauces,
     clearCart,
     clearExtras,
   } = useCart();
@@ -76,8 +75,6 @@ export default function Cart() {
   const extraItems = items.filter((item) => isExtraProduct(item.producto));
   const total = getTotal();
   const totalItems = getTotalItems();
-  const totalPieces = getTotalPieces();
-  const includesSet = includesFreeSauces();
   const stepIndex = STEPS.indexOf(step);
 
   const titles: Record<CheckoutStep, string> = {
@@ -302,25 +299,12 @@ export default function Cart() {
             ) : step === "extras" ? (
               <div className="space-y-3">
                 <div className="rounded-2xl border border-[#C5A059] bg-[#C5A059]/12 px-4 py-3">
-                  {includesSet ? (
-                    <>
-                      <p className="text-sm font-medium text-[#1A1A1A]">
-                        Tu pedido ({totalPieces} pz) ya incluye palito, soja y teriyaki.
-                      </p>
-                      <p className="mt-1 text-sm text-[#6b6256]">
-                        Agregá extras solo si querés de más.
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-sm font-medium text-[#1A1A1A]">
-                        Pedidos de más de 20 pz no incluyen palito ni salsas.
-                      </p>
-                      <p className="mt-1 text-sm text-[#6b6256]">
-                        Podés sumarlos acá si los necesitás.
-                      </p>
-                    </>
-                  )}
+                  <p className="text-sm font-medium leading-snug text-[#1A1A1A]">
+                    {BUSINESS.salsaTexto}
+                  </p>
+                  <p className="mt-1 text-sm text-[#6b6256]">
+                    Si necesitás de más, podés sumarlos acá.
+                  </p>
                 </div>
                 <div className="rounded-2xl border border-[#d9c9a3] bg-white px-4">
                   {extras.map((producto) => (

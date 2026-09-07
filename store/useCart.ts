@@ -3,7 +3,6 @@ import { persist } from "zustand/middleware";
 import { itemUnitPrice, piecesOfLine } from "@/lib/money";
 import {
   REBOZADO_CENTAVOS,
-  SALSAS_MAX_PIEZAS,
   isExtraProduct,
   type CartItem,
   type Producto,
@@ -42,7 +41,6 @@ interface CartStore {
   getTotal: () => number;
   getTotalItems: () => number;
   getTotalPieces: () => number;
-  includesFreeSauces: () => boolean;
 }
 
 export const useCart = create<CartStore>()(
@@ -130,11 +128,6 @@ export const useCart = create<CartStore>()(
 
       getTotalPieces: () => {
         return get().items.reduce((total, item) => total + piecesOfLine(item), 0);
-      },
-
-      includesFreeSauces: () => {
-        const pieces = get().getTotalPieces();
-        return pieces > 0 && pieces <= SALSAS_MAX_PIEZAS;
       },
     }),
     { name: "sushi-cart", skipHydration: true }
