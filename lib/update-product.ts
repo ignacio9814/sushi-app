@@ -1,9 +1,9 @@
 import { deleteField, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { getSeedCatalog } from "@/lib/catalog";
-import { upsertLocalProducto } from "@/lib/local-catalog";
+import { deleteLocalProducto, upsertLocalProducto } from "@/lib/local-catalog";
 import { writeLocalStock } from "@/lib/local-stock";
-import { saveMenuOverride } from "@/lib/menu-overrides";
+import { saveAddedProduct, saveDeletedProduct, saveMenuOverride } from "@/lib/menu-overrides";
 import { saveProductPhoto } from "@/lib/product-image";
 import type { Producto } from "@/types";
 
@@ -28,6 +28,17 @@ export async function saveProductChanges(next: Producto) {
   writeLocalStock(next.id, next.disponible);
   upsertLocalProducto(getSeedCatalog().productos, next);
   saveRemoteProduct(next);
+}
+
+export async function createProduct(next: Producto) {
+  writeLocalStock(next.id, next.disponible);
+  upsertLocalProducto(getSeedCatalog().productos, next);
+  void saveAddedProduct(next).catch(() => undefined);
+}
+
+export async function deleteProduct(producto: Producto) {
+  deleteLocalProducto(getSeedCatalog().productos, producto.id);
+  void saveDeletedProduct(producto.id).catch(() => undefined);
 }
 
 export async function saveProductStock(producto: Producto, disponible: boolean) {

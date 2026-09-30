@@ -12,7 +12,6 @@ import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
 import { openWhatsApp } from "@/lib/whatsapp";
 import BrandLogo, { PeruStripe } from "@/components/BrandLogo";
 import { BRAND } from "@/lib/brand";
-import { BUSINESS, formatIncluyePedido, includedSets } from "@/lib/business";
 import { MEDIO_PAGO_LABEL, type Pedido } from "@/types";
 
 export default function PedidoPage() {
@@ -100,15 +99,6 @@ export default function PedidoPage() {
             </div>
           ))}
         </div>
-
-        {pedido.piezas > 0 ? (
-          <div className="mt-4 space-y-1 text-sm text-amber-400 print:text-black">
-            <p>{BUSINESS.salsaTexto}</p>
-            {includedSets(pedido.piezas) > 1 ? (
-              <p>{formatIncluyePedido(pedido.piezas)}</p>
-            ) : null}
-          </div>
-        ) : null}
 
         {pedido.notas && (
           <p className="mt-3 text-sm text-zinc-400">Notas: {pedido.notas}</p>

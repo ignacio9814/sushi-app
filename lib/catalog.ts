@@ -6,7 +6,7 @@ import {
   mergeLocalProductos,
 } from "@/lib/local-catalog";
 import { applyLocalStock, STOCK_UPDATED_EVENT } from "@/lib/local-stock";
-import { applyProductPatches, subscribeMenuOverrides, type ProductPatch } from "@/lib/menu-overrides";
+import { applyMenuOverrides, subscribeMenuOverrides, type MenuOverridesState } from "@/lib/menu-overrides";
 import type { Categoria, Producto, SushiData } from "@/types";
 
 const seed = sushiData as SushiData;
@@ -35,12 +35,12 @@ export function subscribeCatalog(
 
   let categorias = fallback.categorias;
   let remoteProductos: Producto[] | null = null;
-  let remotePatches: Record<string, ProductPatch> | null = null;
+  let remoteOverrides: MenuOverridesState | null = null;
 
   const emit = () => {
-    const base = applyProductPatches(
+    const base = applyMenuOverrides(
       remoteProductos ?? getSeedCatalog().productos,
-      remotePatches
+      remoteOverrides
     );
     onData({
       categorias,
@@ -79,8 +79,8 @@ export function subscribeCatalog(
         })
       : () => {};
 
-  const unsubOverrides = subscribeMenuOverrides((patches) => {
-    remotePatches = patches;
+  const unsubOverrides = subscribeMenuOverrides((overrides) => {
+    remoteOverrides = overrides;
     emit();
   });
 

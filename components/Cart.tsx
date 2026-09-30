@@ -25,8 +25,8 @@ import { createOrder } from "@/lib/create-order";
 import { formatMoney } from "@/lib/money";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 import type { Pedido } from "@/types";
-import { BUSINESS } from "@/lib/business";
-import { formatRetiroEstimado } from "@/lib/retiro";
+import { BUSINESS, formatIncluyeItems } from "@/lib/business";
+import { formatRetiroEstimado, RETIRO_HORAS } from "@/lib/retiro";
 import { useCart } from "@/store/useCart";
 import { isExtraProduct, type Producto } from "@/types";
 
@@ -41,6 +41,7 @@ export default function Cart() {
     updateQuantity,
     getTotal,
     getTotalItems,
+    getTotalPieces,
     clearCart,
     clearExtras,
   } = useCart();
@@ -75,6 +76,8 @@ export default function Cart() {
   const extraItems = items.filter((item) => isExtraProduct(item.producto));
   const total = getTotal();
   const totalItems = getTotalItems();
+  const totalPieces = getTotalPieces();
+  const incluyeItems = formatIncluyeItems(totalPieces);
   const stepIndex = STEPS.indexOf(step);
 
   const titles: Record<CheckoutStep, string> = {
@@ -85,8 +88,8 @@ export default function Cart() {
 
   const hints: Record<CheckoutStep, string> = {
     comida: "Revisá cantidades y seguí al siguiente paso.",
-    extras: "Opcional. Solo si querés de más.",
-    datos: "Nombre, WhatsApp y un horario estimado de retiro.",
+    extras: "¿Te gustaría agregar algo más?",
+    datos: "Nombre, WhatsApp y un horario de retiro (20 a 22 hs).",
   };
 
   const handleOpenChange = (next: boolean) => {
@@ -298,12 +301,33 @@ export default function Cart() {
               </div>
             ) : step === "extras" ? (
               <div className="space-y-3">
-                <div className="rounded-2xl border border-[#C5A059] bg-[#C5A059]/12 px-4 py-3">
-                  <p className="text-sm font-medium leading-snug text-[#1A1A1A]">
+                <div className="rounded-2xl border-2 border-[#C5A059] bg-[#C5A059]/18 px-4 py-4">
+                  <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
+                    Tu pedido ya incluye
+                  </p>
+                  {totalPieces > 0 && (
+                    <ul className="mt-2 space-y-1 text-base font-medium text-[#1A1A1A]">
+                      {incluyeItems.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  )}
+                  <p
+                    className={
+                      totalPieces > 0
+                        ? "mt-2 text-sm text-[#6b6256]"
+                        : "mt-2 text-base font-medium leading-snug text-[#1A1A1A]"
+                    }
+                  >
                     {BUSINESS.salsaTexto}
                   </p>
-                  <p className="mt-1 text-sm text-[#6b6256]">
-                    Si necesitás de más, podés sumarlos acá.
+                </div>
+                <div className="space-y-1">
+                  <p className="font-heading text-lg text-[#1A1A1A]">
+                    ¿Te gustaría agregar algo más?
+                  </p>
+                  <p className="text-sm text-[#6b6256]">
+                    Es opcional. Si no, seguí al siguiente paso.
                   </p>
                 </div>
                 <div className="rounded-2xl border border-[#d9c9a3] bg-white px-4">
@@ -349,7 +373,7 @@ export default function Cart() {
                   />
                   <div className="space-y-2">
                     <label className="block space-y-1">
-                      <span className="text-sm text-[#1A1A1A]">Horario estimado de retiro</span>
+                      <span className="text-sm text-[#1A1A1A]">Horario de retiro (20 a 22 hs)</span>
                       <select
                         value={retiroHora}
                         onChange={(e) => setRetiroHora(e.target.value)}
@@ -357,14 +381,11 @@ export default function Cart() {
                         className="h-10 w-full rounded-xl border border-[#d9c9a3] bg-[#F9F7F2] px-3 text-sm text-[#1A1A1A]"
                       >
                         <option value="">Elegí la hora</option>
-                        {Array.from({ length: 25 }, (_, hour) => {
-                          const label = String(hour).padStart(2, "0");
-                          return (
-                            <option key={label} value={label}>
-                              {label} hs
-                            </option>
-                          );
-                        })}
+                        {RETIRO_HORAS.map((hora) => (
+                          <option key={hora} value={hora}>
+                            {hora} hs
+                          </option>
+                        ))}
                       </select>
                     </label>
                   </div>
@@ -399,7 +420,7 @@ export default function Cart() {
                     onClick={() => setStep("datos")}
                     className="h-14 w-full bg-[#1A1A1A] text-base font-semibold text-white hover:bg-[#333]"
                   >
-                    {extraItems.length > 0 ? "Siguiente" : "Siguiente, sin extras"}
+                    {extraItems.length > 0 ? "Siguiente" : "No, continuar"}
                   </Button>
                   {extraItems.length > 0 && (
                     <Button

@@ -1,6 +1,5 @@
 import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
 import { BRAND } from "@/lib/brand";
-import { BUSINESS, formatIncluyePedido, includedSets } from "@/lib/business";
 import { MEDIO_PAGO_LABEL, type Pedido } from "@/types";
 
 export function toWhatsAppPhone(value: string) {
@@ -43,14 +42,6 @@ export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
       `${index + 1}. ${item.cantidad}x ${item.nombre}${variante}${rebozado} — ${formatMoney(item.subtotal)}`
     );
   });
-
-  const incluye = formatIncluyePedido(pedido.piezas);
-  if (incluye) {
-    lines.push("", BUSINESS.salsaTexto);
-    if (includedSets(pedido.piezas) > 1) {
-      lines.push(incluye);
-    }
-  }
 
   if (pedido.notas) {
     lines.push("", `Notas: ${pedido.notas}`);

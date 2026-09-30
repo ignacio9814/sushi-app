@@ -11,7 +11,7 @@ export default function WelcomeGate({ onEnter }: { onEnter: () => void }) {
         <BrandLogo priority size="md" />
         <MenuDivider className="mt-5 w-36" />
         <p className="mt-6 text-sm font-semibold tracking-[0.18em] text-[#9B2B2B] uppercase">
-          Antes de pedir
+          Pedidos con anticipación
         </p>
 
         <div className="mt-5 w-full space-y-4 rounded-2xl border border-[#d9c9a3] bg-white px-5 py-5 text-left">
@@ -20,7 +20,7 @@ export default function WelcomeGate({ onEnter }: { onEnter: () => void }) {
               Retiro
             </p>
             <p className="mt-1 text-base font-medium">Solo jueves y viernes</p>
-            <p className="mt-0.5 text-sm text-[#6b6256]">Pedí con anticipación</p>
+            <p className="mt-0.5 text-sm text-[#6b6256]">De 20 a 22 hs</p>
           </div>
           <div>
             <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
