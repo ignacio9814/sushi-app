@@ -24,15 +24,16 @@ import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { createOrder } from "@/lib/create-order";
 import { formatMoney } from "@/lib/money";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
-import type { Pedido } from "@/types";
+import { MEDIO_PAGO_LABEL, type MedioPago, type Pedido } from "@/types";
 import { BUSINESS, formatIncluyeItems } from "@/lib/business";
 import { formatRetiroEstimado, RETIRO_HORAS } from "@/lib/retiro";
 import { useCart } from "@/store/useCart";
 import { isExtraProduct, type Producto } from "@/types";
 
-type CheckoutStep = "comida" | "extras" | "datos";
+type CheckoutStep = "comida" | "extras" | "datos" | "pago";
 
-const STEPS: CheckoutStep[] = ["comida", "extras", "datos"];
+const STEPS: CheckoutStep[] = ["comida", "extras", "datos", "pago"];
+const PAGOS_CLIENTE: MedioPago[] = ["efectivo", "transferencia"];
 
 export default function Cart() {
   const {
@@ -53,6 +54,7 @@ export default function Cart() {
   const [telefono, setTelefono] = useState("");
   const [direccion, setDireccion] = useState("");
   const [retiroHora, setRetiroHora] = useState("");
+  const [medioPago, setMedioPago] = useState<MedioPago | "">("");
   const [notas, setNotas] = useState("");
   const [extras, setExtras] = useState<Producto[]>(() =>
     getSeedCatalog().productos.filter(
@@ -84,17 +86,22 @@ export default function Cart() {
     comida: "Tu pedido",
     extras: "Extras",
     datos: "Tus datos",
+    pago: "¿Cómo vas a pagar?",
   };
 
   const hints: Record<CheckoutStep, string> = {
     comida: "Revisá cantidades y seguí al siguiente paso.",
     extras: "¿Te gustaría agregar algo más?",
     datos: "Nombre, WhatsApp y un horario de retiro (20 a 22 hs).",
+    pago: "Elegí una opción. Sin esto no se puede enviar el pedido.",
   };
 
   const handleOpenChange = (next: boolean) => {
     setOpen(next);
-    if (next) setStep("comida");
+    if (next) {
+      setStep("comida");
+      setMedioPago("");
+    }
   };
 
   const handleCheckout = async () => {
@@ -109,6 +116,12 @@ export default function Cart() {
     }
     if (!retiroHora) {
       toast.error("Indicá el horario estimado de retiro.");
+      setStep("datos");
+      return;
+    }
+    if (medioPago !== "efectivo" && medioPago !== "transferencia") {
+      toast.error("Elegí si vas a pagar en efectivo o por transferencia.");
+      setStep("pago");
       return;
     }
 
@@ -120,6 +133,7 @@ export default function Cart() {
         direccion,
         horarioRetiro: formatRetiroEstimado(retiroHora),
         notas,
+        medioPago,
       });
       clearCart();
       setOpen(false);
@@ -127,6 +141,7 @@ export default function Cart() {
       setTelefono("");
       setDireccion("");
       setRetiroHora("");
+      setMedioPago("");
       setNotas("");
       setSentPedido(pedido);
     } catch (error) {
@@ -140,6 +155,7 @@ export default function Cart() {
   const goBack = () => {
     if (step === "extras") setStep("comida");
     if (step === "datos") setStep("extras");
+    if (step === "pago") setStep("datos");
   };
 
   return (
@@ -184,7 +200,7 @@ export default function Cart() {
               )}
             </SheetTitle>
             {foodItems.length > 0 && (
-              <ol className="mt-3 flex items-center gap-2 text-xs">
+              <ol className="mt-3 flex items-center gap-1.5 overflow-x-auto text-[11px] [scrollbar-width:none] sm:gap-2 sm:text-xs [&::-webkit-scrollbar]:hidden">
                 {STEPS.map((id, index) => (
                   <li key={id} className="flex flex-1 items-center gap-2">
                     <span
@@ -201,7 +217,13 @@ export default function Cart() {
                         index <= stepIndex ? "font-medium text-[#1A1A1A]" : "text-[#8a8174]"
                       }
                     >
-                      {id === "comida" ? "Pedido" : id === "extras" ? "Extras" : "Datos"}
+                      {id === "comida"
+                        ? "Pedido"
+                        : id === "extras"
+                          ? "Extra"
+                          : id === "datos"
+                            ? "Datos"
+                            : "Pago"}
                     </span>
                     {index < STEPS.length - 1 && (
                       <span className="h-px flex-1 bg-[#d9c9a3]" />
@@ -336,7 +358,7 @@ export default function Cart() {
                   ))}
                 </div>
               </div>
-            ) : (
+            ) : step === "datos" ? (
               <div className="space-y-3">
                 {extraItems.length > 0 && (
                   <div className="rounded-2xl border border-[#d9c9a3] bg-white p-3 text-sm text-[#1A1A1A]">
@@ -397,6 +419,51 @@ export default function Cart() {
                   />
                 </div>
               </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="rounded-2xl border-2 border-[#C5A059] bg-[#C5A059]/18 px-4 py-4">
+                  <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
+                    Obligatorio
+                  </p>
+                  <p className="mt-2 font-heading text-xl leading-snug text-[#1A1A1A]">
+                    ¿Vas a pagar en efectivo o por transferencia?
+                  </p>
+                  <p className="mt-2 text-sm text-[#6b6256]">
+                    Tocá una opción. El pedido no se envía hasta que elijas.
+                  </p>
+                </div>
+                <div className="grid gap-3">
+                  {PAGOS_CLIENTE.map((opcion) => {
+                    const selected = medioPago === opcion;
+                    return (
+                      <button
+                        key={opcion}
+                        type="button"
+                        onClick={() => setMedioPago(opcion)}
+                        className={`rounded-2xl border-2 px-4 py-5 text-left transition ${
+                          selected
+                            ? "border-[#C5A059] bg-[#C5A059]/20"
+                            : "border-[#d9c9a3] bg-white"
+                        }`}
+                      >
+                        <p className="font-heading text-2xl text-[#1A1A1A]">
+                          {MEDIO_PAGO_LABEL[opcion]}
+                        </p>
+                        <p className="mt-1 text-sm text-[#6b6256]">
+                          {opcion === "efectivo"
+                            ? "Pagás al retirar en el local."
+                            : "El local te pasa los datos por WhatsApp."}
+                        </p>
+                        {selected && (
+                          <p className="mt-3 text-sm font-semibold text-[#9B2B2B]">
+                            Elegido
+                          </p>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             )}
           </div>
 
@@ -438,13 +505,42 @@ export default function Cart() {
               )}
               {step === "datos" && (
                 <Button
-                  onClick={handleCheckout}
-                  disabled={sending}
-                  variant="outline"
-                  className="h-14 w-full border-transparent bg-[#25D366] text-base font-semibold text-white hover:bg-[#20bd5a]"
+                  onClick={() => {
+                    if (!nombre.trim() || !telefono.trim()) {
+                      toast.error("Dejanos nombre y WhatsApp para confirmar el pedido.");
+                      return;
+                    }
+                    if (!retiroHora) {
+                      toast.error("Indicá el horario estimado de retiro.");
+                      return;
+                    }
+                    setStep("pago");
+                  }}
+                  className="h-14 w-full bg-[#1A1A1A] text-base font-semibold text-white hover:bg-[#333]"
                 >
-                  {sending ? "Enviando..." : "Enviar pedido por WhatsApp"}
+                  Siguiente
                 </Button>
+              )}
+              {step === "pago" && (
+                <>
+                  {!medioPago && (
+                    <p className="text-center text-sm font-medium text-[#9B2B2B]">
+                      Elegí efectivo o transferencia para continuar
+                    </p>
+                  )}
+                  <Button
+                    onClick={handleCheckout}
+                    disabled={sending || !medioPago}
+                    variant="outline"
+                    className="h-14 w-full border-transparent bg-[#25D366] text-base font-semibold text-white hover:bg-[#20bd5a] disabled:bg-[#9ad5b3] disabled:text-white"
+                  >
+                    {sending
+                      ? "Enviando..."
+                      : medioPago
+                        ? `Enviar · ${MEDIO_PAGO_LABEL[medioPago]}`
+                        : "Enviar pedido por WhatsApp"}
+                  </Button>
+                </>
               )}
               {step === "comida" && (
                 <Button onClick={clearCart} variant="ghost" className="w-full text-[#8a8174]">
@@ -467,7 +563,11 @@ export default function Cart() {
           <DialogDescription className="text-base text-[#6b6256]">
             {sentPedido ? (
               <>
-                Pedido {sentPedido.numeroFormateado}. Te confirmamos por WhatsApp.
+                Pedido {sentPedido.numeroFormateado}
+                {sentPedido.medioPago
+                  ? ` · ${MEDIO_PAGO_LABEL[sentPedido.medioPago]}`
+                  : ""}
+                . Te confirmamos por WhatsApp.
               </>
             ) : null}
           </DialogDescription>

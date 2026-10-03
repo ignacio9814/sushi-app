@@ -151,6 +151,11 @@ export default function AdminOrders() {
                 {pedido.horarioRetiro && (
                   <p className="text-sm text-[#9B2B2B]">Retiro: {pedido.horarioRetiro}</p>
                 )}
+                {pedido.medioPago && !emitida && (
+                  <p className="text-sm font-medium text-[#1A1A1A]">
+                    Paga: {MEDIO_PAGO_LABEL[pedido.medioPago]}
+                  </p>
+                )}
                 <p className="text-xs text-[#8a8174]">
                   {new Date(pedido.createdAt).toLocaleString("es-AR")}
                 </p>

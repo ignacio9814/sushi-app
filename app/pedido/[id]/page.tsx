@@ -106,9 +106,11 @@ export default function PedidoPage() {
 
         <div className="mt-6 flex items-end justify-between border-t border-zinc-800 pt-4 print:border-black">
           <p className="text-sm text-zinc-400 print:text-zinc-600">
-            {emitida && pedido.medioPago
-              ? `Pago: ${MEDIO_PAGO_LABEL[pedido.medioPago]}`
-              : "Pago: pendiente de cierre"}
+            {pedido.medioPago
+              ? `Pago: ${MEDIO_PAGO_LABEL[pedido.medioPago]}${emitida ? " · cobrado" : ""}`
+              : emitida
+                ? "Pago: cobrado"
+                : "Pago: pendiente"}
           </p>
           <p className="font-heading text-2xl text-amber-400 print:text-black">
             {formatMoney(pedido.totalCentavos)}

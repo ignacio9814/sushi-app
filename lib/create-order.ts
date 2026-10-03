@@ -24,6 +24,7 @@ export interface CheckoutPayload {
   direccion?: string;
   horarioRetiro?: string;
   notas?: string;
+  medioPago: MedioPago;
 }
 
 function buildPedidoDraft(
@@ -70,6 +71,7 @@ function buildPedidoDraft(
     incluyeSalsasGratis: includedSets(piezas) > 0,
     estado: "pendiente",
     pago: "pendiente",
+    medioPago: payload.medioPago,
     boletaEmitida: false,
   };
 }

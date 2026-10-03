@@ -33,6 +33,10 @@ export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
     lines.push(`Retiro: ${pedido.horarioRetiro}`);
   }
 
+  if (pedido.medioPago) {
+    lines.push(`Pago: *${MEDIO_PAGO_LABEL[pedido.medioPago]}*`);
+  }
+
   lines.push("", "*Detalle*");
 
   pedido.items.forEach((item, index) => {
@@ -51,6 +55,8 @@ export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
 
   if (emitida && pedido.medioPago) {
     lines.push(`Pago: ${MEDIO_PAGO_LABEL[pedido.medioPago]} · COBRADO`);
+  } else if (pedido.medioPago) {
+    lines.push(`Pago: ${MEDIO_PAGO_LABEL[pedido.medioPago]}`);
   } else {
     lines.push("Pago: a coordinar");
   }
