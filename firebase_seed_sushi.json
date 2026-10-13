@@ -6,7 +6,7 @@
     "categorias": [
         {
             "id": "cat_para_ellas",
-            "nombre": "Para ellas",
+            "nombre": "Día de la Madre",
             "descripcion": "Disponible del 13 al 18 de octubre. Combo de 30 piezas y clase de sushi a coordinar.",
             "orden": 0
         },
@@ -44,7 +44,7 @@
         {
             "id": "p_combo_ellas",
             "categoria_id": "cat_para_ellas",
-            "nombre": "Combo especial para ellas",
+            "nombre": "Combo Día de la Madre",
             "descripcion": "10 pz salmón, mango, queso crema y cobertura de láminas de mango · 10 pz langostino rebozado, palta, queso crema y cobertura de láminas de salmón ahumado · 10 pz pasta de cangrejo y palta, rebozado y frito",
             "precio": 55000,
             "piezas": 30,

@@ -210,7 +210,7 @@ export default function AdminProducts() {
       </p>
       {productos.some((producto) => isClaseProduct(producto) && !(producto.precio && producto.precio > 0)) && (
         <div className="rounded-2xl border-2 border-[#C5A059] bg-[#C5A059]/15 px-4 py-3 text-sm text-[#1A1A1A]">
-          Definí el precio de la clase de sushi en <span className="font-semibold">Para ellas</span> para
+          Definí el precio de la clase de sushi en <span className="font-semibold">Día de la Madre</span> para
           que el cliente la pueda comprar.
         </div>
       )}

@@ -47,11 +47,11 @@ export default function WelcomeGate({ onEnter }: { onEnter: () => void }) {
           {isPromoActiva() && (
             <div>
               <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
-                Para ellas
+                Día de la Madre
               </p>
               <p className="mt-1 text-base font-medium leading-snug">
-                Combo especial del 13 al 18 de octubre. Incluye {PROMO.discountPct}% en tu próxima
-                compra, válido {PROMO.claimDays} días.
+                Combo Día de la Madre, del 13 al 18 de octubre. Incluye {PROMO.discountPct}% en tu
+                próxima compra, válido {PROMO.claimDays} días.
               </p>
             </div>
           )}

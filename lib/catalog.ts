@@ -7,6 +7,7 @@ import {
 } from "@/lib/local-catalog";
 import { applyLocalStock, STOCK_UPDATED_EVENT } from "@/lib/local-stock";
 import { applyMenuOverrides, subscribeMenuOverrides, type MenuOverridesState } from "@/lib/menu-overrides";
+import { PROMO } from "@/lib/promo";
 import type { Categoria, Producto, SushiData } from "@/types";
 
 const seed = sushiData as SushiData;
@@ -14,6 +15,21 @@ const seed = sushiData as SushiData;
 function mergeById<T extends { id: string }>(primary: T[], extra: T[]) {
   const ids = new Set(primary.map((item) => item.id));
   return [...primary, ...extra.filter((item) => !ids.has(item.id))];
+}
+
+function applyPromoNames(categorias: Categoria[], productos: Producto[]) {
+  return {
+    categorias: categorias.map((categoria) =>
+      categoria.id === PROMO.categoriaId
+        ? { ...categoria, nombre: "Día de la Madre" }
+        : categoria
+    ),
+    productos: productos.map((producto) =>
+      producto.id === PROMO.comboId
+        ? { ...producto, nombre: "Combo Día de la Madre" }
+        : producto
+    ),
+  };
 }
 
 export function getSeedCatalog() {
@@ -26,10 +42,10 @@ export function getSeedCatalog() {
 
 export function getLocalCatalog() {
   const fallback = getSeedCatalog();
-  return {
-    categorias: fallback.categorias,
-    productos: applyLocalStock(mergeLocalProductos(fallback.productos)),
-  };
+  return applyPromoNames(
+    fallback.categorias,
+    applyLocalStock(mergeLocalProductos(fallback.productos))
+  );
 }
 
 export function subscribeCatalog(
@@ -51,10 +67,12 @@ export function subscribeCatalog(
       mergeById(remoteProductos ?? seedCatalog.productos, seedCatalog.productos),
       remoteOverrides
     );
-    onData({
-      categorias: mergedCategorias,
-      productos: applyLocalStock(mergeLocalProductos(base)),
-    });
+    onData(
+      applyPromoNames(
+        mergedCategorias,
+        applyLocalStock(mergeLocalProductos(base))
+      )
+    );
   };
 
   if (typeof window !== "undefined") {
