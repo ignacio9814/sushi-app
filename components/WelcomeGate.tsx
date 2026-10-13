@@ -20,7 +20,7 @@ export default function WelcomeGate({ onEnter }: { onEnter: () => void }) {
             <img
               src={PROMO.fotoClase}
               alt="Clase de sushi"
-              className="h-56 w-full object-cover object-top"
+              className="h-64 w-full object-cover object-[center_20%]"
             />
             <div className="space-y-2 px-5 py-4">
               <p className="text-[11px] font-semibold tracking-[0.18em] text-[#C5A059] uppercase">
