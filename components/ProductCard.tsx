@@ -39,10 +39,10 @@ export default function ProductCard({ producto }: { producto: Producto }) {
     >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/80 via-[#F9F7F2]/20 to-[#C5A059]/15" />
       <div className="relative">
-      {imagen && (
+      {(clase || imagen) && (
         <div className="mb-4 overflow-hidden rounded-2xl border border-[#d9c9a3]">
           <img
-            src={imagen}
+            src={clase ? PROMO.fotoClase : imagen}
             alt={producto.nombre}
             className={clase ? "h-80 w-full object-cover object-top" : "h-56 w-full object-cover object-center"}
           />

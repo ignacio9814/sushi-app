@@ -9,7 +9,7 @@ export const PROMO = {
   comboPrecio: 55000,
   ventaTexto: "13 al 18 de octubre",
   reclamoTexto: "30 días para reclamar",
-  fotoClase: "/clase-sushi.jpg?v=madre",
+  fotoClase: "/clase-sushi.jpg?v=madre2",
 } as const;
 
 export type VoucherTipo = "desc15" | "clase";
@@ -24,12 +24,17 @@ export function isPromoActiva(today = todayArgentina()) {
   return today >= PROMO.start && today <= PROMO.end;
 }
 
-export function isComboProduct(producto: { id?: string }) {
-  return producto.id === PROMO.comboId;
+export function isComboProduct(producto: { id?: string; promo?: string; nombre?: string }) {
+  return producto.id === PROMO.comboId || producto.promo === "combo";
 }
 
-export function isClaseProduct(producto: { id?: string }) {
-  return producto.id === PROMO.claseId;
+export function isClaseProduct(producto: { id?: string; promo?: string; nombre?: string }) {
+  if (producto.id === PROMO.claseId || producto.promo === "clase") return true;
+  return /clase\s+de\s+sushi/i.test(producto.nombre || "");
+}
+
+export function isFoodProduct(producto: { id?: string; promo?: string; nombre?: string; categoria_id?: string }) {
+  return producto.categoria_id !== "cat_extras" && !isClaseProduct(producto);
 }
 
 export function isPromoCategory(categoriaId: string) {

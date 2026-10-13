@@ -26,7 +26,14 @@ import { formatMoney } from "@/lib/money";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 import { loadRemoteBeneficios, validateDiscountCode } from "@/lib/beneficios";
 import { BUSINESS, formatIncluyeItems } from "@/lib/business";
-import { discountFromTotal, formatFechaCorta, getClaseVoucherUrl, PROMO } from "@/lib/promo";
+import {
+  discountFromTotal,
+  formatFechaCorta,
+  getClaseVoucherUrl,
+  isClaseProduct,
+  isFoodProduct,
+  PROMO,
+} from "@/lib/promo";
 import { formatRetiroEstimado, RETIRO_HORAS } from "@/lib/retiro";
 import { MEDIO_PAGO_LABEL, type MedioPago, type Pedido } from "@/types";
 import { useCart } from "@/store/useCart";
@@ -78,15 +85,19 @@ export default function Cart() {
     });
   }, []);
 
-  const foodItems = items.filter((item) => !isExtraProduct(item.producto));
+  const foodItems = items.filter((item) => isFoodProduct(item.producto));
+  const pedidoItems = items.filter((item) => !isExtraProduct(item.producto));
   const extraItems = items.filter((item) => isExtraProduct(item.producto));
+  const hasFood = foodItems.length > 0;
+  const hasPedido = pedidoItems.length > 0;
+  const visibleSteps = hasFood ? STEPS : STEPS.filter((id) => id !== "extras");
   const bruto = getTotal();
   const descuento = codigoAplicado ? discountFromTotal(bruto) : 0;
   const total = bruto - descuento;
   const totalItems = getTotalItems();
   const totalPieces = getTotalPieces();
   const incluyeItems = formatIncluyeItems(totalPieces);
-  const stepIndex = STEPS.indexOf(step);
+  const stepIndex = visibleSteps.indexOf(step);
 
   const titles: Record<CheckoutStep, string> = {
     comida: "Tu pedido",
@@ -98,7 +109,9 @@ export default function Cart() {
   const hints: Record<CheckoutStep, string> = {
     comida: "Revisá cantidades y seguí al siguiente paso.",
     extras: "¿Te gustaría agregar algo más?",
-    datos: "Nombre, WhatsApp y un horario de retiro (20 a 22 hs).",
+    datos: hasFood
+      ? "Nombre, WhatsApp y un horario de retiro (20 a 22 hs)."
+      : "Nombre y WhatsApp. La fecha de la clase se coordina después.",
     pago: "Elegí una opción. Sin esto no se puede enviar el pedido.",
   };
 
@@ -111,8 +124,8 @@ export default function Cart() {
   };
 
   const handleCheckout = async () => {
-    if (foodItems.length === 0) {
-      toast.error("Elegí al menos un plato antes de enviar.");
+    if (!hasPedido) {
+      toast.error("Elegí el combo, un plato o la clase.");
       setStep("comida");
       return;
     }
@@ -120,7 +133,7 @@ export default function Cart() {
       toast.error("Dejanos nombre y WhatsApp para confirmar el pedido.");
       return;
     }
-    if (!retiroHora) {
+    if (hasFood && !retiroHora) {
       toast.error("Indicá el horario estimado de retiro.");
       setStep("datos");
       return;
@@ -137,7 +150,9 @@ export default function Cart() {
         clienteNombre: nombre,
         clienteTelefono: telefono,
         direccion,
-        horarioRetiro: formatRetiroEstimado(retiroHora),
+        horarioRetiro: hasFood
+          ? formatRetiroEstimado(retiroHora)
+          : "clase a coordinar",
         notas,
         medioPago,
         codigoBeneficio: codigoAplicado || undefined,
@@ -163,7 +178,7 @@ export default function Cart() {
 
   const goBack = () => {
     if (step === "extras") setStep("comida");
-    if (step === "datos") setStep("extras");
+    if (step === "datos") setStep(hasFood ? "extras" : "comida");
     if (step === "pago") setStep("datos");
   };
 
@@ -198,19 +213,19 @@ export default function Cart() {
         <div className="flex min-h-0 flex-1 flex-col bg-[#F9F7F2]">
           <SheetHeader className="shrink-0 border-b border-[#d9c9a3] bg-[#F9F7F2]">
             <SheetTitle className="flex items-center gap-2 text-xl">
-              {step !== "comida" && foodItems.length > 0 && (
+              {step !== "comida" && hasPedido && (
                 <Button variant="ghost" size="icon-sm" onClick={goBack}>
                   <ArrowLeft className="size-4" />
                 </Button>
               )}
               {titles[step]}
-              {step === "comida" && foodItems.length > 0 && (
-                <span className="text-[#9B2B2B]">({foodItems.length})</span>
+              {step === "comida" && hasPedido && (
+                <span className="text-[#9B2B2B]">({pedidoItems.length})</span>
               )}
             </SheetTitle>
-            {foodItems.length > 0 && (
+            {hasPedido && (
               <ol className="mt-3 flex items-center gap-1.5 overflow-x-auto text-[11px] [scrollbar-width:none] sm:gap-2 sm:text-xs [&::-webkit-scrollbar]:hidden">
-                {STEPS.map((id, index) => (
+                {visibleSteps.map((id, index) => (
                   <li key={id} className="flex flex-1 items-center gap-2">
                     <span
                       className={`flex h-6 min-w-6 items-center justify-center rounded-full ${
@@ -234,27 +249,27 @@ export default function Cart() {
                             ? "Datos"
                             : "Pago"}
                     </span>
-                    {index < STEPS.length - 1 && (
+                    {index < visibleSteps.length - 1 && (
                       <span className="h-px flex-1 bg-[#d9c9a3]" />
                     )}
                   </li>
                 ))}
               </ol>
             )}
-            {foodItems.length > 0 && (
+            {hasPedido && (
               <p className="mt-3 text-sm text-[#6b6256]">{hints[step]}</p>
             )}
           </SheetHeader>
 
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[#F9F7F2] p-4 [-webkit-overflow-scrolling:touch]">
-            {foodItems.length === 0 ? (
+            {!hasPedido ? (
               <div className="flex h-full flex-col items-center justify-center text-[#8a8174]">
                 <ShoppingBag className="mb-3 size-10 opacity-40" />
-                <p>Elegí primero tu comida</p>
+                <p>Elegí primero tu comida o la clase</p>
               </div>
             ) : step === "comida" ? (
               <div className="space-y-3">
-                {foodItems.map((item) => {
+                {pedidoItems.map((item) => {
                   const unit = item.variante?.precio || item.producto.precio || 0;
                   const rebozado = item.conRebozado ? 3000 : 0;
                   const itemTotal = (unit + rebozado) * item.cantidad;
@@ -265,7 +280,14 @@ export default function Cart() {
                       className="rounded-2xl border border-[#d9c9a3] bg-white p-3"
                     >
                       <div className="mb-2 flex items-start justify-between gap-2">
-                        <div>
+                        <div className="min-w-0">
+                          {isClaseProduct(item.producto) && (
+                            <img
+                              src={PROMO.fotoClase}
+                              alt=""
+                              className="mb-2 h-24 w-full rounded-xl object-cover object-top"
+                            />
+                          )}
                           <p className="font-heading text-base">{item.producto.nombre}</p>
                           {item.variante && (
                             <p className="text-sm text-[#6b6256]">{item.variante.nombre}</p>
@@ -402,24 +424,30 @@ export default function Cart() {
                     value={direccion}
                     onChange={(e) => setDireccion(e.target.value)}
                   />
-                  <div className="space-y-2">
-                    <label className="block space-y-1">
-                      <span className="text-sm text-[#1A1A1A]">Horario de retiro (20 a 22 hs)</span>
-                      <select
-                        value={retiroHora}
-                        onChange={(e) => setRetiroHora(e.target.value)}
-                        required
-                        className="h-10 w-full rounded-xl border border-[#d9c9a3] bg-[#F9F7F2] px-3 text-sm text-[#1A1A1A]"
-                      >
-                        <option value="">Elegí la hora</option>
-                        {RETIRO_HORAS.map((hora) => (
-                          <option key={hora} value={hora}>
-                            {hora} hs
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
+                  {hasFood ? (
+                    <div className="space-y-2">
+                      <label className="block space-y-1">
+                        <span className="text-sm text-[#1A1A1A]">Horario de retiro (20 a 22 hs)</span>
+                        <select
+                          value={retiroHora}
+                          onChange={(e) => setRetiroHora(e.target.value)}
+                          required
+                          className="h-10 w-full rounded-xl border border-[#d9c9a3] bg-[#F9F7F2] px-3 text-sm text-[#1A1A1A]"
+                        >
+                          <option value="">Elegí la hora</option>
+                          {RETIRO_HORAS.map((hora) => (
+                            <option key={hora} value={hora}>
+                              {hora} hs
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
+                  ) : (
+                    <p className="rounded-xl border border-[#C5A059] bg-[#C5A059]/12 px-3 py-2 text-sm text-[#1A1A1A]">
+                      La fecha de la clase se coordina por WhatsApp. Tenés {PROMO.claimDays} días.
+                    </p>
+                  )}
                   <Textarea
                     placeholder="Notas para cocina (opcional)"
                     value={notas}
@@ -518,7 +546,7 @@ export default function Cart() {
             )}
           </div>
 
-          {foodItems.length > 0 && (
+          {hasPedido && (
             <div className="shrink-0 space-y-3 border-t border-[#d9c9a3] bg-[#F9F7F2] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <div className="space-y-1">
                 {descuento > 0 && (
@@ -534,7 +562,7 @@ export default function Cart() {
               </div>
               {step === "comida" && (
                 <Button
-                  onClick={() => setStep("extras")}
+                  onClick={() => setStep(hasFood ? "extras" : "datos")}
                   className="h-14 w-full bg-[#1A1A1A] text-base font-semibold text-white hover:bg-[#333]"
                 >
                   Siguiente
@@ -569,7 +597,7 @@ export default function Cart() {
                       toast.error("Dejanos nombre y WhatsApp para confirmar el pedido.");
                       return;
                     }
-                    if (!retiroHora) {
+                    if (hasFood && !retiroHora) {
                       toast.error("Indicá el horario estimado de retiro.");
                       return;
                     }

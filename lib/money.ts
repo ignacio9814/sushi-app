@@ -1,3 +1,5 @@
+import { isClaseProduct } from "@/lib/promo";
+
 export function formatMoney(pesos: number) {
   const formatted = Math.round(pesos)
     .toString()
@@ -20,12 +22,12 @@ export function piecesFromVariant(nombre?: string) {
 }
 
 export function piecesOfLine(item: {
-  producto: { categoria_id: string; piezas?: number };
+  producto: { categoria_id: string; piezas?: number; id?: string; nombre?: string; promo?: string };
   variante?: { nombre?: string };
   cantidad: number;
 }) {
   const categoria = item.producto.categoria_id;
-  if (categoria === "cat_extras" || categoria === "cat_ceviche") {
+  if (categoria === "cat_extras" || categoria === "cat_ceviche" || isClaseProduct(item.producto)) {
     return 0;
   }
   if (item.producto.piezas && item.producto.piezas > 0) {
