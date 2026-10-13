@@ -3,11 +3,13 @@ export const PROMO = {
   claseId: "p_clase_sushi",
   categoriaId: "cat_para_ellas",
   start: "2026-10-13",
-  end: "2026-10-18",
+  comboEnd: "2026-10-17",
+  claseEnd: "2026-10-18",
   discountPct: 15,
   claimDays: 30,
   comboPrecio: 55000,
-  ventaTexto: "13 al 18 de octubre",
+  ventaTextoCombo: "13 al 17 de octubre",
+  ventaTextoClase: "13 al 18 de octubre",
   reclamoTexto: "30 días para reclamar",
   fotoClase: "/clase-sushi.jpg?v=madre2",
 } as const;
@@ -20,8 +22,16 @@ export function todayArgentina() {
   });
 }
 
+export function isComboActiva(today = todayArgentina()) {
+  return today >= PROMO.start && today <= PROMO.comboEnd;
+}
+
+export function isClaseActiva(today = todayArgentina()) {
+  return today >= PROMO.start && today <= PROMO.claseEnd;
+}
+
 export function isPromoActiva(today = todayArgentina()) {
-  return today >= PROMO.start && today <= PROMO.end;
+  return isComboActiva(today) || isClaseActiva(today);
 }
 
 export function isComboProduct(producto: { id?: string; promo?: string; nombre?: string }) {
@@ -62,9 +72,8 @@ export function isCustomerVisibleProduct(producto: {
   precio?: number;
 }) {
   if (!producto.disponible) return false;
-  if ((isComboProduct(producto) || isClaseProduct(producto)) && !isPromoActiva()) {
-    return false;
-  }
+  if (isComboProduct(producto) && !isComboActiva()) return false;
+  if (isClaseProduct(producto) && !isClaseActiva()) return false;
   return true;
 }
 

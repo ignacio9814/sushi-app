@@ -50,7 +50,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
       )}
       {destacado && (
         <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
-          Día de la Madre · {PROMO.ventaTexto}
+          Día de la Madre · {clase ? PROMO.ventaTextoClase : PROMO.ventaTextoCombo}
         </p>
       )}
       <div className="mt-1 flex items-baseline justify-between gap-4">
@@ -86,7 +86,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
             {PROMO.discountPct}% de descuento en tu próxima compra.
           </p>
           <p className="mt-1 text-sm text-[#6b6256]">
-            Se compra del {PROMO.ventaTexto}. {PROMO.reclamoTexto}.
+            Se compra del {PROMO.ventaTextoCombo}. {PROMO.reclamoTexto}.
           </p>
         </div>
       )}
@@ -100,7 +100,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
             Clase de sushi a coordinar con el local.
           </p>
           <p className="mt-1 text-sm text-[#6b6256]">
-            Se compra del {PROMO.ventaTexto}. {PROMO.reclamoTexto}.
+            Se compra del {PROMO.ventaTextoClase}. {PROMO.reclamoTexto}.
           </p>
         </div>
       )}

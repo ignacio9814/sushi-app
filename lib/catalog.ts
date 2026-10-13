@@ -21,7 +21,12 @@ function applyPromoNames(categorias: Categoria[], productos: Producto[]) {
   return {
     categorias: categorias.map((categoria) =>
       categoria.id === PROMO.categoriaId
-        ? { ...categoria, nombre: "Día de la Madre" }
+        ? {
+            ...categoria,
+            nombre: "Día de la Madre",
+            descripcion:
+              "Combo del 13 al 17. Clase hasta el 18. El 18 se retiran los pedidos. Las dos se reclaman dentro de los 30 días.",
+          }
         : categoria
     ),
     productos: productos.map((producto) => {

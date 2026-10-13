@@ -28,7 +28,8 @@ export default function WelcomeGate({ onEnter }: { onEnter: () => void }) {
               </p>
               <p className="font-heading text-2xl">Combo y clase de sushi</p>
               <p className="text-sm text-[#F9F7F2]/80">
-                Se compran del {PROMO.ventaTexto}. Las dos tienen {PROMO.reclamoTexto}.
+                Combo del {PROMO.ventaTextoCombo}. Clase hasta el 18. El 18 se retiran
+                los pedidos. {PROMO.reclamoTexto}.
               </p>
             </div>
           </div>
