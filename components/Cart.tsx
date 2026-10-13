@@ -285,7 +285,7 @@ export default function Cart() {
                             <img
                               src={PROMO.fotoClase}
                               alt=""
-                              className="mb-2 h-24 w-full rounded-xl object-cover object-[center_46%]"
+                              className="mb-2 h-24 w-full rounded-xl object-cover object-[center_54%]"
                             />
                           )}
                           <p className="font-heading text-base">{item.producto.nombre}</p>
