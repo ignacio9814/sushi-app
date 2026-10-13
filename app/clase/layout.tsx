@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     description: "Un vale para una clase. Se coordina dentro de los 30 días.",
     images: [
       {
-        url: "/clase-sushi.jpg",
+        url: "/clase-sushi.jpg?v=madre",
         width: 1024,
         height: 1536,
         alt: "Clase de sushi · Adan Reymundo",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/clase-sushi.jpg"],
+    images: ["/clase-sushi.jpg?v=madre"],
   },
 };
 

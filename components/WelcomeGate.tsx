@@ -15,6 +15,25 @@ export default function WelcomeGate({ onEnter }: { onEnter: () => void }) {
           Pedidos con anticipación
         </p>
 
+        {isPromoActiva() && (
+          <div className="mt-5 w-full overflow-hidden rounded-3xl border-2 border-[#C5A059] bg-[#1A1A1A] text-left text-[#F9F7F2]">
+            <img
+              src={PROMO.fotoClase}
+              alt="Clase de sushi"
+              className="h-56 w-full object-cover object-top"
+            />
+            <div className="space-y-2 px-5 py-4">
+              <p className="text-[11px] font-semibold tracking-[0.18em] text-[#C5A059] uppercase">
+                Día de la Madre
+              </p>
+              <p className="font-heading text-2xl">Combo y clase de sushi</p>
+              <p className="text-sm text-[#F9F7F2]/80">
+                Se compran del {PROMO.ventaTexto}. Las dos tienen {PROMO.reclamoTexto}.
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="mt-5 w-full space-y-4 rounded-2xl border border-[#d9c9a3] bg-white px-5 py-5 text-left">
           <div>
             <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
@@ -44,17 +63,6 @@ export default function WelcomeGate({ onEnter }: { onEnter: () => void }) {
             </p>
             <p className="mt-1 text-base font-medium leading-snug">{BUSINESS.salsaTexto}</p>
           </div>
-          {isPromoActiva() && (
-            <div>
-              <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
-                Día de la Madre
-              </p>
-              <p className="mt-1 text-base font-medium leading-snug">
-                Combo Día de la Madre, del 13 al 18 de octubre. Incluye {PROMO.discountPct}% en tu
-                próxima compra, válido {PROMO.claimDays} días.
-              </p>
-            </div>
-          )}
         </div>
 
         <button

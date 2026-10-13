@@ -7,6 +7,9 @@ export const PROMO = {
   discountPct: 15,
   claimDays: 30,
   comboPrecio: 55000,
+  ventaTexto: "13 al 18 de octubre",
+  reclamoTexto: "30 días para reclamar",
+  fotoClase: "/clase-sushi.jpg?v=madre",
 } as const;
 
 export type VoucherTipo = "desc15" | "clase";
@@ -39,8 +42,9 @@ export function isCustomerVisibleProduct(producto: {
   precio?: number;
 }) {
   if (!producto.disponible) return false;
-  if (isComboProduct(producto) && !isPromoActiva()) return false;
-  if (isClaseProduct(producto) && !(producto.precio && producto.precio > 0)) return false;
+  if ((isComboProduct(producto) || isClaseProduct(producto)) && !isPromoActiva()) {
+    return false;
+  }
   return true;
 }
 
@@ -83,7 +87,7 @@ export function getSiteUrl() {
 }
 
 export function getClaseFotoUrl() {
-  return `${getSiteUrl()}/clase-sushi.jpg`;
+  return `${getSiteUrl()}${PROMO.fotoClase}`;
 }
 
 export function getClaseVoucherUrl(codigo: string) {

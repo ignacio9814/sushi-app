@@ -62,7 +62,7 @@ export default function ClaseVoucherPage() {
           Código {codigo || "CLASE"}. Coordiná dentro de {PROMO.claimDays} días.
         </p>
         <div className="mt-6 w-full overflow-hidden rounded-3xl border border-[#C5A059] bg-white shadow-[0_16px_40px_rgba(26,26,26,0.08)]">
-          <img src="/clase-sushi.jpg" alt="Clase de sushi" className="w-full object-cover" />
+          <img src={PROMO.fotoClase} alt="Clase de sushi" className="w-full object-cover" />
         </div>
         <p className="mt-4 text-sm text-[#6b6256]">
           {BRAND.address}, {BRAND.city}
@@ -83,7 +83,7 @@ export default function ClaseVoucherPage() {
             Enviar por mail
           </a>
           <a
-            href="/clase-sushi.jpg"
+            href={PROMO.fotoClase}
             download="clase-sushi-adan-reymundo.jpg"
             className="inline-flex h-12 items-center justify-center rounded-full border border-[#d9c9a3] bg-white text-sm font-medium text-[#1A1A1A]"
           >

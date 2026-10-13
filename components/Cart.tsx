@@ -650,7 +650,7 @@ export default function Cart() {
                         rel="noreferrer"
                         className="mt-2 block overflow-hidden rounded-xl border border-[#d9c9a3]"
                       >
-                        <img src="/clase-sushi.jpg" alt="Clase de sushi" className="w-full object-cover" />
+                        <img src={PROMO.fotoClase} alt="Clase de sushi" className="w-full object-cover" />
                       </a>
                     )}
                   </div>

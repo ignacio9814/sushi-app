@@ -24,11 +24,19 @@ function applyPromoNames(categorias: Categoria[], productos: Producto[]) {
         ? { ...categoria, nombre: "Día de la Madre" }
         : categoria
     ),
-    productos: productos.map((producto) =>
-      producto.id === PROMO.comboId
-        ? { ...producto, nombre: "Combo Día de la Madre" }
-        : producto
-    ),
+    productos: productos.map((producto) => {
+      if (producto.id === PROMO.comboId) {
+        return { ...producto, nombre: "Combo Día de la Madre" };
+      }
+      if (producto.id === PROMO.claseId) {
+        return {
+          ...producto,
+          nombre: "Clase de sushi",
+          imagen_url: PROMO.fotoClase,
+        };
+      }
+      return producto;
+    }),
   };
 }
 

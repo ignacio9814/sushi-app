@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import Cart from "@/components/Cart";
 import ProductCard from "@/components/ProductCard";
 import BrandLogo, { MenuDivider } from "@/components/BrandLogo";
+import PromoBanner from "@/components/PromoBanner";
 import WelcomeGate from "@/components/WelcomeGate";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { BRAND } from "@/lib/brand";
 import { getWhatsAppChatUrl } from "@/lib/whatsapp";
-import { isCustomerVisibleProduct } from "@/lib/promo";
+import { isCustomerVisibleProduct, isPromoActiva, isPromoCategory } from "@/lib/promo";
 import type { Categoria, Producto } from "@/types";
 import { Lock } from "lucide-react";
 import Link from "next/link";
@@ -97,6 +98,11 @@ export default function Home() {
       </header>
 
       <main className="relative mx-auto max-w-2xl px-5 py-10">
+        {isPromoActiva() && (activeCategory === "all" || isPromoCategory(activeCategory)) && (
+          <div className="mb-10">
+            <PromoBanner />
+          </div>
+        )}
         {filteredCategorias.map((categoria) => {
           const productosCategoria = visibleProductos.filter(
             (producto) => producto.categoria_id === categoria.id

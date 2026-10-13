@@ -16,6 +16,8 @@ export default function ProductCard({ producto }: { producto: Producto }) {
   const [variante, setVariante] = useState<Variante | undefined>(defaultVariante);
   const combo = isComboProduct(producto);
   const clase = isClaseProduct(producto);
+  const destacado = combo || clase;
+  const imagen = clase ? PROMO.fotoClase : producto.imagen_url;
 
   const precioVisible = useMemo(() => {
     if (variante) return variante.precio;
@@ -32,21 +34,26 @@ export default function ProductCard({ producto }: { producto: Producto }) {
   return (
     <article
       className={`relative overflow-hidden rounded-2xl border bg-white/50 p-5 shadow-[0_12px_28px_rgba(26,26,26,0.06)] ${
-        combo || clase ? "border-[#C5A059]" : "border-[#e0d2b0]"
+        destacado ? "border-2 border-[#C5A059]" : "border-[#e0d2b0]"
       }`}
     >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/80 via-[#F9F7F2]/20 to-[#C5A059]/15" />
       <div className="relative">
-      {producto.imagen_url && (
+      {imagen && (
         <div className="mb-4 overflow-hidden rounded-2xl border border-[#d9c9a3]">
           <img
-            src={producto.imagen_url}
+            src={imagen}
             alt={producto.nombre}
-            className="h-56 w-full object-cover object-center"
+            className={clase ? "h-80 w-full object-cover object-top" : "h-56 w-full object-cover object-center"}
           />
         </div>
       )}
-      <div className="flex items-baseline justify-between gap-4">
+      {destacado && (
+        <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
+          Día de la Madre · {PROMO.ventaTexto}
+        </p>
+      )}
+      <div className="mt-1 flex items-baseline justify-between gap-4">
         <h3 className="text-base font-semibold tracking-wide text-[#1A1A1A] uppercase">
           {producto.nombre}
         </h3>
@@ -56,9 +63,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
       </div>
 
       {combo && (
-        <p className="mt-2 text-[11px] font-semibold tracking-[0.14em] text-[#9B2B2B] uppercase">
-          13 al 18 de octubre · 30 piezas
-        </p>
+        <p className="mt-1 text-sm text-[#6b6256]">30 piezas · edición limitada</p>
       )}
 
       {detalles && detalles.length > 0 && (
@@ -78,18 +83,26 @@ export default function ProductCard({ producto }: { producto: Producto }) {
             Un privilegio exclusivo
           </p>
           <p className="mt-1 text-sm font-medium text-[#1A1A1A]">
-            Con tu Sushi Box recibís {PROMO.discountPct}% de descuento en tu próxima compra.
+            {PROMO.discountPct}% de descuento en tu próxima compra.
           </p>
           <p className="mt-1 text-sm text-[#6b6256]">
-            El código vale {PROMO.claimDays} días para reclamarlo.
+            Se compra del {PROMO.ventaTexto}. {PROMO.reclamoTexto}.
           </p>
         </div>
       )}
 
       {clase && (
-        <p className="mt-3 text-sm text-[#6b6256]">
-          Fecha a coordinar con el local. Tenés {PROMO.claimDays} días para usarla.
-        </p>
+        <div className="mt-3 rounded-xl border border-[#C5A059] bg-[#C5A059]/15 px-3 py-3">
+          <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
+            Experiencia
+          </p>
+          <p className="mt-1 text-sm font-medium text-[#1A1A1A]">
+            Clase de sushi a coordinar con el local.
+          </p>
+          <p className="mt-1 text-sm text-[#6b6256]">
+            Se compra del {PROMO.ventaTexto}. {PROMO.reclamoTexto}.
+          </p>
+        </div>
       )}
 
       {producto.permite_rebozado && (
