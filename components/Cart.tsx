@@ -21,6 +21,12 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
+import {
+  cartExplicacion,
+  formatPedidoHorario,
+  itemPedidoNota,
+  summarizeCart,
+} from "@/lib/checkout";
 import { createOrder } from "@/lib/create-order";
 import { formatMoney } from "@/lib/money";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
@@ -30,11 +36,11 @@ import {
   discountFromTotal,
   formatFechaCorta,
   getClaseVoucherUrl,
+  isClasePedidoItem,
   isClaseProduct,
-  isFoodProduct,
   PROMO,
 } from "@/lib/promo";
-import { formatRetiroEstimado, RETIRO_HORAS } from "@/lib/retiro";
+import { RETIRO_HORAS } from "@/lib/retiro";
 import { MEDIO_PAGO_LABEL, type MedioPago, type Pedido } from "@/types";
 import { useCart } from "@/store/useCart";
 import { isExtraProduct, type Producto } from "@/types";
@@ -85,12 +91,26 @@ export default function Cart() {
     });
   }, []);
 
-  const foodItems = items.filter((item) => isFoodProduct(item.producto));
+  const summary = summarizeCart(items);
   const pedidoItems = items.filter((item) => !isExtraProduct(item.producto));
-  const extraItems = items.filter((item) => isExtraProduct(item.producto));
-  const hasFood = foodItems.length > 0;
+  const extraItems = summary.extraItems;
+  const hasFood = summary.hasFood;
+  const hasClase = summary.hasClase;
   const hasPedido = pedidoItems.length > 0;
-  const visibleSteps = hasFood ? STEPS : STEPS.filter((id) => id !== "extras");
+  const visibleSteps = summary.needsExtras ? STEPS : STEPS.filter((id) => id !== "extras");
+  const explicacion = cartExplicacion(summary);
+
+  useEffect(() => {
+    if (!hasFood && extraItems.length > 0) {
+      clearExtras();
+    }
+  }, [clearExtras, extraItems.length, hasFood]);
+
+  useEffect(() => {
+    if (step === "extras" && !summary.needsExtras) {
+      setStep("comida");
+    }
+  }, [step, summary.needsExtras]);
   const bruto = getTotal();
   const descuento = codigoAplicado ? discountFromTotal(bruto) : 0;
   const total = bruto - descuento;
@@ -107,12 +127,20 @@ export default function Cart() {
   };
 
   const hints: Record<CheckoutStep, string> = {
-    comida: "Revisá cantidades y seguí al siguiente paso.",
+    comida: summary.mixed
+      ? "Revisá comida y clase. Son dos partes distintas."
+      : hasClase
+        ? "Revisá la clase y seguí. La fecha se coordina después."
+        : "Revisá cantidades y seguí al siguiente paso.",
     extras: "¿Te gustaría agregar algo más?",
-    datos: hasFood
-      ? "Nombre, WhatsApp y un horario de retiro (20 a 22 hs)."
-      : "Nombre y WhatsApp. La fecha de la clase se coordina después.",
-    pago: "Elegí una opción. Sin esto no se puede enviar el pedido.",
+    datos: summary.mixed
+      ? "Nombre, WhatsApp y horario de retiro de la comida (20 a 22). La clase se coordina aparte."
+      : hasFood
+        ? "Nombre, WhatsApp y un horario de retiro (20 a 22 hs)."
+        : "Nombre y WhatsApp. La fecha de la clase se coordina después.",
+    pago: summary.mixed
+      ? "El total incluye comida y clase. Elegí cómo pagás el pedido completo."
+      : "Elegí una opción. Sin esto no se puede enviar el pedido.",
   };
 
   const handleOpenChange = (next: boolean) => {
@@ -133,8 +161,8 @@ export default function Cart() {
       toast.error("Dejanos nombre y WhatsApp para confirmar el pedido.");
       return;
     }
-    if (hasFood && !retiroHora) {
-      toast.error("Indicá el horario estimado de retiro.");
+    if (summary.needsRetiro && !retiroHora) {
+      toast.error("Indicá el horario estimado de retiro de la comida.");
       setStep("datos");
       return;
     }
@@ -146,13 +174,11 @@ export default function Cart() {
 
     setSending(true);
     try {
-      const pedido = await createOrder(items, {
+      const pedido = await createOrder(summary.checkoutItems, {
         clienteNombre: nombre,
         clienteTelefono: telefono,
         direccion,
-        horarioRetiro: hasFood
-          ? formatRetiroEstimado(retiroHora)
-          : "clase a coordinar",
+        horarioRetiro: formatPedidoHorario(summary, retiroHora),
         notas,
         medioPago,
         codigoBeneficio: codigoAplicado || undefined,
@@ -269,6 +295,18 @@ export default function Cart() {
               </div>
             ) : step === "comida" ? (
               <div className="space-y-3">
+                {explicacion.length > 0 && (
+                  <div className="rounded-2xl border border-[#C5A059] bg-[#C5A059]/12 px-4 py-3 text-sm text-[#1A1A1A]">
+                    <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
+                      Cómo sigue este pedido
+                    </p>
+                    <ul className="mt-2 space-y-1">
+                      {explicacion.map((linea) => (
+                        <li key={linea}>{linea}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 {pedidoItems.map((item) => {
                   const unit = item.variante?.precio || item.producto.precio || 0;
                   const rebozado = item.conRebozado ? 3000 : 0;
@@ -289,6 +327,11 @@ export default function Cart() {
                             />
                           )}
                           <p className="font-heading text-base">{item.producto.nombre}</p>
+                          {itemPedidoNota(item.producto) && (
+                            <p className="text-xs font-medium text-[#9B2B2B]">
+                              {itemPedidoNota(item.producto)}
+                            </p>
+                          )}
                           {item.variante && (
                             <p className="text-sm text-[#6b6256]">{item.variante.nombre}</p>
                           )}
@@ -424,10 +467,14 @@ export default function Cart() {
                     value={direccion}
                     onChange={(e) => setDireccion(e.target.value)}
                   />
-                  {hasFood ? (
+                  {hasFood && (
                     <div className="space-y-2">
                       <label className="block space-y-1">
-                        <span className="text-sm text-[#1A1A1A]">Horario de retiro (20 a 22 hs)</span>
+                        <span className="text-sm text-[#1A1A1A]">
+                          {hasClase
+                            ? "Horario de retiro de la comida (20 a 22 hs)"
+                            : "Horario de retiro (20 a 22 hs)"}
+                        </span>
                         <select
                           value={retiroHora}
                           onChange={(e) => setRetiroHora(e.target.value)}
@@ -443,7 +490,8 @@ export default function Cart() {
                         </select>
                       </label>
                     </div>
-                  ) : (
+                  )}
+                  {hasClase && (
                     <p className="rounded-xl border border-[#C5A059] bg-[#C5A059]/12 px-3 py-2 text-sm text-[#1A1A1A]">
                       La fecha de la clase se coordina por WhatsApp. Tenés {PROMO.claimDays} días.
                     </p>
@@ -460,7 +508,9 @@ export default function Cart() {
                     ¿Tenés un código de beneficio?
                   </p>
                   <p className="text-xs text-[#6b6256]">
-                    Si compraste el combo, ingresá tu código ADAN-XXXX para el {PROMO.discountPct}% off.
+                    {summary.hasCombo
+                      ? `Si ya tenés un código de una compra anterior, aplicá el ${PROMO.discountPct}% acá. El código nuevo del combo vale para la próxima.`
+                      : `Si compraste el combo, ingresá tu código ADAN-XXXX para el ${PROMO.discountPct}% off.`}
                   </p>
                   <div className="flex gap-2">
                     <Input
@@ -508,7 +558,11 @@ export default function Cart() {
                     ¿Vas a pagar en efectivo o por transferencia?
                   </p>
                   <p className="mt-2 text-sm text-[#6b6256]">
-                    Tocá una opción. El pedido no se envía hasta que elijas.
+                    {summary.mixed
+                      ? "Un solo pago por comida y clase. El pedido no se envía hasta que elijas."
+                      : hasClase
+                        ? "Pagás la clase ahora. La fecha se coordina después."
+                        : "Tocá una opción. El pedido no se envía hasta que elijas."}
                   </p>
                 </div>
                 <div className="grid gap-3">
@@ -530,7 +584,9 @@ export default function Cart() {
                         </p>
                         <p className="mt-1 text-sm text-[#6b6256]">
                           {opcion === "efectivo"
-                            ? "Pagás al retirar en el local."
+                            ? hasFood
+                              ? "Pagás al retirar la comida en el local."
+                              : "Pagás en el local al confirmar o coordinar la clase."
                             : "El local te pasa los datos por WhatsApp."}
                         </p>
                         {selected && (
@@ -597,8 +653,8 @@ export default function Cart() {
                       toast.error("Dejanos nombre y WhatsApp para confirmar el pedido.");
                       return;
                     }
-                    if (hasFood && !retiroHora) {
-                      toast.error("Indicá el horario estimado de retiro.");
+                    if (summary.needsRetiro && !retiroHora) {
+                      toast.error("Indicá el horario estimado de retiro de la comida.");
                       return;
                     }
                     setStep("pago");
@@ -654,7 +710,12 @@ export default function Cart() {
                 {sentPedido.medioPago
                   ? ` · ${MEDIO_PAGO_LABEL[sentPedido.medioPago]}`
                   : ""}
-                . Te confirmamos por WhatsApp.
+                . Te confirmamos por WhatsApp
+                {sentPedido.items.some((item) => isClasePedidoItem(item))
+                  ? sentPedido.items.some((item) => !isClasePedidoItem(item))
+                    ? ": la comida se retira y la clase se coordina."
+                    : ": la clase se coordina dentro de los 30 días."
+                  : "."}
               </>
             ) : null}
           </DialogDescription>

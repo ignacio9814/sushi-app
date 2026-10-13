@@ -1,7 +1,19 @@
 import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
 import { BRAND } from "@/lib/brand";
-import { formatFechaCorta, getClaseFotoUrl, getClaseVoucherUrl, PROMO } from "@/lib/promo";
-import { MEDIO_PAGO_LABEL, type Pedido } from "@/types";
+import {
+  formatFechaCorta,
+  getClaseFotoUrl,
+  getClaseVoucherUrl,
+  isClasePedidoItem,
+  PROMO,
+} from "@/lib/promo";
+import { MEDIO_PAGO_LABEL, type Pedido, type PedidoItem } from "@/types";
+
+function lineItem(item: PedidoItem, index: number) {
+  const variante = item.varianteNombre ? ` (${item.varianteNombre})` : "";
+  const rebozado = item.conRebozado ? " + rebozado" : "";
+  return `${index}. ${item.cantidad}x ${item.nombre}${variante}${rebozado} — ${formatMoney(item.subtotal)}`;
+}
 
 export function toWhatsAppPhone(value: string) {
   const raw = value.replace(/\D/g, "");
@@ -30,23 +42,40 @@ export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
     lines.push(`Dir: ${pedido.direccion}`);
   }
 
+  const comida = pedido.items.filter((item) => !isClasePedidoItem(item));
+  const clases = pedido.items.filter((item) => isClasePedidoItem(item));
+
   if (pedido.horarioRetiro) {
-    lines.push(`Retiro: ${pedido.horarioRetiro}`);
+    if (comida.length && clases.length) {
+      const [retiroComida] = pedido.horarioRetiro.split(" · ");
+      lines.push(`Retiro comida: ${retiroComida}`);
+      lines.push(`Clase: a coordinar (${PROMO.claimDays} días)`);
+    } else if (clases.length) {
+      lines.push(`Clase: ${pedido.horarioRetiro}`);
+    } else {
+      lines.push(`Retiro: ${pedido.horarioRetiro}`);
+    }
   }
 
   if (pedido.medioPago) {
     lines.push(`Pago: *${MEDIO_PAGO_LABEL[pedido.medioPago]}*`);
   }
 
-  lines.push("", "*Detalle*");
-
-  pedido.items.forEach((item, index) => {
-    const variante = item.varianteNombre ? ` (${item.varianteNombre})` : "";
-    const rebozado = item.conRebozado ? " + rebozado" : "";
-    lines.push(
-      `${index + 1}. ${item.cantidad}x ${item.nombre}${variante}${rebozado} — ${formatMoney(item.subtotal)}`
-    );
-  });
+  if (comida.length && clases.length) {
+    lines.push("", "*Para retirar*");
+    comida.forEach((item, index) => {
+      lines.push(lineItem(item, index + 1));
+    });
+    lines.push("", "*Experiencia a coordinar*");
+    clases.forEach((item, index) => {
+      lines.push(lineItem(item, comida.length + index + 1));
+    });
+  } else {
+    lines.push("", "*Detalle*");
+    pedido.items.forEach((item, index) => {
+      lines.push(lineItem(item, index + 1));
+    });
+  }
 
   if (pedido.notas) {
     lines.push("", `Notas: ${pedido.notas}`);

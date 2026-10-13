@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { getLocalPedido } from "@/lib/create-order";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
 import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
+import { isClasePedidoItem } from "@/lib/promo";
 import { openWhatsApp } from "@/lib/whatsapp";
 import BrandLogo, { PeruStripe } from "@/components/BrandLogo";
 import { BRAND } from "@/lib/brand";
@@ -83,7 +84,7 @@ export default function PedidoPage() {
         {pedido.direccion && <p className="text-sm text-zinc-400">{pedido.direccion}</p>}
         {pedido.horarioRetiro && (
           <p className="text-sm text-amber-200 print:text-black">
-            Retiro: {pedido.horarioRetiro}
+            {pedido.horarioRetiro}
           </p>
         )}
 
@@ -94,6 +95,7 @@ export default function PedidoPage() {
                 {item.cantidad}x {item.nombre}
                 {item.varianteNombre ? ` (${item.varianteNombre})` : ""}
                 {item.conRebozado ? " + rebozado" : ""}
+                {isClasePedidoItem(item) ? " · a coordinar" : ""}
               </span>
               <span>{formatMoney(item.subtotal)}</span>
             </div>

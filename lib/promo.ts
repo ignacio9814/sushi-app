@@ -37,6 +37,21 @@ export function isFoodProduct(producto: { id?: string; promo?: string; nombre?: 
   return producto.categoria_id !== "cat_extras" && !isClaseProduct(producto);
 }
 
+export function isClasePedidoItem(item: { productoId?: string; nombre?: string }) {
+  return isClaseProduct({ id: item.productoId, nombre: item.nombre });
+}
+
+export function isComboPedidoItem(item: { productoId?: string; nombre?: string }) {
+  return isComboProduct({ id: item.productoId, nombre: item.nombre });
+}
+
+export function countMatchingItems(
+  items: { producto: { id?: string; promo?: string; nombre?: string }; cantidad: number }[],
+  match: (producto: { id?: string; promo?: string; nombre?: string }) => boolean
+) {
+  return items.reduce((total, item) => (match(item.producto) ? total + item.cantidad : total), 0);
+}
+
 export function isPromoCategory(categoriaId: string) {
   return categoriaId === PROMO.categoriaId;
 }

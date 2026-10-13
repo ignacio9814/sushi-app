@@ -17,7 +17,7 @@ import {
 } from "@/lib/create-order";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
 import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
-import { formatFechaCorta, getClaseVoucherUrl, PROMO } from "@/lib/promo";
+import { formatFechaCorta, getClaseVoucherUrl, isClasePedidoItem, PROMO } from "@/lib/promo";
 import { openWhatsApp } from "@/lib/whatsapp";
 import {
   MEDIO_PAGO_LABEL,
@@ -150,7 +150,7 @@ export default function AdminOrders() {
                   {pedido.clienteNombre} · {pedido.clienteTelefono}
                 </p>
                 {pedido.horarioRetiro && (
-                  <p className="text-sm text-[#9B2B2B]">Retiro: {pedido.horarioRetiro}</p>
+                  <p className="text-sm text-[#9B2B2B]">{pedido.horarioRetiro}</p>
                 )}
                 {pedido.medioPago && !emitida && (
                   <p className="text-sm font-medium text-[#1A1A1A]">
@@ -178,6 +178,7 @@ export default function AdminOrders() {
                   {item.cantidad}x {item.nombre}
                   {item.varianteNombre ? ` (${item.varianteNombre})` : ""}
                   {item.conRebozado ? " + rebozado" : ""}
+                  {isClasePedidoItem(item) ? " · a coordinar" : ""}
                 </li>
               ))}
             </ul>

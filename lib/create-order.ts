@@ -14,7 +14,7 @@ import {
 } from "@/lib/beneficios";
 import { includedSets } from "@/lib/business";
 import { formatPedido, itemUnitPrice, piecesOfLine } from "@/lib/money";
-import { discountFromTotal, isClaseProduct, isComboProduct } from "@/lib/promo";
+import { countMatchingItems, discountFromTotal, isClaseProduct, isComboProduct } from "@/lib/promo";
 import {
   REBOZADO_CENTAVOS,
   type CartItem,
@@ -102,7 +102,10 @@ function applyDiscount(pedido: Pedido, payload: CheckoutPayload) {
 
 function attachIssuedVouchers(pedido: Pedido, items: CartItem[]) {
   const vouchers = [];
-  if (items.some((item) => isComboProduct(item.producto))) {
+  const comboQty = countMatchingItems(items, isComboProduct);
+  const claseQty = countMatchingItems(items, isClaseProduct);
+
+  for (let index = 0; index < comboQty; index += 1) {
     const issued = issueBeneficio({
       tipo: "desc15",
       clienteNombre: pedido.clienteNombre,
@@ -117,7 +120,8 @@ function attachIssuedVouchers(pedido: Pedido, items: CartItem[]) {
       venceAt: issued.venceAt,
     });
   }
-  if (items.some((item) => isClaseProduct(item.producto))) {
+
+  for (let index = 0; index < claseQty; index += 1) {
     const issued = issueBeneficio({
       tipo: "clase",
       clienteNombre: pedido.clienteNombre,
@@ -132,6 +136,7 @@ function attachIssuedVouchers(pedido: Pedido, items: CartItem[]) {
       venceAt: issued.venceAt,
     });
   }
+
   return vouchers.length ? { ...pedido, vouchers } : pedido;
 }
 
