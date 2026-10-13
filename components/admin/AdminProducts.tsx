@@ -18,7 +18,13 @@ import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { isAvailable } from "@/lib/local-stock";
 import { formatMoney } from "@/lib/money";
 import { isClaseProduct } from "@/lib/promo";
-import { createProduct, deleteProduct, saveProductChanges, saveProductStock } from "@/lib/update-product";
+import {
+  createProduct,
+  deleteProduct,
+  saveProductChanges,
+  saveProductPhotoFile,
+  saveProductStock,
+} from "@/lib/update-product";
 import type { Categoria, Producto } from "@/types";
 
 function priceLabel(producto: Producto) {
@@ -325,6 +331,21 @@ export default function AdminProducts() {
                           Guardar
                         </Button>
                       </div>
+                      <label className="block space-y-1 text-sm text-[#1A1A1A]">
+                        Foto de la clase
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="block w-full text-xs text-[#6b6256]"
+                          onChange={(event) => {
+                            const file = event.target.files?.[0];
+                            if (!file) return;
+                            void saveProductPhotoFile(producto, file)
+                              .then(() => toast.success("Foto de la clase actualizada"))
+                              .catch(() => toast.error("No se pudo guardar la foto"));
+                          }}
+                        />
+                      </label>
                     </div>
                   )}
                 </div>

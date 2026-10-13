@@ -26,7 +26,7 @@ import { formatMoney } from "@/lib/money";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 import { loadRemoteBeneficios, validateDiscountCode } from "@/lib/beneficios";
 import { BUSINESS, formatIncluyeItems } from "@/lib/business";
-import { discountFromTotal, formatFechaCorta, PROMO } from "@/lib/promo";
+import { discountFromTotal, formatFechaCorta, getClaseVoucherUrl, PROMO } from "@/lib/promo";
 import { formatRetiroEstimado, RETIRO_HORAS } from "@/lib/retiro";
 import { MEDIO_PAGO_LABEL, type MedioPago, type Pedido } from "@/types";
 import { useCart } from "@/store/useCart";
@@ -634,14 +634,26 @@ export default function Cart() {
         {sentPedido && (
           <div className="flex flex-col gap-2">
             {sentPedido.vouchers?.length ? (
-              <div className="rounded-2xl border border-[#C5A059] bg-[#C5A059]/15 px-4 py-3 text-left text-sm">
+              <div className="space-y-3 rounded-2xl border border-[#C5A059] bg-[#C5A059]/15 px-4 py-3 text-left text-sm">
                 {sentPedido.vouchers.map((voucher) => (
-                  <p key={voucher.codigo} className="text-[#1A1A1A]">
-                    <span className="font-semibold">{voucher.codigo}</span>
-                    {voucher.tipo === "desc15"
-                      ? ` · ${PROMO.discountPct}% hasta ${formatFechaCorta(voucher.venceAt)}`
-                      : ` · clase hasta ${formatFechaCorta(voucher.venceAt)}`}
-                  </p>
+                  <div key={voucher.codigo}>
+                    <p className="text-[#1A1A1A]">
+                      <span className="font-semibold">{voucher.codigo}</span>
+                      {voucher.tipo === "desc15"
+                        ? ` · ${PROMO.discountPct}% hasta ${formatFechaCorta(voucher.venceAt)}`
+                        : ` · clase hasta ${formatFechaCorta(voucher.venceAt)}`}
+                    </p>
+                    {voucher.tipo === "clase" && (
+                      <a
+                        href={getClaseVoucherUrl(voucher.codigo)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-2 block overflow-hidden rounded-xl border border-[#d9c9a3]"
+                      >
+                        <img src="/clase-sushi.jpg" alt="Clase de sushi" className="w-full object-cover" />
+                      </a>
+                    )}
+                  </div>
                 ))}
               </div>
             ) : null}

@@ -1,6 +1,6 @@
 import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
 import { BRAND } from "@/lib/brand";
-import { formatFechaCorta, PROMO } from "@/lib/promo";
+import { formatFechaCorta, getClaseFotoUrl, getClaseVoucherUrl, PROMO } from "@/lib/promo";
 import { MEDIO_PAGO_LABEL, type Pedido } from "@/types";
 
 export function toWhatsAppPhone(value: string) {
@@ -70,6 +70,8 @@ export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
         lines.push(
           `Clase de sushi: *${voucher.codigo}* a coordinar hasta ${formatFechaCorta(voucher.venceAt)}`
         );
+        lines.push(`Foto de la clase: ${getClaseFotoUrl()}`);
+        lines.push(`Vale: ${getClaseVoucherUrl(voucher.codigo)}`);
       }
     });
   }

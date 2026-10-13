@@ -74,3 +74,18 @@ export function discountFromTotal(total: number, pct = PROMO.discountPct) {
   if (total <= 0) return 0;
   return Math.round((total * pct) / 100);
 }
+
+export function getSiteUrl() {
+  if (typeof window !== "undefined" && window.location.origin) {
+    return window.location.origin;
+  }
+  return process.env.NEXT_PUBLIC_SITE_URL || "https://sushi-app-five.vercel.app";
+}
+
+export function getClaseFotoUrl() {
+  return `${getSiteUrl()}/clase-sushi.jpg`;
+}
+
+export function getClaseVoucherUrl(codigo: string) {
+  return `${getSiteUrl()}/clase/${encodeURIComponent(normalizeVoucherCode(codigo))}`;
+}

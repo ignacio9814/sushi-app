@@ -17,7 +17,7 @@ import {
 } from "@/lib/create-order";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
 import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
-import { formatFechaCorta, PROMO } from "@/lib/promo";
+import { formatFechaCorta, getClaseVoucherUrl, PROMO } from "@/lib/promo";
 import { openWhatsApp } from "@/lib/whatsapp";
 import {
   MEDIO_PAGO_LABEL,
@@ -193,6 +193,19 @@ export default function AdminOrders() {
               <p key={voucher.codigo} className="mb-2 text-xs text-[#1A1A1A]">
                 {voucher.tipo === "desc15" ? "Código 15%" : "Clase"} {voucher.codigo} · hasta{" "}
                 {formatFechaCorta(voucher.venceAt)}
+                {voucher.tipo === "clase" && (
+                  <>
+                    {" · "}
+                    <a
+                      href={getClaseVoucherUrl(voucher.codigo)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[#C5A059] underline"
+                    >
+                      ver foto
+                    </a>
+                  </>
+                )}
               </p>
             ))}
 
