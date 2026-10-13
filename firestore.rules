@@ -26,6 +26,10 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
+    match /config/beneficios {
+      allow read, write: if true;
+    }
+
     match /pedidos/{id} {
       allow read, create, update: if true;
       allow delete: if false;

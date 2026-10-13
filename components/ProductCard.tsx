@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import BatterDialog from "@/components/BatterDialog";
 import { formatMoney } from "@/lib/money";
+import { isClaseProduct, isComboProduct, PROMO } from "@/lib/promo";
 import { useCart } from "@/store/useCart";
 import type { Producto, Variante } from "@/types";
 
@@ -13,6 +14,8 @@ export default function ProductCard({ producto }: { producto: Producto }) {
   const { addItem } = useCart();
   const defaultVariante = producto.variantes?.[0];
   const [variante, setVariante] = useState<Variante | undefined>(defaultVariante);
+  const combo = isComboProduct(producto);
+  const clase = isClaseProduct(producto);
 
   const precioVisible = useMemo(() => {
     if (variante) return variante.precio;
@@ -20,22 +23,43 @@ export default function ProductCard({ producto }: { producto: Producto }) {
   }, [producto.precio, variante]);
 
   const detalles = producto.descripcion
-    ?.split(/\s*[·•|]\s*/)
+    ?.split(/\n+| · |\s*[·•|]\s*/)
     .map((part) => part.trim())
     .filter(Boolean);
 
+  const canAdd = !clase || precioVisible > 0;
+
   return (
-    <article className="relative overflow-hidden rounded-2xl border border-[#e0d2b0] bg-white/50 p-5 shadow-[0_12px_28px_rgba(26,26,26,0.06)]">
+    <article
+      className={`relative overflow-hidden rounded-2xl border bg-white/50 p-5 shadow-[0_12px_28px_rgba(26,26,26,0.06)] ${
+        combo || clase ? "border-[#C5A059]" : "border-[#e0d2b0]"
+      }`}
+    >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/80 via-[#F9F7F2]/20 to-[#C5A059]/15" />
       <div className="relative">
+      {producto.imagen_url && (
+        <div className="mb-4 overflow-hidden rounded-2xl border border-[#d9c9a3]">
+          <img
+            src={producto.imagen_url}
+            alt={producto.nombre}
+            className="h-56 w-full object-cover object-center"
+          />
+        </div>
+      )}
       <div className="flex items-baseline justify-between gap-4">
         <h3 className="text-base font-semibold tracking-wide text-[#1A1A1A] uppercase">
           {producto.nombre}
         </h3>
         <p className="shrink-0 text-base font-medium text-[#9B2B2B]">
-          {formatMoney(precioVisible)}
+          {clase && precioVisible <= 0 ? "Precio en cocina" : formatMoney(precioVisible)}
         </p>
       </div>
+
+      {combo && (
+        <p className="mt-2 text-[11px] font-semibold tracking-[0.14em] text-[#9B2B2B] uppercase">
+          13 al 18 de octubre · 30 piezas
+        </p>
+      )}
 
       {detalles && detalles.length > 0 && (
         <ul className="mt-2 ml-1 space-y-1 border-l border-[#C5A059] pl-4">
@@ -46,6 +70,26 @@ export default function ProductCard({ producto }: { producto: Producto }) {
             </li>
           ))}
         </ul>
+      )}
+
+      {combo && (
+        <div className="mt-3 rounded-xl border border-[#C5A059] bg-[#C5A059]/15 px-3 py-3">
+          <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
+            Un privilegio exclusivo
+          </p>
+          <p className="mt-1 text-sm font-medium text-[#1A1A1A]">
+            Con tu Sushi Box recibís {PROMO.discountPct}% de descuento en tu próxima compra.
+          </p>
+          <p className="mt-1 text-sm text-[#6b6256]">
+            El código vale {PROMO.claimDays} días para reclamarlo.
+          </p>
+        </div>
+      )}
+
+      {clase && (
+        <p className="mt-3 text-sm text-[#6b6256]">
+          Fecha a coordinar con el local. Tenés {PROMO.claimDays} días para usarla.
+        </p>
       )}
 
       {producto.permite_rebozado && (
@@ -81,7 +125,9 @@ export default function ProductCard({ producto }: { producto: Producto }) {
       ) : null}
 
       <div className="mt-3 flex justify-end">
-        {producto.permite_rebozado ? (
+        {!canAdd ? (
+          <p className="text-sm text-[#6b6256]">Cocina está definiendo el precio.</p>
+        ) : producto.permite_rebozado ? (
           <BatterDialog producto={producto} variante={variante} />
         ) : (
           <Button

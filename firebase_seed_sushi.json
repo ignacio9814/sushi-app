@@ -5,6 +5,12 @@
     },
     "categorias": [
         {
+            "id": "cat_para_ellas",
+            "nombre": "Para ellas",
+            "descripcion": "Disponible del 13 al 18 de octubre. Combo de 30 piezas y clase de sushi a coordinar.",
+            "orden": 0
+        },
+        {
             "id": "cat_infaltables",
             "nombre": "Rolls Infaltables",
             "descripcion": "Cualquiera se puede rebozar y freír. Ese proceso tiene un adicional de $ 3.000.",
@@ -35,6 +41,26 @@
         }
     ],
     "productos": [
+        {
+            "id": "p_combo_ellas",
+            "categoria_id": "cat_para_ellas",
+            "nombre": "Combo especial para ellas",
+            "descripcion": "10 pz salmón, mango, queso crema y cobertura de láminas de mango · 10 pz langostino rebozado, palta, queso crema y cobertura de láminas de salmón ahumado · 10 pz pasta de cangrejo y palta, rebozado y frito",
+            "precio": 55000,
+            "piezas": 30,
+            "promo": "combo",
+            "disponible": true
+        },
+        {
+            "id": "p_clase_sushi",
+            "categoria_id": "cat_para_ellas",
+            "nombre": "Clase de sushi",
+            "descripcion": "Una clase para disfrutar, aprender y compartir. Se coordina dentro de los 30 días.",
+            "precio": 0,
+            "promo": "clase",
+            "imagen_url": "/clase-sushi.jpg",
+            "disponible": true
+        },
         {
             "id": "p1",
             "categoria_id": "cat_infaltables",

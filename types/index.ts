@@ -13,6 +13,8 @@ export interface Producto {
   permite_rebozado?: boolean;
   disponible: boolean;
   imagen_url?: string;
+  piezas?: number;
+  promo?: "combo" | "clase";
 }
 
 export interface Categoria {
@@ -86,6 +88,13 @@ export interface Pedido {
   medioPago?: MedioPago;
   boletaEmitida?: boolean;
   cerradoAt?: number;
+  descuentoCodigo?: string;
+  descuentoCentavos?: number;
+  vouchers?: {
+    codigo: string;
+    tipo: "desc15" | "clase";
+    venceAt: number;
+  }[];
 }
 
 export const REBOZADO_CENTAVOS = 3000;

@@ -12,6 +12,9 @@ export type ProductPatch = Partial<
     | "variantes"
     | "permite_rebozado"
     | "categoria_id"
+    | "imagen_url"
+    | "piezas"
+    | "promo"
   >
 > & { updatedAt?: number };
 
@@ -73,6 +76,9 @@ export function patchFromProduct(producto: Producto): ProductPatch {
   if (producto.precio !== undefined) patch.precio = producto.precio;
   if (producto.variantes !== undefined) patch.variantes = producto.variantes;
   if (producto.permite_rebozado !== undefined) patch.permite_rebozado = producto.permite_rebozado;
+  if (producto.imagen_url !== undefined) patch.imagen_url = producto.imagen_url;
+  if (producto.piezas !== undefined) patch.piezas = producto.piezas;
+  if (producto.promo !== undefined) patch.promo = producto.promo;
   return patch;
 }
 

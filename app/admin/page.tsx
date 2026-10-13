@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import AdminBeneficios from "@/components/admin/AdminBeneficios";
 import AdminOrders from "@/components/admin/AdminOrders";
 import AdminProducts from "@/components/admin/AdminProducts";
 import { Button } from "@/components/ui/button";
 
 export default function AdminPage() {
-  const [tab, setTab] = useState<"pedidos" | "menu">("pedidos");
+  const [tab, setTab] = useState<"pedidos" | "menu" | "beneficios">("pedidos");
 
   return (
     <div>
@@ -14,7 +15,7 @@ export default function AdminPage() {
         <h2 className="font-heading text-2xl">Cocina</h2>
         <p className="text-sm text-[#6b6256]">Pedidos en vivo. La boleta se emite al cobrar y cerrar.</p>
       </div>
-      <div className="mb-6 grid grid-cols-2 gap-2">
+      <div className="mb-6 grid grid-cols-3 gap-2">
         <Button
           variant={tab === "pedidos" ? "default" : "outline"}
           className={`h-11 rounded-full ${
@@ -37,8 +38,25 @@ export default function AdminPage() {
         >
           Menú
         </Button>
+        <Button
+          variant={tab === "beneficios" ? "default" : "outline"}
+          className={`h-11 rounded-full ${
+            tab === "beneficios"
+              ? "bg-[#9B2B2B] text-[#F9F7F2] hover:bg-[#7f2020]"
+              : "border-[#d9c9a3] bg-transparent text-[#1A1A1A]"
+          }`}
+          onClick={() => setTab("beneficios")}
+        >
+          Beneficios
+        </Button>
       </div>
-      {tab === "pedidos" ? <AdminOrders /> : <AdminProducts />}
+      {tab === "pedidos" ? (
+        <AdminOrders />
+      ) : tab === "menu" ? (
+        <AdminProducts />
+      ) : (
+        <AdminBeneficios />
+      )}
     </div>
   );
 }

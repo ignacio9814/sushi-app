@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { isAvailable } from "@/lib/local-stock";
 import { formatMoney } from "@/lib/money";
+import { isClaseProduct } from "@/lib/promo";
 import { createProduct, deleteProduct, saveProductChanges, saveProductStock } from "@/lib/update-product";
 import type { Categoria, Producto } from "@/types";
 
@@ -66,11 +67,14 @@ export default function AdminProducts() {
   const [precio, setPrecio] = useState("");
   const [variantes, setVariantes] = useState<{ nombre: string; precio: string }[]>([]);
   const [rebozado, setRebozado] = useState(false);
+  const [precioClase, setPrecioClase] = useState("");
 
   useEffect(() => {
     return subscribeCatalog(({ categorias: cats, productos: next }) => {
       setCategorias(cats);
       setProductos(next);
+      const clase = next.find((producto) => isClaseProduct(producto));
+      if (clase) setPrecioClase(String(clase.precio || ""));
     });
   }, []);
 
@@ -204,6 +208,12 @@ export default function AdminProducts() {
       <p className="text-sm text-[#6b6256]">
         Verde = se vende. Rojo = el cliente no lo ve. En cada sección podés agregar, editar o eliminar.
       </p>
+      {productos.some((producto) => isClaseProduct(producto) && !(producto.precio && producto.precio > 0)) && (
+        <div className="rounded-2xl border-2 border-[#C5A059] bg-[#C5A059]/15 px-4 py-3 text-sm text-[#1A1A1A]">
+          Definí el precio de la clase de sushi en <span className="font-semibold">Para ellas</span> para
+          que el cliente la pueda comprar.
+        </div>
+      )}
 
       {grouped.map(({ categoria, productos: items }) => (
         <section key={categoria.id} className="space-y-3">
@@ -292,6 +302,31 @@ export default function AdminProducts() {
                       Sin stock
                     </button>
                   </div>
+                  {isClaseProduct(producto) && (
+                    <div className="mt-3 space-y-2 rounded-2xl border border-[#C5A059] bg-[#C5A059]/12 p-3">
+                      <p className="text-sm font-medium text-[#1A1A1A]">Precio de la clase</p>
+                      <p className="text-xs text-[#6b6256]">Sin puntos: 45000 = $ 45.000. Hasta que pongas un precio, el cliente no la ve.</p>
+                      <div className="flex gap-2">
+                        <Input
+                          type="number"
+                          value={precioClase}
+                          onChange={(event) => setPrecioClase(event.target.value)}
+                          placeholder="45000"
+                        />
+                        <Button
+                          className="rounded-full bg-[#1A1A1A] text-[#F9F7F2] hover:bg-[#333]"
+                          onClick={() => {
+                            const value = Number(precioClase) || 0;
+                            void saveProductChanges({ ...producto, precio: value })
+                              .then(() => toast.success("Precio de la clase guardado"))
+                              .catch(() => toast.error("No se pudo guardar el precio"));
+                          }}
+                        >
+                          Guardar
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))
             )}

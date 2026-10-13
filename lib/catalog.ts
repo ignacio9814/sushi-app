@@ -11,6 +11,11 @@ import type { Categoria, Producto, SushiData } from "@/types";
 
 const seed = sushiData as SushiData;
 
+function mergeById<T extends { id: string }>(primary: T[], extra: T[]) {
+  const ids = new Set(primary.map((item) => item.id));
+  return [...primary, ...extra.filter((item) => !ids.has(item.id))];
+}
+
 export function getSeedCatalog() {
   return {
     categorias: [...seed.categorias].sort((a, b) => a.orden - b.orden),
@@ -38,12 +43,16 @@ export function subscribeCatalog(
   let remoteOverrides: MenuOverridesState | null = null;
 
   const emit = () => {
+    const seedCatalog = getSeedCatalog();
+    const mergedCategorias = mergeById(categorias, seedCatalog.categorias).sort(
+      (a, b) => a.orden - b.orden
+    );
     const base = applyMenuOverrides(
-      remoteProductos ?? getSeedCatalog().productos,
+      mergeById(remoteProductos ?? seedCatalog.productos, seedCatalog.productos),
       remoteOverrides
     );
     onData({
-      categorias,
+      categorias: mergedCategorias,
       productos: applyLocalStock(mergeLocalProductos(base)),
     });
   };

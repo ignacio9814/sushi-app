@@ -17,6 +17,7 @@ import {
 } from "@/lib/create-order";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
 import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
+import { formatFechaCorta, PROMO } from "@/lib/promo";
 import { openWhatsApp } from "@/lib/whatsapp";
 import {
   MEDIO_PAGO_LABEL,
@@ -183,6 +184,17 @@ export default function AdminOrders() {
             {pedido.notas && (
               <p className="mb-3 text-xs text-[#6b6256]">Notas: {pedido.notas}</p>
             )}
+            {pedido.descuentoCodigo && (
+              <p className="mb-2 text-xs text-[#9B2B2B]">
+                Usó {PROMO.discountPct}% · {pedido.descuentoCodigo}
+              </p>
+            )}
+            {pedido.vouchers?.map((voucher) => (
+              <p key={voucher.codigo} className="mb-2 text-xs text-[#1A1A1A]">
+                {voucher.tipo === "desc15" ? "Código 15%" : "Clase"} {voucher.codigo} · hasta{" "}
+                {formatFechaCorta(voucher.venceAt)}
+              </p>
+            ))}
 
             <p className="mb-2 text-xs tracking-wide text-[#8a8174] uppercase">Estado</p>
             <div className="mb-4 flex flex-wrap gap-2">

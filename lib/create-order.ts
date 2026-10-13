@@ -6,8 +6,15 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
+import {
+  issueBeneficio,
+  loadRemoteBeneficios,
+  redeemBeneficio,
+  validateDiscountCode,
+} from "@/lib/beneficios";
 import { includedSets } from "@/lib/business";
 import { formatPedido, itemUnitPrice, piecesOfLine } from "@/lib/money";
+import { discountFromTotal, isClaseProduct, isComboProduct } from "@/lib/promo";
 import {
   REBOZADO_CENTAVOS,
   type CartItem,
@@ -25,6 +32,7 @@ export interface CheckoutPayload {
   horarioRetiro?: string;
   notas?: string;
   medioPago: MedioPago;
+  codigoBeneficio?: string;
 }
 
 function buildPedidoDraft(
@@ -74,6 +82,57 @@ function buildPedidoDraft(
     medioPago: payload.medioPago,
     boletaEmitida: false,
   };
+}
+
+function applyDiscount(pedido: Pedido, payload: CheckoutPayload) {
+  const codigo = payload.codigoBeneficio?.trim();
+  if (!codigo) return pedido;
+  const check = validateDiscountCode(codigo);
+  if (!check.ok) {
+    throw new Error(check.error);
+  }
+  const descuentoCentavos = discountFromTotal(pedido.totalCentavos);
+  return {
+    ...pedido,
+    descuentoCodigo: check.beneficio.codigo,
+    descuentoCentavos,
+    totalCentavos: Math.max(0, pedido.totalCentavos - descuentoCentavos),
+  };
+}
+
+function attachIssuedVouchers(pedido: Pedido, items: CartItem[]) {
+  const vouchers = [];
+  if (items.some((item) => isComboProduct(item.producto))) {
+    const issued = issueBeneficio({
+      tipo: "desc15",
+      clienteNombre: pedido.clienteNombre,
+      clienteTelefono: pedido.clienteTelefono,
+      pedidoId: pedido.id,
+      pedidoNumero: pedido.numeroFormateado,
+      createdAt: pedido.createdAt,
+    });
+    vouchers.push({
+      codigo: issued.codigo,
+      tipo: issued.tipo,
+      venceAt: issued.venceAt,
+    });
+  }
+  if (items.some((item) => isClaseProduct(item.producto))) {
+    const issued = issueBeneficio({
+      tipo: "clase",
+      clienteNombre: pedido.clienteNombre,
+      clienteTelefono: pedido.clienteTelefono,
+      pedidoId: pedido.id,
+      pedidoNumero: pedido.numeroFormateado,
+      createdAt: pedido.createdAt,
+    });
+    vouchers.push({
+      codigo: issued.codigo,
+      tipo: issued.tipo,
+      venceAt: issued.venceAt,
+    });
+  }
+  return vouchers.length ? { ...pedido, vouchers } : pedido;
 }
 
 const LOCAL_PEDIDOS_KEY = "sushi_pedidos_local";
@@ -155,8 +214,17 @@ export async function createOrder(
     throw new Error("El carrito está vacío");
   }
 
+  await loadRemoteBeneficios();
+
   const numeroLocal = nextLocalNumero();
-  const localPedido = buildPedidoDraft(items, payload, numeroLocal, `local-${numeroLocal}`);
+  let localPedido = applyDiscount(
+    buildPedidoDraft(items, payload, numeroLocal, `local-${numeroLocal}`),
+    payload
+  );
+  localPedido = attachIssuedVouchers(localPedido, items);
+  if (localPedido.descuentoCodigo) {
+    redeemBeneficio(localPedido.descuentoCodigo, localPedido.id);
+  }
   saveLocalPedido(localPedido);
 
   if (!isFirebaseConfigured || !db) {
@@ -170,7 +238,10 @@ export async function createOrder(
     const counterSnap = await transaction.get(counterRef);
     const numero = (counterSnap.data()?.ultimoBoleta ?? 0) + 1;
     const pedidoRef = doc(collection(firestore, "pedidos"));
-    const pedido = buildPedidoDraft(items, payload, numero, pedidoRef.id);
+    const pedido = {
+      ...applyDiscount(buildPedidoDraft(items, payload, numero, pedidoRef.id), payload),
+      vouchers: localPedido.vouchers,
+    };
 
     transaction.set(
       counterRef,

@@ -20,13 +20,16 @@ export function piecesFromVariant(nombre?: string) {
 }
 
 export function piecesOfLine(item: {
-  producto: { categoria_id: string };
+  producto: { categoria_id: string; piezas?: number };
   variante?: { nombre?: string };
   cantidad: number;
 }) {
   const categoria = item.producto.categoria_id;
   if (categoria === "cat_extras" || categoria === "cat_ceviche") {
     return 0;
+  }
+  if (item.producto.piezas && item.producto.piezas > 0) {
+    return item.producto.piezas * item.cantidad;
   }
   if (item.variante?.nombre) {
     return piecesFromVariant(item.variante.nombre) * item.cantidad;

@@ -3,6 +3,7 @@
 import BrandLogo, { MenuDivider } from "@/components/BrandLogo";
 import { BRAND } from "@/lib/brand";
 import { BUSINESS } from "@/lib/business";
+import { isPromoActiva, PROMO } from "@/lib/promo";
 
 export default function WelcomeGate({ onEnter }: { onEnter: () => void }) {
   return (
@@ -43,6 +44,17 @@ export default function WelcomeGate({ onEnter }: { onEnter: () => void }) {
             </p>
             <p className="mt-1 text-base font-medium leading-snug">{BUSINESS.salsaTexto}</p>
           </div>
+          {isPromoActiva() && (
+            <div>
+              <p className="text-[11px] font-semibold tracking-[0.16em] text-[#9B2B2B] uppercase">
+                Para ellas
+              </p>
+              <p className="mt-1 text-base font-medium leading-snug">
+                Combo especial del 13 al 18 de octubre. Incluye {PROMO.discountPct}% en tu próxima
+                compra, válido {PROMO.claimDays} días.
+              </p>
+            </div>
+          )}
         </div>
 
         <button

@@ -24,9 +24,11 @@ import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { createOrder } from "@/lib/create-order";
 import { formatMoney } from "@/lib/money";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
-import { MEDIO_PAGO_LABEL, type MedioPago, type Pedido } from "@/types";
+import { loadRemoteBeneficios, validateDiscountCode } from "@/lib/beneficios";
 import { BUSINESS, formatIncluyeItems } from "@/lib/business";
+import { discountFromTotal, formatFechaCorta, PROMO } from "@/lib/promo";
 import { formatRetiroEstimado, RETIRO_HORAS } from "@/lib/retiro";
+import { MEDIO_PAGO_LABEL, type MedioPago, type Pedido } from "@/types";
 import { useCart } from "@/store/useCart";
 import { isExtraProduct, type Producto } from "@/types";
 
@@ -56,6 +58,8 @@ export default function Cart() {
   const [retiroHora, setRetiroHora] = useState("");
   const [medioPago, setMedioPago] = useState<MedioPago | "">("");
   const [notas, setNotas] = useState("");
+  const [codigoInput, setCodigoInput] = useState("");
+  const [codigoAplicado, setCodigoAplicado] = useState("");
   const [extras, setExtras] = useState<Producto[]>(() =>
     getSeedCatalog().productos.filter(
       (producto) => producto.disponible && isExtraProduct(producto)
@@ -76,7 +80,9 @@ export default function Cart() {
 
   const foodItems = items.filter((item) => !isExtraProduct(item.producto));
   const extraItems = items.filter((item) => isExtraProduct(item.producto));
-  const total = getTotal();
+  const bruto = getTotal();
+  const descuento = codigoAplicado ? discountFromTotal(bruto) : 0;
+  const total = bruto - descuento;
   const totalItems = getTotalItems();
   const totalPieces = getTotalPieces();
   const incluyeItems = formatIncluyeItems(totalPieces);
@@ -134,6 +140,7 @@ export default function Cart() {
         horarioRetiro: formatRetiroEstimado(retiroHora),
         notas,
         medioPago,
+        codigoBeneficio: codigoAplicado || undefined,
       });
       clearCart();
       setOpen(false);
@@ -143,6 +150,8 @@ export default function Cart() {
       setRetiroHora("");
       setMedioPago("");
       setNotas("");
+      setCodigoInput("");
+      setCodigoAplicado("");
       setSentPedido(pedido);
     } catch (error) {
       console.error(error);
@@ -418,6 +427,48 @@ export default function Cart() {
                     rows={2}
                   />
                 </div>
+                <div className="space-y-2 rounded-2xl border-2 border-[#C5A059] bg-[#C5A059]/15 p-3">
+                  <p className="font-heading text-sm text-[#1A1A1A]">
+                    ¿Tenés un código de beneficio?
+                  </p>
+                  <p className="text-xs text-[#6b6256]">
+                    Si compraste el combo, ingresá tu código ADAN-XXXX para el {PROMO.discountPct}% off.
+                  </p>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="ADAN-XXXX"
+                      value={codigoInput}
+                      onChange={(e) => {
+                        setCodigoInput(e.target.value.toUpperCase());
+                        setCodigoAplicado("");
+                      }}
+                      className="uppercase"
+                    />
+                    <Button
+                      type="button"
+                      className="rounded-full bg-[#1A1A1A] text-[#F9F7F2] hover:bg-[#333]"
+                      onClick={() => {
+                        void loadRemoteBeneficios().then(() => {
+                          const check = validateDiscountCode(codigoInput);
+                          if (!check.ok) {
+                            toast.error(check.error);
+                            setCodigoAplicado("");
+                            return;
+                          }
+                          setCodigoAplicado(check.beneficio.codigo);
+                          toast.success(`${PROMO.discountPct}% aplicado`);
+                        });
+                      }}
+                    >
+                      Aplicar
+                    </Button>
+                  </div>
+                  {codigoAplicado && (
+                    <p className="text-sm font-medium text-[#9B2B2B]">
+                      Código {codigoAplicado}: {PROMO.discountPct}% off ({formatMoney(descuento)})
+                    </p>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="space-y-4">
@@ -469,9 +520,17 @@ export default function Cart() {
 
           {foodItems.length > 0 && (
             <div className="shrink-0 space-y-3 border-t border-[#d9c9a3] bg-[#F9F7F2] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-              <div className="flex items-center justify-between font-heading text-xl">
-                <span>Total</span>
-                <span className="text-[#9B2B2B]">{formatMoney(total)}</span>
+              <div className="space-y-1">
+                {descuento > 0 && (
+                  <div className="flex items-center justify-between text-sm text-[#6b6256]">
+                    <span>Descuento {PROMO.discountPct}%</span>
+                    <span>-{formatMoney(descuento)}</span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between font-heading text-xl">
+                  <span>Total</span>
+                  <span className="text-[#9B2B2B]">{formatMoney(total)}</span>
+                </div>
               </div>
               {step === "comida" && (
                 <Button
@@ -574,6 +633,18 @@ export default function Cart() {
         </DialogHeader>
         {sentPedido && (
           <div className="flex flex-col gap-2">
+            {sentPedido.vouchers?.length ? (
+              <div className="rounded-2xl border border-[#C5A059] bg-[#C5A059]/15 px-4 py-3 text-left text-sm">
+                {sentPedido.vouchers.map((voucher) => (
+                  <p key={voucher.codigo} className="text-[#1A1A1A]">
+                    <span className="font-semibold">{voucher.codigo}</span>
+                    {voucher.tipo === "desc15"
+                      ? ` · ${PROMO.discountPct}% hasta ${formatFechaCorta(voucher.venceAt)}`
+                      : ` · clase hasta ${formatFechaCorta(voucher.venceAt)}`}
+                  </p>
+                ))}
+              </div>
+            ) : null}
             <a
               href={getWhatsAppUrl(sentPedido)}
               target="_blank"

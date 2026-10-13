@@ -8,6 +8,7 @@ import WelcomeGate from "@/components/WelcomeGate";
 import { getSeedCatalog, subscribeCatalog } from "@/lib/catalog";
 import { BRAND } from "@/lib/brand";
 import { getWhatsAppChatUrl } from "@/lib/whatsapp";
+import { isCustomerVisibleProduct } from "@/lib/promo";
 import type { Categoria, Producto } from "@/types";
 import { Lock } from "lucide-react";
 import Link from "next/link";
@@ -39,7 +40,7 @@ export default function Home() {
     setEntered(true);
   };
 
-  const visibleProductos = productos.filter((producto) => producto.disponible);
+  const visibleProductos = productos.filter((producto) => isCustomerVisibleProduct(producto));
   const foodCategorias = categorias.filter((categoria) => categoria.id !== "cat_extras");
   const filteredCategorias =
     activeCategory === "all"

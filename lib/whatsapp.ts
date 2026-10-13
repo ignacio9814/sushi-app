@@ -1,5 +1,6 @@
 import { formatBoleta, formatMoney, formatPedido } from "@/lib/money";
 import { BRAND } from "@/lib/brand";
+import { formatFechaCorta, PROMO } from "@/lib/promo";
 import { MEDIO_PAGO_LABEL, type Pedido } from "@/types";
 
 export function toWhatsAppPhone(value: string) {
@@ -49,6 +50,28 @@ export function buildWhatsAppMessage(pedido: Pedido, boletaUrl?: string) {
 
   if (pedido.notas) {
     lines.push("", `Notas: ${pedido.notas}`);
+  }
+
+  if (pedido.descuentoCentavos && pedido.descuentoCodigo) {
+    lines.push(
+      "",
+      `Descuento ${PROMO.discountPct}% (${pedido.descuentoCodigo}): -${formatMoney(pedido.descuentoCentavos)}`
+    );
+  }
+
+  if (pedido.vouchers?.length) {
+    lines.push("", "*Beneficios*");
+    pedido.vouchers.forEach((voucher) => {
+      if (voucher.tipo === "desc15") {
+        lines.push(
+          `15% próxima compra: *${voucher.codigo}* (válido hasta ${formatFechaCorta(voucher.venceAt)})`
+        );
+      } else {
+        lines.push(
+          `Clase de sushi: *${voucher.codigo}* a coordinar hasta ${formatFechaCorta(voucher.venceAt)}`
+        );
+      }
+    });
   }
 
   lines.push("", `*Total: ${formatMoney(pedido.totalCentavos)}*`);
