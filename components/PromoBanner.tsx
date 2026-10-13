@@ -8,7 +8,7 @@ export default function PromoBanner() {
       <img
         src={PROMO.fotoClase}
         alt="Clase de sushi · Día de la Madre"
-        className="h-72 w-full object-cover object-center sm:h-80"
+        className="h-72 w-full object-cover object-top sm:h-80"
       />
       <div className="space-y-3 px-5 py-5">
         <p className="text-[11px] font-semibold tracking-[0.2em] text-[#C5A059] uppercase">

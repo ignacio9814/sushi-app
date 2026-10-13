@@ -44,7 +44,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
           <img
             src={clase ? PROMO.fotoClase : imagen}
             alt={producto.nombre}
-            className={clase ? "h-80 w-full object-cover object-top" : "h-56 w-full object-cover object-center"}
+            className={clase ? "h-80 w-full object-cover object-[center_46%]" : "h-56 w-full object-cover object-center"}
           />
         </div>
       )}
